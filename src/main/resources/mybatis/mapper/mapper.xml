@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 매퍼파일 -->
+<mapper namespace="com.cos.security1.service.MybatisMapper">
+	<!--매퍼 인터페이스의 메소드명이 아이디(id)가 된다
+	    <select>태그의 resultType속성은 메소드의 반환타입과 일치 시키자
+	-->
+	<select id="findbyUserPassword" resultType="String" parameterType="java.util.Map">
+		SELECT pwd FROM member WHERE id= #{id}
+	</select>
+	
+	<select id="getInfo" resultType="Map" parameterType="String">
+		SELECT authority,provider FROM member WHERE id=#{id}
+	</select>
+	
+	<select id="isPreviousUser" resultType="int" parameterType="String">
+		SELECT count(*) FROM member WHERE id=#{id}
+	</select>
+	
+	<select id="findByUsername" resultType="UserDto" parameterType="String">
+		SELECT id,pwd,authority FROM member WHERE id = #{id}
+	</select>
+	
+	<select id="findByMemberInfo" resultType="UserDto" parameterType="String">
+		SELECT name,profileimage FROM member WHERE id = #{id}
+	</select>
+	
+	<insert id="joinSocialMember" parameterType="UserDto">
+		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage})
+	</insert>
+	
+	
+	
+</mapper>
