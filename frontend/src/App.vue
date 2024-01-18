@@ -8,6 +8,8 @@ import MyCalendar from './views/CalendarView.vue';
 import Admin from './views/AdminView.vue';
 import Location from './views/LocationView.vue';
 import MyPageView from './views/MyPageView.vue';
+import BoardView from './views/BoardView.vue';
+
 
 const page_=ref('main')
 
@@ -31,6 +33,8 @@ function selectPage(page){
     <Admin v-if="page_=='admin'"/>
     <Location v-if="page_=='location'"/>
     <MyPageView v-if="page_=='mypage'"/>
+    <BoardView v-if="page_=='board'"/>
+
 </template>
 
 <style>
