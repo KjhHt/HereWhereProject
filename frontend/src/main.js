@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 library.add(faUserSecret)
 import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 createApp(App).component('font-awesome-icon', FontAwesomeIcon)
     .use(store).use(router).mount('#app')
