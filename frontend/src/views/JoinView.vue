@@ -12,7 +12,7 @@
         <div class="form_list">
           <label for="fileInput">
             <img :src="imageData.poto" class="poto_icon rounded-image" :style="{ width: imageSize, height: imageSize }">
-            <span class="image_poto">(선택사항)프로필을 선택하세요</span>
+            <span class="image_poto">(선택사항)프로필을 선택하세요!!!!!!!</span>
           </label>
           <!-- 숨겨진 파일 입력 창 -->
           <input type="file" id="fileInput" ref="fileInput" style="display: none" @change="handleFileUpload">
