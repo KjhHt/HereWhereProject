@@ -1,4 +1,20 @@
 <template>
+
+<div class="feed">
+    <!-- 글 작성 버튼 -->
+  <button class="post-btn" @click="showPostModal = true">
+      <i class="bi bi-plus-lg"></i> 
+    </button>
+    <!-- 글 작성 모달 -->
+    <div class="modal" v-if="showPostModal">
+      <div class="modal-content">
+        <span class="close-button" @click="showPostModal = false">×</span>
+        <textarea v-model="newPost" placeholder="여기에 글을 작성하세요"></textarea>
+        <button @click="submitPost">글 작성</button>
+      </div>
+    </div>
+  </div>
+
   <div class="feed">
       <div class="post" v-for="post in displayedPosts" :key="post.id">
         <div class="post-header">
@@ -17,7 +33,7 @@
           <div class="modal">
           <div class="modal-content">
           <span class="close-button" @click="closeCommentModal(post)">×</span>
-              <textarea v-model="newComment" placeholder="댓글을 입력하세요..."></textarea>
+              <textarea v-model="newComment" placeholder="댓글을 입력하세요"></textarea>
             <button @click="submitComment">댓글 작성</button>
           </div>
         </div>
@@ -49,6 +65,8 @@ export default {
       displayedPosts: [], // 화면에 보여질 포스트를 저장할 배열
       page: 0,
       isLoading: false,
+      showPostModal: false,  // 글 작성 모달의 보이기/숨기기를 제어하는 데이터
+      newPost: ''  // 사용자가 입력한 글 내용을 저장하는 데이터
     };
   },
   async mounted() {
@@ -101,6 +119,14 @@ export default {
       console.log(this.newComment);
       this.newComment = '';
       this.closeCommentModal();
+    },
+     submitPost() {
+      // 글 작성 처리를 여기서 합니다.
+      // 예를 들어, 서버에 POST 요청을 보내거나 Vuex 액션을 디스패치할 수 있습니다.
+
+      // 글 작성 처리가 끝나면 모달을 닫습니다.
+      this.showPostModal = false;
+      this.newPost = '';
     },
     fetchAllPosts() {
       // 더미 데이터 하드코딩
@@ -286,7 +312,6 @@ export default {
   align-items: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: rgba(255, 255, 255, 0.651);
   padding: 20px;
@@ -294,5 +319,22 @@ export default {
   width: 80%;
   max-width: 500px;
 }
+.post-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3897f0;  /* 인스타그램의 메인 색상 */
+  color: #fff;  /* 아이콘 색상 */
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s;
+}
 
+.post-btn:hover {
+  background-color: #0679e6;  /* 버튼을 호버했을 때의 색상 */
+}
 </style>
