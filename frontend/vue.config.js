@@ -5,11 +5,11 @@ module.exports = defineConfig({
     devServer: {
         proxy: {
           '/':{
-            target:'http://localhost:8080', // Spring Boot Server
+            target:'http://192.168.0.69:8080', // Spring Boot Server
             changeOrigin:true,
           },
           '/oauth2':{
-            target:'http://localhost:8080', // Spring Boot Server
+            target:'http://192.168.0.69:8080', // Spring Boot Servernpm
             changeOrigin:true,
             '^/oauth2':'/login/oauth2/code/'
           }
