@@ -1,7 +1,7 @@
 <template>
   <div id="main-page">
     <div class="cInnerContent">
-      <h1 class="header-section gs_reveal ipsType_center" ><strong>이미지 검색 여행 서비스, HERE WHERE에 오신 것을 환영합니다!</strong></h1>
+      <h1 class="header-section gs_reveal ipsType_center" ><strong>이미지 검색 여행 서비스, HERE WHERE에 오신 것을 환영합니다!!!</strong></h1>
       <div class="features">
         <div class="feature ipsSpacer_bottom_double ipsGrid ipsGrid_collapsePhone">
           <div class="featured-image-container ipsGrid_span5 gs_reveal gs_reveal_fromLeft">

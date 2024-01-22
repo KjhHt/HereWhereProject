@@ -4,10 +4,10 @@ import SideBar from '@/components/SideBar.vue';
 console.log(ref,SideBar)
 </script>
 <template>
-    <div>
+    <div >
         <SideBar/>
     </div>
 </template>
 <style>
-    
+
 </style>
