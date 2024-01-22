@@ -35,7 +35,6 @@ public class MemberService {
 	}
 
 	public UserDto findByUsername(String id) {
-		// TODO Auto-generated method stub
 		return mapper.findByUsername(id);
 	}
 
@@ -47,8 +46,29 @@ public class MemberService {
 	}
 
 	public UserDto findByMemberInfo(String id) {
-		// TODO Auto-generated method stub
 		return mapper.findByMemberInfo(id);
+	}
+
+	//회원가입
+	public void joinMember(UserDto dto) {
+		// 비밀번호 인코딩
+		BCryptPasswordEncoder bcy = new BCryptPasswordEncoder();
+		String pwd = bcy.encode(dto.getPwd());
+		dto.setPwd(pwd);
+		
+		// member 테이블
+		mapper.joinMember(dto);
+		System.out.println("joinMember 완료");
+		// member_info 테이블
+		mapper.joinMemberInfo(dto);
+		System.out.println("joinMemberInfo 완료");
+		// profileimage_table 테이블
+		mapper.profileImageTable(dto);
+		System.out.println("profileImageTable 완료");
+		
+		
+		
+		
 	}
 
 
