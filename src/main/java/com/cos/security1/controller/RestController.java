@@ -152,7 +152,7 @@ public class RestController {
 		StringBuffer filenames = FileUtils.upload(parts, saveDirectory);
 		
 		
-		
+		System.out.println("잠시 테스트");
 		
 		
 		UserDto dto = new UserDto();
