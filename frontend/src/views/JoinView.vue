@@ -75,10 +75,10 @@
             <input type="button" id="postcode" @click="openPostcode" value="검색" class="btn btn-outline-secondary"><br>
             <input type="text" v-model="roadAddress" placeholder="지번주소" class="addrnum">
             <input type="text" v-model="detailAddress" placeholder="상세주소" class="addradd">
-
           </div>
+
           <div class="join"></div>
-          <button type="button" class="btn btn-outline-secondary" @click="clickSearchIcon">join</button>
+          <button type="button" class="btn btn-outline-secondary" @click="joinMember">join</button>
           
         </div>
       </div>
@@ -128,6 +128,7 @@ export default {
       validPasswordConfirmation: true, 
       selectedGender: '',  // 남자 또는 여자 선택
       selectedNationality: '',  // 내국인 또는 외국인 선택
+      profileImage:'',
       
       imageData: {
         id: require('@/assets/person-icon.png'),
@@ -159,9 +160,37 @@ export default {
         { label: 'ENTJ', value: 'ENTJ' },
         // 다른 선택 옵션들을 필요에 따라 추가
       ],
+
     };
   },
   methods: {
+    joinMember(){
+      const formData = new FormData();
+      formData.append('id', this.username);
+      formData.append('pwd', this.password);
+      formData.append('name', this.name);
+      formData.append('gender', this.selectedGender);
+      formData.append('mbti', this.selectedRightMBTI);
+      formData.append('tel', this.phoneNumber);
+      formData.append('address', this.roadAddress+' '+this.detailAddress);
+      formData.append('profileImage', this.profileImage);
+
+      axios.post('http://localhost:8080/joinMember',formData)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
+
+    },
+    openPostcode(){
+      new window.daum.Postcode({
+        oncomplete:(data)=>{
+          this.zonecode =data.zonecode;
+          this.roadAddress =data.roadAddress;
+        }
+      }).open()
+    },
+
 
     sendVerificationCode() {
   if (this.validPhoneNumber) {
@@ -311,6 +340,7 @@ validateUsername() {
     if (files && files.length > 0) {
       // 선택한 파일 정보 업데이트
       const file = files[0];
+      this.profileImage = file;
       const reader = new FileReader();
 
       // FileReader의 onload 이벤트 핸들러 내부에서 imageData.poto를 직접 업데이트
@@ -320,7 +350,9 @@ validateUsername() {
         // 이미지 크기를 동적으로 설정
         this.imageSize = '150px'; // 적절한 크기로 설정
       };
-
+      console.log('file : ', file)
+      console.log('reader : ', reader)
+      console.log('input : ', input)
       // 파일을 읽어옵니다.
       reader.readAsDataURL(file);
     }

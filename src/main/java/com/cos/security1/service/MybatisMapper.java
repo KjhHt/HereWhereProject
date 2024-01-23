@@ -17,4 +17,9 @@ public interface MybatisMapper {
 	void joinSocialMember(UserDto dto);
 	UserDto findByMemberInfo(String id);
 	
+	//회원가입
+	void joinMember(UserDto dto);
+	void joinMemberInfo(UserDto dto);
+	void profileImageTable(UserDto dto);
+	
 }

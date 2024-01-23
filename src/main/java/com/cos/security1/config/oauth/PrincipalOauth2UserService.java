@@ -103,6 +103,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 			System.out.println("이미 로그인했던 회원");
 		}
 		
+		System.out.println("id : "+userEntity.getId());
+		System.out.println("getName : "+userEntity.getName());
+		System.out.println("getPwd : "+userEntity.getPwd());
+		System.out.println(oauth2User.getAttributes());
+		
 		return new PrincipalDetails(userEntity,oauth2User.getAttributes());
 	}
 	
