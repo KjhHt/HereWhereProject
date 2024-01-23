@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- 매퍼파일 -->
+
 <mapper namespace="com.cos.security1.service.MybatisMapper">
-	<!--매퍼 인터페이스의 메소드명이 아이디(id)가 된다
-	    <select>태그의 resultType속성은 메소드의 반환타입과 일치 시키자
-	-->
+
 	<select id="findbyUserPassword" resultType="String" parameterType="java.util.Map">
 		SELECT pwd FROM member WHERE id= #{id}
 	</select>
@@ -29,7 +27,19 @@
 	<insert id="joinSocialMember" parameterType="UserDto">
 		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage})
 	</insert>
+
+
+	<insert id="joinMember" parameterType="UserDto">
+		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage})
+	</insert>
 	
+	<insert id="joinMemberInfo" parameterType="UserDto">
+		INSERT INTO member_info VALUES(SEQ_MEMBER_INFO_TABLE.NEXTVAL,#{mbti},#{tel},#{gender},#{address},#{lat},#{lng},#{id})
+	</insert>
+	
+	<insert id="profileImageTable" parameterType="UserDto">
+		INSERT INTO profileimage_table VALUES(SEQ_PROFILEIMAGE_TABLE.NEXTVAL,#{filename},#{filesize},#{fileroute},#{id})
+	</insert>
 	
 	
 </mapper>
