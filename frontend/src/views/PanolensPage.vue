@@ -38,11 +38,14 @@
           }
         },
         initializePanolens() {
-          const viewer = new PANOLENS.Viewer({ container: this.$refs['panolens-container'] });
-          const panorama = new PANOLENS.ImagePanorama(this.currentPanoramaImage);
-
+          const viewer = new PANOLENS.Viewer({ 
+            container: this.$refs['panolens-container'],
+            controlBar: false,
+            autoRotate: true, 
+            autoRotateSpeed: 0.6,
+          });
+          const panorama = new PANOLENS.ImagePanorama(this.currentPanoramaImage); 
           viewer.add(panorama);
-          
         },
         
         goToAppPage() {

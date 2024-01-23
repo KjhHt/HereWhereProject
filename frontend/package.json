@@ -24,6 +24,7 @@
     "core-js": "^3.8.3",
     "gsap": "^3.12.4",
     "panolens": "^0.12.1",
+    "unsplash-js": "^7.0.19",
     "vue": "^3.2.13",
     "vue-cookies": "^1.8.3",
     "vue-router": "^4.2.5",
