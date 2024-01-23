@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :class="{ 'header-fixed': isHeaderFixed }">
+  <header class="header">
     <div class="container">
       <div class="header-content d-flex flex-wrap align-items-center justify-content-between">
         <div class="logo-container">
@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      isHeaderFixed: false,
+      
       loginModalVisible: false,
       isDropdownOpen: false,
     };
@@ -72,9 +72,7 @@ export default {
     },
   },
   methods: {
-    handleScroll() {
-      this.isHeaderFixed = window.scrollY > 56;
-    },
+    
     openLoginModal() {
       this.loginModalVisible = true;
     },
@@ -175,7 +173,7 @@ export default {
   gap: 20px;
   margin: auto 0;
   align-items: center;
-  
+  cursor: pointer;
 }
 
 .nav-item {
