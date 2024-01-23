@@ -170,6 +170,9 @@ gap: 10px;
     /* 아이콘 정렬을 위한 스타일 */
 .icon-container {
 text-align: center;
+display: flex;
+justify-content: center;
+align-items: center;
 margin-bottom: 1rem; /* 텍스트와의 간격을 조절 */
 }
 .h3 {

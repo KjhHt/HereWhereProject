@@ -38,10 +38,16 @@
           }
         },
         initializePanolens() {
-          const viewer = new PANOLENS.Viewer({ container: this.$refs['panolens-container'] });
-          const panorama = new PANOLENS.ImagePanorama(this.currentPanoramaImage);
+          const viewer = new PANOLENS.Viewer({ 
+            container: this.$refs['panolens-container'],
+            controlBar: false,
+            autoRotate: true, 
+            autoRotateSpeed: 0.6,
+          });
+          const panorama = new PANOLENS.ImagePanorama(this.currentPanoramaImage); 
           viewer.add(panorama);
         },
+        
         goToAppPage() {
             this.showPanolensPage = false;
             setTimeout(() => {
@@ -109,7 +115,7 @@
     transition: transform 1s, opacity 1s;
   }
   .fade-enter, .fade-leave-to {
-    transform: scale(0.8);
+    transform: scale(2.0);
     opacity: 0;
   }
     </style>
