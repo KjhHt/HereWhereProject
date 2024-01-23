@@ -81,7 +81,6 @@ function selectPage(page){
     <Location v-if="page_=='location'"/>
     <MyPageView v-if="page_=='mypage'"/>
     <BoardView v-if="page_=='board'"/>
-
     <Chat :onSend="handleSendEvent" :chat="data" />
 
 </template>
