@@ -16,7 +16,7 @@ export default createStore({
   },
   plugins: [
     createPersistedState({
-      path: ['loginStore'] 
+      path: ['loginStore','menuStore'] 
     })
   ],
 })
