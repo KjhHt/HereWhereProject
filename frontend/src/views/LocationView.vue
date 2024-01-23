@@ -218,7 +218,3 @@ const 왼쪽모달창 = ref(false);
 }
 
 </style>
-
-
-
-

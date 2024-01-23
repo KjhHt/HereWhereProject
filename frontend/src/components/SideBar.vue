@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { useStore } from 'vuex'
 import VueSidebarMenuAkahon from "vue-sidebar-menu-akahon";
-const menuTitle=ref('HERE WHERE');
+const menuTitle=ref('');
 const menuItems=ref([
-    {link:'#',name:'나의 여행 지도',tooltip:'나의 여행 지도',icon:'bx-map-alt'},
-    {link:'#',name:'나의 예약',tooltip:'나의 예약',icon:'bx-calendar-event'},
-    {link:'#',name:'나의 정보',tooltip:'나의 정보',icon:'bx-user-circle'},
-    {link:'#',name:'팔로우',tooltip:'팔로우',icon:'bx-user-plus'}
+    {link:'map',name:'나의 여행 지도',tooltip:'나의 여행 지도',icon:'bx-map-alt'},
+    {link:'reservations',name:'나의 예약',tooltip:'나의 예약',icon:'bx-calendar-event'},
+    {link:'info',name:'나의 정보',tooltip:'나의 정보',icon:'bx-user-circle'},
+    {link:'follow',name:'팔로우',tooltip:'팔로우',icon:'bx-user-plus'}
 ]);
 const searchPlaceholder=ref('검색')
 const searchTooltip=ref('검색')
@@ -20,8 +21,16 @@ const menuItemsTextColor=ref('#000')
 const searchInputTextColor=ref('#000')
 const menuItemsHoverColor=ref('#000')
 const isMenuOpen=ref(false)
+const store = useStore()
+let index=0;
+function onMenuItemClick(item){
+    // console.log(item)
+    index=menuItems.value.findIndex(menuItem=>menuItem.link===item)
+    store.commit('setSelectSide',index)
+    console.log('index:',index)
+}
 </script>
-<template lang="">
+<template>
     <div>
         <VueSidebarMenuAkahon
         :menuTitle='menuTitle'
@@ -36,8 +45,17 @@ const isMenuOpen=ref(false)
         :logoTitleColor='logoTitleColor'
         :searchPlaceholder='searchPlaceholder'
         :searchTooltip='searchTooltip'
-        :isMenuOpen='isMenuOpen'/>
+        :isMenuOpen='isMenuOpen'
+        @menuItemClcked='onMenuItemClick'/>
     </div>
 </template>
 <style scoped>
+.page-container {
+  display: flex;
+  height: 100vh; 
+}
+.sidebar {
+  position: relative;
+  
+}
 </style>
