@@ -217,7 +217,7 @@ strong {
 
 /* ===================================== Resume Template CSS ================================== */
 .top-cover {
-  background-image: url(../../../public/bg.jpg);
+  /* background-image: url(../../../public/bg.jpg); */
   background-size: cover;
   width: 100%; }
 
