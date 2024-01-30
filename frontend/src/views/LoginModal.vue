@@ -43,14 +43,14 @@
                <li class="login_kakao">
                 <a href="/oauth2/authorization/kakao" class="sl_kakao ga_data_layer" data-provider="kakao">
                   <span class="wrap_icon">
-                    <img src="@/assets/kakao_circle.png" alt="Kakao Icon" class="icon" style="width: 50px; height: 50px;">
+                    <img src="@/assets/kakao_big.png" alt="Kakao Icon" class="icon" style="width: 50px; height: 50px;">
                  </span>
                 </a>
               </li>
               <li class="login_google">
                  <a href="/oauth2/authorization/google" class="sl_google ga_data_layer" data-provider="google"> 
                   <span class="wrap_icon">
-                    <img src="@/assets/google_circle.png" alt="Google Icon" class="icon" style="width: 50px; height: 50px;">
+                    <img src="@/assets/google_big.png" alt="Google Icon" class="icon" style="width: 50px; height: 50px;">
                  </span>
                 </a>
               </li>
