@@ -27,12 +27,14 @@ export default {
 }
 
 .photos {
-  column-count: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-@media screen and (min-width: 576px) {
-  .photos {
-    column-count: 4;
-  }
+.photos img {
+  width: 100%;
+  height: 100%;
+  display: block;  
 }
 </style>

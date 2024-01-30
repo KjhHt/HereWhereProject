@@ -13,12 +13,46 @@
           </a>
         </div>
         <nav class="nav">
-          <a @click="$emit('selectPage','location')" class="nav-item">위치검색</a>
-          <a @click="$emit('selectPage','board')" class="nav-item">게시판</a>
-          <a @click="$emit('selectPage','admin')" class="nav-item">관리자</a>
-          <a @click="$emit('selectPage','mycalendar')" class="nav-item">캘린더</a>
-          <a @click="$emit('selectPage','mypage')" class="nav-item">마이페이지</a>
-          <a @click="$emit('selectPage','join')" class="nav-item">회원가입</a>
+          <a @click="$emit('selectPage','location')" class="nav-item" @mouseover="showTooltip('위치검색')" @mouseout="hideTooltip">
+            <div class="tooltip-wrapper">
+              <img src="@/assets/location.png" alt="Location Icon" class="nav-icon" />
+              <span v-if="tooltip === '위치검색'" class="tooltip">위치검색</span>
+            </div>
+          </a>
+          <a @click="$emit('selectPage','board')" class="nav-item" @mouseover="showTooltip('게시판')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/board.png" alt="Board Icon" class="nav-icon" />
+          <span v-if="tooltip === '게시판'" class="tooltip">게시판</span>
+        </div>
+      </a>
+
+      <a @click="$emit('selectPage','admin')" class="nav-item" @mouseover="showTooltip('관리자')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/admin.png" alt="Admin Icon" class="nav-icon" />
+          <span v-if="tooltip === '관리자'" class="tooltip">관리자</span>
+        </div>
+      </a>
+
+      <a @click="$emit('selectPage','mycalendar')" class="nav-item" @mouseover="showTooltip('캘린더')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/calendar.png" alt="Calendar Icon" class="nav-icon" />
+          <span v-if="tooltip === '캘린더'" class="tooltip">캘린더</span>
+        </div>
+      </a>
+
+      <a @click="$emit('selectPage','mypage')" class="nav-item" @mouseover="showTooltip('마이페이지')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/mypage.png" alt="MyPage Icon" class="nav-icon" />
+          <span v-if="tooltip === '마이페이지'" class="tooltip">마이페이지</span>
+        </div>
+      </a>
+
+      <a @click="$emit('selectPage','join')" class="nav-item" @mouseover="showTooltip('회원가입')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/join.png" alt="Join Icon" class="nav-icon" />
+          <span v-if="tooltip === '회원가입'" class="tooltip">회원가입</span>
+        </div>
+      </a>
           <div class="text-end">
             <!-- 로그인 전 상태: -->
               <div v-if="!isLoggedIn">
@@ -59,6 +93,7 @@ export default {
       src : '',
       loginModalVisible: false,
       isDropdownOpen: false,
+      tooltip: '',
     };
   },
   mounted() {
@@ -103,7 +138,10 @@ export default {
     },
   },
   methods: {
-    
+    showTooltip(text) {
+      this.tooltip = text;
+    },
+
     openLoginModal() {
       this.loginModalVisible = true;
     },
@@ -208,9 +246,8 @@ export default {
 }
 
 .nav-item {
-  color: #000;
-  font: 400 16px/150% Roboto, sans-serif;
-  text-decoration: none;
+  display: flex;
+  align-items: center; /* 이미지를 수직 가운데 정렬 */
 }
 
 
@@ -249,6 +286,30 @@ export default {
   border-radius: 100px;
 }
 
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
 
+
+.tooltip {
+  position: absolute;
+  background-color: #000;
+  color: #fff;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0; 
+  transition: opacity 0.2s ease;
+  top: 100%; 
+  left: 50%; 
+  transform: translateX(-50%); 
+}
+
+
+.nav-item:hover .tooltip {
+  opacity: 1;
+}
 
 </style>
