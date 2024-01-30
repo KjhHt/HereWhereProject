@@ -65,6 +65,7 @@
     <style scoped>
     .container-info {
       position:relative;
+      margin: auto;
     }
     .search-form {
       width: 100%;
