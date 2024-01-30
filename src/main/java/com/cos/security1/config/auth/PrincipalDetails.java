@@ -18,18 +18,15 @@ public class PrincipalDetails implements UserDetails,OAuth2User {
 	private UserDto user;	
 	private Map<String,Object> attributes;
 	
-	// 일반 로그인 생성자
 	public PrincipalDetails(UserDto user) {
 		this.user = user;
 	}
 	
-	// OAuth 로그인
 	public PrincipalDetails(UserDto user,Map<String,Object> attributes) {
 		this.user = user;
 		this.attributes = attributes;
 	}
 	
-	// 해당 User의 권한을 리턴하는곳!
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> collect = new ArrayList<>();

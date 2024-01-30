@@ -22,8 +22,8 @@ import com.cos.security1.config.oauth.PrincipalOauth2UserService;
 import com.cos.security1.service.MemberService;
 
 @Configuration
-@EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록이 됩니다.
-@EnableMethodSecurity // secured 어노테이션 활성화
+@EnableWebSecurity 
+@EnableMethodSecurity 
 public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 	@Autowired
 	private MemberService service;
@@ -54,7 +54,6 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
 		http.addFilterBefore(corsFilter, ChannelProcessingFilter.class);
 		http.csrf( (csrf) -> csrf.disable());
 		http.authorizeHttpRequests( (requests)->requests
-				//.requestMatchers("/user/**").authenticated()
 				.requestMatchers("/api/v1/uesr/**").hasRole("USER")
 				.requestMatchers("/api/v1/manager/**").hasRole("MANAGER")
 				.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
@@ -70,11 +69,9 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
 					.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin((formLogin) ->
 				formLogin
-					//.loginPage("/loginForm")
 					.usernameParameter("id")
 					.passwordParameter("pwd")
 					.loginProcessingUrl("/login")
-					//.defaultSuccessUrl("/") 
 			)
 			.oauth2Login( (oauth2)-> 
 				oauth2

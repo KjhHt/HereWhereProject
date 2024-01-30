@@ -1,4 +1,8 @@
 module.exports = {
+    //lsj추가함
+    "globals": {
+      "Swal": "readonly"
+    },
     root: true,
     env: {
       node: true,

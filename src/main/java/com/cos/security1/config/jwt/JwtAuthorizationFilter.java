@@ -21,13 +21,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// 시큐리티 
-// 권한이 인증 특정 주소요청 필터는 무조건탐
-
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 
 	private AuthenticationManager authenticationManager;
-	
 	private MemberService service;
 	
 	public JwtAuthorizationFilter(AuthenticationManager authenticationManager,MemberService service) {
@@ -38,7 +34,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		System.out.println("인증이나 권한이 필요한 주소 요청이 됨");
 
 		Cookie[] cookies = request.getCookies();
 		String jwttoken = null;
@@ -51,7 +46,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 		    }
 		}
 		
-		System.out.println(jwttoken);
 		if(jwttoken == null ) {
 			System.out.println("해당 쿠키가 없다");
 			chain.doFilter(request, response);
@@ -64,11 +58,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 			System.out.println("유효한 토큰이다.");
 			Map payloads = tokens.getTokenPayloads(jwttoken);
 			String username = (String)payloads.get("username");
-			System.out.println("username : "+username);
 			if(username != null) {
-				System.out.println("username " + username);
 				UserDto userEntity = service.findByUsername(username);
-				System.out.println("userEntity : "+userEntity);
 				PrincipalDetails principalDetails = new PrincipalDetails(userEntity);
 				// Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
 				Authentication authentication =
