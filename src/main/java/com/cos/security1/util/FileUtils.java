@@ -69,7 +69,6 @@ public class FileUtils {
 	 * @return 파일명을 저장한 StringBuffer
 	 */
 	//업로드 로직
-	//업로드 로직
 	public static StringBuffer upload(Collection<Part> parts,String saveDirectory) {
 		//업로드된 파일명들 저장용
 		StringBuffer fileNames=new StringBuffer();

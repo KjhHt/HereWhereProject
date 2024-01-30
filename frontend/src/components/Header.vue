@@ -62,7 +62,7 @@
               <!-- 로그인 후 상태: -->
               <div v-else>
                 <div class="profile-dropdown">
-                <img src="@/assets/Cat.png" alt="Cat Icon" class="cat-image" @click="toggleDropdown" />
+                <img :src="src" alt="Cat Icon" class="cat-image" @click="toggleDropdown" />
                 <!-- 드롭다운 메뉴 -->
                   <div v-if="isDropdownOpen" class="dropdown-menu">
                     <router-link to="/mypage" class="dropdown-item">마이페이지</router-link>
@@ -80,6 +80,7 @@
 
 <script>
 import LoginModal from '@/views/LoginModal.vue';
+import axios from 'axios';
 //import loginStore from '../store/index'
 
 export default {
@@ -89,7 +90,7 @@ export default {
   },
   data() {
     return {
-      
+      src : '',
       loginModalVisible: false,
       isDropdownOpen: false,
       tooltip: '',
@@ -104,6 +105,36 @@ export default {
   computed: {
     isLoggedIn() {
       return this.$store.state.loginStore.isLogin;
+    },
+  },
+  watch:{
+    '$store.state.loginStore.isLogin': {
+      handler(newValue){
+        if(newValue){ // 로그인 했을때
+          const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+          const profileimage = vuexStore.loginStore.userInfo.profileimage;
+          console.log(profileimage);
+          if( profileimage === '0' ){
+            this.src = require('@/assets/dino.jpg');
+          }
+          else{
+            if(profileimage.startsWith("D:")){
+              const pathSegments = profileimage.split('\\');
+              const lastSegment = pathSegments[pathSegments.length - 1];
+              axios.get(`http://localhost:8080/profile/${lastSegment}`)
+              .then(res => {
+                const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
+                this.src = dataURI;
+              })
+              .catch(err => console.log(err))
+            }
+            else{
+              this.src = profileimage;
+            }
+          }
+        }
+      },
+      immediate:true,
     },
   },
   methods: {
