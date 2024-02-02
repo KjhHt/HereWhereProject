@@ -3,7 +3,14 @@
 
 
   <WriteForm v-if="open" @close="writeForm" @update="handleUpdate"/>
-  <DetailForm v-if="detailOpen" @Detailclose="detailForm" :boardList="boardList" :boardDetail="boardDetail" :imageSrc="imageSrc"/>
+  
+  <DetailForm v-if="detailOpen" 
+      @Detailclose="detailForm" 
+      :boardList="boardList" 
+      :boardDetail="boardDetail" 
+      :imageSrc="imageSrc" 
+      :formatTimeAgo="formatTimeAgo" 
+  />
 
 
   <div v-for="(boardItem) in boardList" :key="boardItem.board_no" ref="boardRef">
@@ -16,7 +23,7 @@
       <div class="details">
           <div class="header-container">
       <h1 class="d-inline">{{ boardItem.board_writer }}</h1>
-      <p class="d-inline">{{ boardItem.board_createtime }}</p> <!-- You can also use a span tag here -->
+      <p class="d-inline">{{ formatTimeAgo(boardItem.board_createtime) }}</p> <!-- You can also use a span tag here -->
       </div>
           <div :id="'carouselExample' + boardItem.board_no" class="carousel slide">
           <div class="carousel-inner">
@@ -161,7 +168,6 @@
         await fetchProfileImage(board['profileimage'], board);
 
       }
-      
     boardList.value = [...boardList.value, ...newBoardList];
     await test();
     if(firstList.value){
@@ -184,7 +190,7 @@
       board['profileimage'] = require('@/assets/dino.jpg');
     } 
     else {
-        if (profileimage.startsWith("D:")) {
+        if (profileimage.startsWith("D:") || profileimage.startsWith("E:") ) {
           const pathSegments = profileimage.split('\\');
           const lastSegment = pathSegments[pathSegments.length - 1];
           
@@ -248,10 +254,37 @@
         for (const filename of filenames) {
           image.value[board.board_no].push(`${filename}`);
         }
+        console.log( board['profileimage'] );
+        console.log( board );
+        await fetchProfileImage(board['profileimage'], board);
       }
       boardList.value = [...[newBoard] , ...boardList.value];
+      console.log(boardList.value);
       await test();
   }
+
+  function formatTimeAgo(time){
+    const currentTime = new Date();
+    const postedTime = new Date(time);
+    const timeDifference = currentTime - postedTime;
+
+    const seconds = Math.floor(timeDifference) / (1000);
+    const minutes = Math.floor(timeDifference / (1000 * 60));
+    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    
+    if (seconds < 60) {
+        return `${seconds.toFixed(0)}초 전`;
+    } else if (minutes < 60) {
+        return `${minutes}분 전`;
+    } else if (hours <= 23) {
+        return `${hours}시간 전`;
+    } else {
+        return `${days}일 전`;
+    }
+  }
+
+
 </script>
   <style scoped>
   .header-container {

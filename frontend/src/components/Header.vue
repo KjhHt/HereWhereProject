@@ -62,7 +62,7 @@
               <!-- 로그인 후 상태: -->
               <div v-else>
                 <div class="profile-dropdown">
-                <img :src="src" alt="Cat Icon" class="cat-image" @click="toggleDropdown" />
+                <img :src="src" alt="Login" class="cat-image" @click="toggleDropdown" />
                 <!-- 드롭다운 메뉴 -->
                   <div v-if="isDropdownOpen" class="dropdown-menu">
                     <router-link to="/mypage" class="dropdown-item">마이페이지</router-link>
@@ -116,20 +116,23 @@ export default {
           console.log(profileimage);
           if( profileimage === '0' ){
             this.src = require('@/assets/dino.jpg');
+            localStorage.setItem('profileImage', require('@/assets/dino.jpg'));
           }
           else{
-            if(profileimage.startsWith("D:")){
+            if(profileimage.startsWith("D:") || profileimage.startsWith("E:")){
               const pathSegments = profileimage.split('\\');
               const lastSegment = pathSegments[pathSegments.length - 1];
               axios.get(`http://localhost:8080/profile/${lastSegment}`)
               .then(res => {
                 const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
                 this.src = dataURI;
+                localStorage.setItem('profileImage', dataURI);
               })
               .catch(err => console.log(err))
             }
             else{
               this.src = profileimage;
+              localStorage.setItem('profileImage', profileimage);
             }
           }
         }

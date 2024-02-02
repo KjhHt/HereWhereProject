@@ -1,14 +1,10 @@
-<template>
-  <body class="modal-open">
+<template class="a2">
+  <body class="a1">
       <div class="container">
           <!-- <h1 class="logo">
               <img :src="imageData.logo" class="logo_icon">
           </h1> -->
-          <div class="content">
-              <!-- //from
-          //input hidden등등 필요시 설정 -->
-          </div>
-          <div class="from-content">
+          <div class="3">
               <div class="form_list">
             <label for="fileInput">
               <img :src="imageData.poto" class="poto_icon rounded-image" :style="{ width: imageSize, height: imageSize }" @click.prevent="handleImageClick">
@@ -29,7 +25,7 @@
                                       <div class="mb-3">
                                           <label for="recipient-name" class="col-form-label">이미지 결과</label>
                                           <div id="image-container">
-                                              <img v-if="image_url" :src="image_url" alt="Generated Image" :style="{ width: '100%', height: '50%' }">
+                                              <img v-if="image_url" :src="image_url" alt="Generated Image" :style="{ width: '50%', height: '50%' }">
                                               <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status" v-if="loading">
                                                   <span class="visually-hidden">Loading...</span>
                                               </div>
@@ -57,7 +53,7 @@
                                   
                               </div>
                               <div class="modal-body">
-                                  <p>프로필 이미지가 적용되었습니다.</p>
+                                  <p style="width: 500px; height: 100px; top: 40px;">프로필 이미지가 적용되었습니다.</p>
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-outline-info" :class="use" data-bs-dismiss="modal">Close</button>
@@ -111,7 +107,7 @@
                           </div>
   
                           <!--  모달창 content  -->
-                          <div id="carouselExampleFade" class="carousel slide carousel-fade">
+                          <div id="carouselExampleFade" class="carousel slide carousel-fade" >
                               <div class="carousel-inner">
                                   <div class="carousel-item active">
                                       <div class="titlemain" >
@@ -127,25 +123,25 @@
                                       </div>
                                     
                                   </div>
-                                  <div class="carousel-item" >
+                                  <div class="carousel-item" direction="right">
                                       <div class="title1">
                                           <h5>[나에게 쉬는 시간이 생겼을 때~]</h5>
                                       </div>
                                       <img :src="mbtidata.problem0" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item" >
+                                  <div class="carousel-item" direction="right">
                                       <div class="title1">
                                           <h5>[내가 엘리베이터를 탔을 때!]</h5>
                                       </div>
                                       <img :src="mbtidata.problem1" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item">
+                                  <div class="carousel-item" direction="right">
                                       <div class="title1">
                                           <h5>[만약 친구가 차사고가 났다고 연락이 왔을 때?]</h5>
                                       </div>
                                       <img :src="mbtidata.problem2" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item">
+                                  <div class="carousel-item" direction="right">
                                       <div class="title1">
                                           <h5>[친구들과 함께 간 여행, 숙소에서 짐을 풀고 나가자! 했을 때]</h5>
                                       </div>
@@ -228,19 +224,21 @@
                       <input type="text" v-model="x" placeholder="x좌표">
                       <input type="text" v-model="y" placeholder="y좌표">
                   </div>
-                  <div class="join"></div>
+                  <div class="join">
                   <button type="button" class="btn btn-outline-secondary" @click="joinMember">join</button>
-  
+                </div>
               </div>
           </div>
       </div>
   </body>
   <input type="file" ref="fileInput" style="display: none" @change="handleFileUpload">
+
 </template>
 
 
 <script>
 import axios from 'axios'
+
 
 export default {
   name: 'app',
@@ -330,28 +328,17 @@ export default {
         
         methods: {
           joinMember(){
-            console.log(this.username);
-            console.log(this.password);
-            console.log(this.name);
-            console.log(this.selectedGender);
-            console.log(this.customMBTI);
-            console.log(this.phoneNumber);
-            console.log(this.roadAddress);
-            console.log(this.detailAddress);
-            console.log(this.profileImage);
-            console.log(this.x);
-            console.log(this.y);
-          const formData = new FormData();
-          formData.append('id', this.username);
-          formData.append('pwd', this.password);
-          formData.append('name', this.name);
-          formData.append('gender', this.selectedGender);
-          formData.append('mbti', this.customMBTI);
-          formData.append('tel', this.phoneNumber);
-          formData.append('address', this.roadAddress+' '+this.detailAddress);
-          formData.append('profileImage', this.profileImage);
-          formData.append('lat', this.x);
-          formData.append('lng', this.y);
+            const formData = new FormData();
+            formData.append('id', this.username);
+            formData.append('pwd', this.password);
+            formData.append('name', this.name);
+            formData.append('gender', this.selectedGender);
+            formData.append('mbti', this.customMBTI);
+            formData.append('tel', this.phoneNumber);
+            formData.append('address', this.roadAddress+' '+this.detailAddress);
+            formData.append('profileImage', this.profileImage);
+            formData.append('lat', this.x);
+            formData.append('lng', this.y);
           axios.post('http://localhost:8080/joinMember',formData)
           .then(res => {
               console.log(res);
@@ -462,16 +449,36 @@ export default {
                   headers: {
                       'Content-Type': 'application/json',
                   },
+                  responseType: 'arraybuffer',
               })
               .then(response => {
-                  if (response.data && response.data.image_url) {
-                      console.log('이미지 결과:', response.data);
-                      this.image_url = response.data.image_url;
-                      this.loading = false
-                  } else {
-                      console.error('이미지 생성 실패');
-                  }
-              })
+                  console.log(response.data);
+                  if (response.data instanceof ArrayBuffer) {
+                  //this.imageData.poto=response.data;
+                  const base64Image = btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+                  this.image_url = `data:image/jpeg;base64,${base64Image}`;
+                  
+                  
+                  // if (response.data && response.data.image_url) {
+                    //     console.log('이미지 결과:', response.data);
+                    //     this.image_url = response.data.image_url;
+                    //     this.loading = false
+                    // } else {
+                      //     console.error('이미지 생성 실패');
+                      // }
+                      const blob = new Blob([response.data], { type: 'image/jpeg' });
+
+                    // Create File from Blob
+                    const file = new File([blob], `${text}.jpg`, { type: 'image/jpeg' });
+
+                    console.log(file);
+                    this.profileImage = file;
+                    } else {
+                    console.error('이미지 생성 실패');
+                    }
+
+                    this.loading = false;
+                    })
               .catch(err => console.log(err));
       },
 
@@ -652,6 +659,7 @@ export default {
           const input = event.target;
           const files = input.files;
 
+
           if (files && files.length > 0) {
               // 선택한 파일 정보 업데이트
               const file = files[0];
@@ -662,6 +670,7 @@ export default {
               reader.onload = () => {
                   // imageData.poto를 이미지 데이터 URL로 업데이트
                   this.imageData.poto = reader.result;
+                  console.log('dd',this.imageData.poto);
                   // 이미지 크기를 동적으로 설정
               };
 
@@ -681,6 +690,8 @@ export default {
               console.log('image_url:', this.image_url);
               this.imageData.poto = this.image_url;
               this.imageSize = '150px';
+
+
           }
       },
       modalOpen() {
@@ -692,23 +703,6 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  background: #ffffff;
-  display: inline-block;
-  margin-top: 50px;
-  width: 530px;
-  height: 1150px;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-}
-
-body {
-  background: #ffffff;
-
-}
-
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -720,6 +714,23 @@ body {
   position: relative;
   padding-bottom: 160px;
 }
+.container {
+  background: #ffffff;
+  display: inline-block;
+  width: 1000px;
+  height: 1400px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+.a1 {
+  background: #dbd3d3;
+
+}
+
+
 
 .logo {
   height: 5%;
@@ -738,7 +749,7 @@ body {
 .form_list .input {
   font-style: oblique;
   box-sizing: border-box;
-  width: 400px;
+  width: 500px;
   font-size: 16px;
   line-height: 40px;
   align-items: center;
@@ -752,10 +763,10 @@ body {
   transition: border-color 0.2s;
   margin-top: 10px;
   /* 위쪽 간격 조절 */
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 .form_gender {
@@ -790,7 +801,7 @@ background: blue;
 .address_icon,
 .email_icon {
   /* border: 1px solid red; */
-  margin-left: 80px;
+  margin-left: 250px;
   z-index: 1;
   display: flex;
   position: absolute;
@@ -847,13 +858,13 @@ background: blue;
 .select input[type=radio]+label {
   display: inline-block;
   cursor: pointer;
-  height: 36px;
-  width: 100px;
+  height: 40px;
+  width: 120px;
   border: 1px solid #858383;
   line-height: 35px;
   text-align: center;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 15px;
   position: fixed;
   top: 0px;
   /* 선을 고정할 위치의 상단 여백 설정 */
@@ -876,24 +887,15 @@ background: blue;
 
 
 .gender1[type=radio]+label {
-  border-top-left-radius: 22.5px;
-  border-bottom-left-radius: 22.5px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .gender2[type=radio]+label {
-  border-top-right-radius: 22.5px;
-  border-bottom-right-radius: 22.5px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
-.gender3[type=radio]+label {
-  border-top-left-radius: 22.5px;
-  border-bottom-left-radius: 22.5px;
-}
-
-.gender4[type=radio]+label {
-  border-top-right-radius: 22.5px;
-  border-bottom-right-radius: 22.5px;
-}
 
 .btn {
   position: relative;
@@ -972,12 +974,12 @@ background: blue;
 }
 
 .form_address .btn {
-  position: relative;
-  width: 50px;
-  height: 30px;
-  font-size: 12px;
-  margin-top: -134px;
-  margin-left: 5px;
+position: relative;
+width: 50px;
+height: 31px;
+font-size: 12px;
+margin-top: -81px;
+left: -190px;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -986,49 +988,51 @@ background: blue;
 }
 
 .addrnumber {
-  margin-right: 200px;
+  margin-right: 199px;
   margin-top: 10px;
   width: 150px;
   border: 1px solid#858383;
+  height: 30px;
 }
 
 .addrnum {
   position: absolute;
   width: 350px;
-  margin-top: -17px;
+  margin-top: 13px;
   margin-right: 0px;
   border: 1px solid#858383;
+  height: 30px;
 }
 
 .addradd {
-  width: 200px;
-  margin-top: 16px;
-  margin-right: 150px;
-  border: 1px solid#858383;
+    width: 200px;
+    margin-top: 55px;
+    margin-right: 200px;
+    border: 1px solid#858383;
+    height: 30px;
 }
 
 .form_address {
   border: 1px solid#858383;
-  height: 150px;
-  margin-top: 10px;
-  width: 395px;
-  margin-left: 68px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
+  height: 200px;
+  margin-top: 15px;
+  width: 500px;
+  margin-left: 230px;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .information {
-  position: relative;
-  width: 500px;
-  margin-right: 280px;
-  font-size: 15px;
-  font-style: oblique;
-  color: #8a8989;
-  /* border: 1px solid red; */
-  padding-left: 20px;
-  top: 5px;
+    position: relative;
+    width: 500px;
+    margin-right: 350px;
+    font-size: 17px;
+    font-style: oblique;
+    color: #8a8989;
+    padding-left: 20px;
+    top: 7px;
 }
 
 .addr_icon {
@@ -1036,7 +1040,7 @@ background: blue;
   width: 16px;
   height: 16px;
   margin-top: 8px;
-  margin-left: 0px;
+  margin-left: -8px;
 }
 
 .form_name .input {
@@ -1150,7 +1154,7 @@ background: blue;
   height: 35.2px;
   font-size: 13px;
   top: 0;
-  margin-top: -66px;
+  margin-top: -65px;
   margin-left: 288px;
   border-top-left-radius: 0px;
   border-top-right-radius: 10px;
@@ -1365,5 +1369,8 @@ bottom: 0;
   position: relative;
 }
 
+
+
 /* mbti 버튼 스타일 -----------------------------------------여기까지---------*/
+
 </style>

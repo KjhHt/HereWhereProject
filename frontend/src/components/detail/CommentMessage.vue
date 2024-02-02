@@ -2,7 +2,7 @@
   <!-- Comment Row -->
     <div class="d-flex comment-row m-t-0 w-100">
         <div class="p-2">
-          <img src="https://i.imgur.com/Ur43esv.jpg" alt="user" width="50" class="rounded-circle">
+          <img :src="props.msg.profileimage" alt="user" width="50" class="rounded-circle">
         </div>
         <div class="comment-text w-100">
           <div class="row">

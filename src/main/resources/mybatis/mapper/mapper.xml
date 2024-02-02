@@ -85,10 +85,14 @@
 	</insert>
 	
 	<select id="commentList" parameterType="String" resultType="CommentDto">
-		SELECT * FROM board_comment WHERE board_no=#{board_no} ORDER BY comment_createtime
+		SELECT bc.*,mb.profileimage
+		FROM board_comment bc 
+		JOIN member mb ON bc.id = mb.id
+		WHERE bc.board_no=#{board_no}
+		ORDER BY bc.comment_createtime
 	</select>
 	<insert id="commentInsert" parameterType="CommentDto">
-		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no})
+		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no},#{id})
 	</insert>
 
 	<select id="islike" parameterType="String" resultType="int">

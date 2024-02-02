@@ -18,4 +18,9 @@ public class CommentDto {
 	private String comment_content;
 	private String comment_createtime;
 	private String board_no;
+	
+	//작성자 아이디
+	private String id;
+	//작성자 프로필
+	private String profileimage;
 }

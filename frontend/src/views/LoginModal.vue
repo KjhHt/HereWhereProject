@@ -13,11 +13,11 @@
             <h1 class="h3 mb-3 fw-normal">로그인</h1>
 
             <div class="form-floating">
-              <input v-model="id" type="id" class="form-control" id="modalFloatingInput" placeholder="아이디">
+              <input v-model="id" type="text" class="form-control" id="modalFloatingInput" placeholder="아이디">
               <label for="modalFloatingInput">아이디를 입력해주세요</label>
             </div>
             <div class="form-floating">
-              <input v-model="pwd" type="pwd" class="form-control" id="modalFloatingPassword" placeholder="비밀번호">
+              <input v-model="pwd" type="password" class="form-control" id="modalFloatingPassword" placeholder="비밀번호">
               <label for="modalFloatingPassword">비밀번호를 입력해주세요</label>
             </div>
 

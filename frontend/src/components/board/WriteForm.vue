@@ -4,12 +4,12 @@
   <div class="backdrop" @click="close"></div>
   <div class="editor-container bg-light p-3 rounded">
     <div class="profile-container">
-    <img src="@/assets/dino.jpg" alt="Profile Image" class="profile-image"/>
-    <span class="profile-id">HEREWHERE</span>
+    <img :src="formData[1]" alt="Profile Image" class="profile-image"/>
+    <span class="profile-id">{{ formData[0] }}</span>
     </div>
     <Upload @upload-click="click" @update-files="handleImage" :upload-click="click" :class="[imageList.length>0?'d-none':'']"/>
     <Carousel :key="carouselKey" :imageList="imageList" @delete-image="deleteImage" :class="[imageList.length>0?'':'d-none']"/>
-    <QuillEditor :options="toolbarOptions" ref="editorRef"/>
+      <QuillEditor :options="toolbarOptions" ref="editorRef"/>
     <a class="btn btn-secondary d-block mt-3" @click="post">게시</a>
   </div>
   
@@ -17,7 +17,7 @@
 <script setup>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { defineEmits, ref, watch} from 'vue';
+import { defineEmits, ref, watch ,onMounted} from 'vue';
 import Carousel from './BoardCarousel.vue';
 import Upload from './ImageUpload.vue';
 import axios from 'axios';
@@ -26,6 +26,7 @@ import axios from 'axios';
 const editorRef=ref(null)
 const emit=defineEmits(['close','update'])
 const fileData = ref([]);
+const formData = ref([]);
 
 function close(){
   emit('close',false);
@@ -41,11 +42,14 @@ const toolbarOptions=ref({
       }
     },
   },
-  placeholder: 'HEREWHERE님 여행을 공유해주세요',
+  placeholder: '여행 게시물을 등록해주세요!',
   theme: 'snow',
 });
 const click=ref(false)
 const imageList=ref([])
+watch(()=>editorRef.value,editor=>{
+  console.log(editor)
+})
 
 watch(()=>imageList.value.length, (length)=>{
   console.log('watch:',length)
@@ -56,21 +60,51 @@ watch(imageList, () => {
   carouselKey.value++;
 });
 
+onMounted(() => {
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const name = vuexStore.loginStore.userInfo.name;
+  const profileimage = vuexStore.loginStore.userInfo.profileimage;
+  formData.value[0] = name;
+
+  toolbarOptions.value.placeholder = name+'님 여행을 공유해주세요';
+  console.log(name+'님 여행을 공유해주세요');
+  console.log(toolbarOptions.value.placeholder);
+
+
+  console.log(profileimage);
+  if( profileimage === '0' ){
+    formData.value[1] = require('@/assets/dino.jpg');
+  }
+  else{
+    if(profileimage.startsWith("D:") || profileimage.startsWith("E:")){
+      const pathSegments = profileimage.split('\\');
+      const lastSegment = pathSegments[pathSegments.length - 1];
+      axios.get(`http://localhost:8080/profile/${lastSegment}`)
+      .then(res => {
+        const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
+        formData.value[1] = dataURI;
+      })
+      .catch(err => console.log(err))
+    }
+    else{
+      formData.value[1] = profileimage;
+    }
+  }
+
+});
 
 function uploadClick(){
   click.value=!click.value
 }
 
 function handleImage(files) {
-if(imageList.value.length>0) imageList.value.splice(0)
-fileData.value.push(files);
-for (let file of files) {
+  if(imageList.value.length>0) imageList.value.splice(0)
+    fileData.value.push(files);
+  for (let file of files) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      // Base64 문자열 얻기
       const base64String = reader.result;
-      // 이미지 리스트에 추가
       imageList.value.push({ url: base64String, uid: Date.now() + Math.random().toString() });
     };
   }
@@ -99,6 +133,8 @@ function post(){
   })
   .then(res => {
     console.log(res.data);
+    const profileimage = vuexStore.loginStore.userInfo.profileimage;
+    res.data.profileimage = profileimage;
     emit('update', res.data);
     emit('close',false);
   })
