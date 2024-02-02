@@ -31,8 +31,6 @@ function handleSendEvent(input){
       message: res.activity,
     };
     data.value.push(messageChatbot);
-
-
     }, getRandomNumber());
 }
 

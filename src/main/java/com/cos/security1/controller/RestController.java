@@ -226,7 +226,6 @@ public class RestController {
 
         byte[] imageBytes = resource.getInputStream().readAllBytes();
         String base64Image = Base64.encodeBase64String(imageBytes);
-
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(base64Image);
     }
     
@@ -292,7 +291,23 @@ public class RestController {
     
     //댓글 입력
     @PostMapping("/user/commentInsert")
-    public void commentInsert(@RequestBody CommentDto commentDto) {
+    public void commentInsert(@RequestBody CommentDto commentDto,HttpServletRequest req) {
+    	
+		String token = null;
+		Cookie[] cookies = req.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	                String cookieValue = cookie.getValue();
+	                token = cookieValue;
+	            }
+	        }
+	    }
+	    Map username = JWTTokens.getTokenPayloads(token);
+	    String id = (String)username.get("username");
+    	
+	    commentDto.setId(id);
+    	
     	service.commentInsert(commentDto);
     }
     

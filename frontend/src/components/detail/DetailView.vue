@@ -11,7 +11,7 @@
         <Carousel :key="carouselKey" :imageList="imageList" @delete-image="deleteImage" :boardDetail="props.boardDetail" :imageSrc="imageSrc"/>
         <!-- <a class="btn btn-secondary d-block mt-3" @click="post">게시</a> -->
       </div>
-        <CommentLayout  class="comment-layout bg-light d-flex rounded-bottom" :boardList="props.boardList" :boardDetail="props.boardDetail"/>
+        <CommentLayout  class="comment-layout bg-light d-flex rounded-bottom" :boardList="props.boardList" :boardDetail="props.boardDetail" :formatTimeAgo="props.formatTimeAgo"/>
     </div>
 </template>
 <script setup>
@@ -31,6 +31,9 @@ const props = defineProps({
   },
   boardList : {
     type: Array,
+  },
+  formatTimeAgo : {
+    type : Function,
   },
 })
 

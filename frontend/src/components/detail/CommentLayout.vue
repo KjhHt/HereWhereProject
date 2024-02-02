@@ -18,6 +18,9 @@ const props = defineProps({
   boardList : {
     type: Array,
   },
+  formatTimeAgo : {
+    type : Function,
+  },
 })
 
 const msgData = ref([]);
@@ -26,16 +29,39 @@ onMounted(() => {
   getComment();
 });
 
-const getComment = () => {
-  axios.get('http://localhost:8080/comment', {
-    params: {
-      board_no: props.boardDetail[0]
+const getComment = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/comment', {
+      params: {
+        board_no: props.boardDetail[0]
+      }
+    });
+    
+    for(const key in res.data){
+      console.log('확인 : ',res.data[key].profileimage);
+      let profileimage = res.data[key].profileimage;
+      if( profileimage === '0' ){
+        res.data[key].profileimage = require('@/assets/dino.jpg');
+      }
+      else{
+        if(profileimage.startsWith("D:") || profileimage.startsWith("E:") ){
+          const pathSegments = profileimage.split('\\');
+          const lastSegment = pathSegments[pathSegments.length - 1];
+          const imgResponse = await axios.get(`http://localhost:8080/profile/${lastSegment}`);
+          const dataURI = `data:${imgResponse.headers['content-type']};base64,${imgResponse.data}`;
+          res.data[key].profileimage = dataURI;
+        }
+        else{
+          res.data[key].profileimage = profileimage;
+        }
+      }
+      const createtime = props.formatTimeAgo(res.data[key].comment_createtime);
+      res.data[key].comment_createtime = createtime;
     }
-  })
-  .then(res =>{
     msgData.value = res.data;
-  })
-  .catch(err => console.log(err))
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // 메시지 전송 함수
@@ -57,6 +83,9 @@ const sendMessage = (msg) => {
           item.comment_count++;
         }
       }
+      const text = document.querySelector('.form__input');
+      text.value = '';
+
     }
   })
   .catch(err => console.log(err))
