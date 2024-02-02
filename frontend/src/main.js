@@ -9,5 +9,11 @@ library.add(faUserSecret)
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
+//수진 2024/01/29
+import swal from 'sweetalert2'
+import VueJsTour from '@globalhive/vuejs-tour';
+import '@globalhive/vuejs-tour/dist/style.css';
+window.Swal = swal
+//수진 2024/01/29
 createApp(App).component('font-awesome-icon', FontAwesomeIcon)
-    .use(store).use(router).mount('#app')
+    .use(store).use(router).use(VueJsTour).mount('#app')

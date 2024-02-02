@@ -1,0 +1,1 @@
+frontend\node_modules\vue-sidebar-menu-akahon\src\components  :  Sidebar-menu-akahon.vue

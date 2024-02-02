@@ -11,12 +11,12 @@ console.log('menu:',menu.value)
 </script>
 <template>
     <div class="page-container">
-        <SideBar/>
-        <!-- <OverlayView v-if="menu==0"/> -->
-        <TheSearchForm v-if="menu==2"/>
+            <SideBar/>
+            <!-- <OverlayView v-if="menu==0"/> -->
+            <TheSearchForm/>
     </div>
 </template>
-<style>
+<style scoped>
 .page-container {
   display: flex;
   height: 100vh;

@@ -17,6 +17,7 @@ const loginStore = {
       state.isLogin = false
       localStorage.removeItem('access_token')
       localStorage.removeItem('vuex')
+      localStorage.removeItem('profileImage')
       window.location.href="http://localhost:8080/"
     },
   },
@@ -38,7 +39,6 @@ const loginStore = {
         .catch(error => console.log(error))
     },
     saveToken({ dispatch },token){
-        console.log('여기 와지니??')
         localStorage.setItem('access_token', token) // 토큰을 저장함
         dispatch('getMemberInfo')
     },
