@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- 매퍼파일 -->
+
 <mapper namespace="com.cos.security1.service.MybatisMapper">
-	<!--매퍼 인터페이스의 메소드명이 아이디(id)가 된다
-	    <select>태그의 resultType속성은 메소드의 반환타입과 일치 시키자
-	-->
+
 	<select id="findbyUserPassword" resultType="String" parameterType="java.util.Map">
 		SELECT pwd FROM member WHERE id= #{id}
 	</select>
@@ -27,9 +25,85 @@
 	</select>
 	
 	<insert id="joinSocialMember" parameterType="UserDto">
-		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage})
+		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage},NULL)
+	</insert>
+
+
+	<insert id="joinMember" parameterType="UserDto">
+		INSERT INTO member VALUES(#{id},#{pwd},#{name},#{authority},#{provider},SYSDATE,#{profileimage},NULL)
 	</insert>
 	
+	<insert id="joinMemberInfo" parameterType="UserDto">
+		INSERT INTO member_info VALUES(SEQ_MEMBER_INFO_TABLE.NEXTVAL,#{mbti},#{tel},#{gender},#{address},#{lat},#{lng},#{id})
+	</insert>
 	
+	<insert id="profileImageTable" parameterType="UserDto">
+		INSERT INTO profileimage_table VALUES(SEQ_PROFILEIMAGE_TABLE.NEXTVAL,#{filename},#{filesize},#{fileroute},#{id})
+	</insert>
 	
+	<update id="updateRecentLoginTime" parameterType="String">
+		UPDATE member SET recentlogintime=sysdate WHERE id=#{id}
+	</update>
+	
+	<!-- 
+	<resultMap id="BoardDtoResultMap" type="BoardDto">
+	  <id property="boardNo" column="board_no" />
+	  <result property="boardContent" column="board_content" />
+	  <result property="boardCreatetime" column="board_createtime" />
+	  <result property="boardUpdatetime" column="board_updatetime" />
+	  <result property="boardImageFileName" column="board_imagefilename" />
+	  <result property="boardWriter" column="board_writer" />
+	  <result property="id" column="id" />
+	</resultMap>
+	 -->
+	<select id="boardList" parameterType="String" resultType="BoardDto">
+		SELECT bt.*, 
+		       (SELECT COUNT(*) 
+		        FROM board_comment bc 
+		        WHERE bt.board_no = bc.board_no) as comment_count ,
+		       (SELECT COUNT(*) 
+		        FROM like_table lt
+		        WHERE bt.board_no = lt.board_no) as like_count
+		FROM (
+		        SELECT b.*, m.profileimage 
+		        FROM board_table b JOIN member m ON b.id = m.id
+		        WHERE b.id = m.id
+		        ORDER BY b.board_createtime DESC
+		        OFFSET ${num} ROWS 
+		        FETCH NEXT 3 ROWS ONLY
+	     	) bt
+	</select>
+	
+	<insert id="boardInsert" parameterType="BoardDto">
+		INSERT INTO board_table VALUES(SEQ_BOARD_TABLE.NEXTVAL,#{board_content},sysdate,null,#{board_imageFileName},#{board_writer},#{id})
+	</insert>
+	<select id="findBoardNo" parameterType="String" resultType="BoardDto">
+		SELECT board_no,board_createtime FROM board_table WHERE board_imagefilename = #{fileName}
+	</select>
+	<insert id="boardImageInsert" parameterType="BoardDto">
+		INSERT INTO boardimage_table VALUES(SEQ_BOARDIMAGE_TABLE.NEXTVAL,#{boardImage_FileName},#{boardImage_Size},#{boardImage_Route},#{board_no})
+	</insert>
+	
+	<select id="commentList" parameterType="String" resultType="CommentDto">
+		SELECT bc.*,mb.profileimage
+		FROM board_comment bc 
+		JOIN member mb ON bc.id = mb.id
+		WHERE bc.board_no=#{board_no}
+		ORDER BY bc.comment_createtime
+	</select>
+	<insert id="commentInsert" parameterType="CommentDto">
+		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no},#{id})
+	</insert>
+
+	<select id="islike" parameterType="String" resultType="int">
+		SELECT count(*) FROM like_table WHERE like_id = #{id} AND board_no = #{board_no}
+	</select>
+	<insert id="insertLike">
+		INSERT INTO like_table VALUES(SEQ_LIKE.NEXTVAL,#{id},sysdate,#{board_no})
+	</insert>
+	<delete id="deleteLike">
+		DELETE like_table WHERE like_id = #{id} AND board_no = #{board_no}
+	</delete>
+	
+
 </mapper>

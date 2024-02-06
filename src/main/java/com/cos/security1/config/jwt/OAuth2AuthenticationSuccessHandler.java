@@ -23,7 +23,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 			Authentication authentication) throws IOException, ServletException {
 		
 		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-		System.out.println("principalDetails :"+principalDetails.getUsername());
 		
 		if( principalDetails.getUsername() == null) {
 			System.out.println("소셜 principalDetails.getUsername() 가 null이다");
@@ -35,7 +34,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 		long expirationTime = 1000 * 60 * 60 * 1;//1시간
 		JWTTokens tokens = new JWTTokens();
 		String token = tokens.createToken(principalDetails.getUsername(), payloads, expirationTime);
-		//response.addHeader("Authorization", "Bearer "+token);
 		
 		Cookie cookie = new Cookie("User-Token", token);
 		cookie.setHttpOnly(true);
@@ -43,7 +41,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 		cookie.setPath("/");
 		cookie.setSecure(true);
 		response.addCookie(cookie);
-		
 		response.sendRedirect("/");
 	}
 	

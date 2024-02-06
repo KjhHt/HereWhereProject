@@ -26,7 +26,7 @@ let index=0;
 function onMenuItemClick(item){
     // console.log(item)
     index=menuItems.value.findIndex(menuItem=>menuItem.link===item)
-    store.commit('setSelectSide',index)
+    store.commit('setMenu',index)
     console.log('index:',index)
 }
 </script>

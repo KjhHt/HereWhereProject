@@ -12,11 +12,11 @@ public class CorsConfig {
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true); //응답할때 json 자바스크립
+		config.setAllowCredentials(true); 
 		config.addAllowedOrigin("http://localhost:8080");
-		config.addAllowedOriginPattern("*"); // 모든 ip
-		config.addAllowedHeader("*"); // 모든 header 응답허용
-		config.addAllowedMethod("*"); // 모든 post,get....
+		config.addAllowedOriginPattern("*"); 
+		config.addAllowedHeader("*"); 
+		config.addAllowedMethod("*"); 
 		source.registerCorsConfiguration("/api/**",config);
 		source.registerCorsConfiguration("/oauth2/**",config);
 		source.registerCorsConfiguration("/user/**",config);

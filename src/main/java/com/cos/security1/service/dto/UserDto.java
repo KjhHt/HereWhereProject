@@ -22,6 +22,18 @@ public class UserDto {
 	private String profileimage;
 	private String provider;
 
+	//일반 회원가입
+	private String mbti;
+	private String tel;
+	private String gender;
+	private String address;
+	private String lat;
+	private String lng;
+	
+	//프로필 이미지 부분
+	private String filename;
+	private String filesize;
+	private String fileroute;
 	
 	
 }
