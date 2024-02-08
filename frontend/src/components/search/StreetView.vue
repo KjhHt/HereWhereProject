@@ -9,8 +9,6 @@ let props=defineProps({
     map:Object
 })
 
-
-
 const streetView=ref(null)
 const streetViewPanorama=ref(null)
 onMounted(() => {
@@ -30,7 +28,7 @@ onMounted(() => {
       visible: true,
       disableDefaultUI: true
     });
-    props.map.map.setStreetView(streetViewPanorama);
+    props.map.map.setStreetView(streetViewPanorama.value);
     streetView.value.addEventListener('click', () => {
         toggleFullScreen(streetView.value);
         });
@@ -47,9 +45,6 @@ watch(() => props.map?.map?.center, newCenter => {
   }
 }, { deep: true });
 
-
-
-
 function toggleFullScreen(element) {
   if (!document.fullscreenElement) {
     if (element.requestFullscreen) {
@@ -63,9 +58,8 @@ function toggleFullScreen(element) {
     }
   } 
 }
-
-
 </script>
+
 <style scoped>
 .streetview-container {
   position: absolute;
