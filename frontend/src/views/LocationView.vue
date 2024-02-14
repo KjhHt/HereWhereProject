@@ -6,66 +6,113 @@
       </header> -->
       <div class="map-container">
         <div class="custom-hamburger-menu">
-          <Hamburgermenu/>
-        </div>
-  
-        <!--오른쪽 모달창-->
-        <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 370px;  height: calc(100vh - 81px); bottom: 0;
-    top: auto; border: none;">
+          <Hamburgermenu :showPlan="showPlan"/>
+        </div>  
+        <!--검색 오프-->
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
           <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>     
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>  
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>        
           </div>
           <div class="offcanvas-body">
             <div class="search-container">
-              <input v-model="searchQuery" placeholder="Here Where검색" @input="handleSearchInput"  ref="searchRef"/>
-              <button type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling" class="search-button">
+              <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" @input="handleSearchInput"  ref="searchRef"/>
+              <button type="button" class="search-button">
                   <i class="fas fa-search"></i>         
               </button>
-              <SearchImage @searchLocation="searchLocation"/>
-              <button v-if="왼쪽모달창" @click="왼쪽모달창 = false" class="search-button">
-                  <i class="fas fa-times"></i>
-              </button>
+              <SearchImage @searchLocation="searchLocation"/>            
             </div>
           </div>
         </div>
 
-      
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasHotel" aria-labelledby="offcanvasHotelLabel" data-bs-backdrop="false" style="height: 400px; border: none;">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasHotelLabel">주변 호텔 목록</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <!--여행플랜 오프-->
+    <div class="offcanvas offcanvas-start"
+          data-bs-scroll="true"
+          data-bs-backdrop="false"
+          tabindex="-1"
+          id="offcanvasPlan"
+          aria-labelledby="offcanvasPlan"
+          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+      <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
+        <h5>여행플랜</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="planRef"></button>
       </div>
-      <div class="offcanvas-body small">
-        <div>
-          <HotelCard v-for="hotel in hotelsInfo" :key="hotel" :hotel="hotel"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasRestaurant" aria-labelledby="offcanvasRestaurantLabel" data-bs-backdrop="false" style="height: 400px; border: none;">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRestaurantLabel">주변 맛집 목록</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body small">
-        <div>
-          <RestaurantCard v-for="restaurant in restaurantsInfo" :key="restaurant" :restaurant="restaurant"/>
-          
-        </div>
+      <div class="offcanvas-body">
+        <PlanCard v-for="plan in plansInfo" :key="plan.id" :plan="plan" @passArrival="arrivalRoute"/>
       </div>
     </div>
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasAttraction" aria-labelledby="offcanvasAttractionLabel" data-bs-backdrop="false" style="height: 400px; border: none;">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasAttractionLabel">주변 명소 목록</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <!--음식점 오프-->
+    <div class="offcanvas offcanvas-start"
+          data-bs-scroll="true"
+          data-bs-backdrop="false"
+          tabindex="-1"
+          id="offcanvasRestaurant"
+          aria-labelledby="offcanvasRestaurantLabel"
+          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
+              <h5>주변 음식점 리스트</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+        <div class="offcanvas-body">
+          <RestaurantCard v-for="restaurant in restaurantsInfo" :key="restaurant.id" :restaurant="restaurant"/>
+        </div>
       </div>
-      <div class="offcanvas-body small">
-        <div>
+      <!--호텔 오프-->
+      <div class="offcanvas offcanvas-start"
+          data-bs-scroll="true"
+          data-bs-backdrop="false"
+          tabindex="-1"
+          id="offcanvasHotel"
+          aria-labelledby="offcanvasHotelLabel"
+          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+        <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
+          <h5>주변 호텔 리스트</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <HotelDate/>
+          <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>
+        </div>
+      </div>
+      <!--관광지 오프-->
+      <div class="offcanvas offcanvas-start"
+          data-bs-scroll="true"
+          data-bs-backdrop="false"
+          tabindex="-1"
+          id="offcanvasAttraction"
+          aria-labelledby="offcanvasAttractionLabel"
+          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+        <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
+          <h5>주변 관광지 리스트</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
           <AttractionCard v-for="attraction in attractionsInfo" :key="attraction" :attraction="attraction"/>
         </div>
       </div>
-    </div>
+
+      <!--경로 오프-->
+      <div :class="{ 'offcanvas offcanvas-bottom': true, 'show': showRoute }" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height:40vh">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasBottomLabel">경로지정</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"></button>
+        </div>
+        <div class="offcanvas-body small">
+          <div class="row mb-3">
+            <label for="departures" class="col-sm-2 col-form-label">출발지</label>
+            <div class="col-sm-6">
+              <input v-model="departuresValue" type="text" class="form-control" id="departures" ref="departuresRef">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="arrivals" class="col-sm-2 col-form-label">도착지</label>
+            <div class="col-sm-6">
+              <input v-model="arrivalsValue" type="text" class="form-control" id="arrivals" ref="arrivalsRef">
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary" @click="setDraw">검색</a>
+        </div>
+      </div>
   
     <!-- 왼쪽 모달창 -->
     <div class="leftmodal-container" v-if="왼쪽모달창 == true">
@@ -88,8 +135,7 @@
 
         <!-- 예약 폼 -->
         <div class="reservation-form">
-          <h4 style="align-self: flex-start;">예약폼</h4>
-          
+          <h4 style="align-self: flex-start;">예약폼</h4>      
           <div class="form-row">
             <label for="startDate">시작</label>
             <input
@@ -100,7 +146,6 @@
               @input="() => autoResizeTextArea('startDate')"
             />
           </div>
-
           <div class="form-row">
             <label for="endDate">종료</label>
             <input
@@ -111,9 +156,6 @@
               @input="() => autoResizeTextArea('endDate')"
             />
           </div>
-
-          
-
           <div class="form-row">
             <label for="guests">인원</label>
             <button @click="decrementGuests">-</button>
@@ -152,9 +194,8 @@
       :disable-default-ui="mapOptions.disableDefaultUI"
       ref="mapRef"
       style="width:100vw; height:calc(100vh - 81px);"
-      @click="e=>{getDirection(e)}"
       >
-        <DrawDirection :coords="clickCoords" />
+        <DrawDirection :coords="routeCoords" />
       
         <CustomMarker :options="{ position: mapOptions.center, anchorPoint: 'BOTTOM_CENTER' }">
             <div style="text-align: center">
@@ -172,21 +213,32 @@
             :options="windowOptions"
             :model-value="infoWindow"       
             ref="infoRef">
-              <div class="card" style="width: 18rem; height: 18rem;">
+            <div class="card" style="width: 18rem; height: 24rem;">
               <img :src="locationInfo.placeImage" class="card-img-top img-fluid" alt="...">
               <div class="card-body">
                 <h5 class="card-title">{{locationInfo.placeName}}</h5>
                 <p class="card-text">{{ locationInfo.placeAddress }}</p>
                 <p class="card-text">{{ locationInfo.placeRating }}</p>
-                <a href="#" class="btn btn-primary">더보기</a>
+                <a href="#" class="btn btn-primary" @click="setPlansInfo">Pick</a>
               </div>
             </div>
-            </InfoWindow>
+        </InfoWindow>
         <MarkerCluster>
-          <MapMarker v-if="targetLocation" :options="{position:targetLocation}" @click="selectMarker"/>
-          <CustomMarker v-for="hotel in hotelsInfo" :key="hotel.place_id"  :options="{ position: hotel.latlng }">
+          <!--인포윈도우 마커표시<MapMarker v-if="targetLocation" :options="{position:targetLocation}" @click="selectMarker"/>-->
+          <CustomMarker v-for="plan in plansInfo" :key="plan.name" 
+                        :options="{ position: {lat:plan.geometry.location.lat(),
+                                               lng:plan.geometry.location.lng() }}"
+                        @click="()=>searchLocation(plan)" >
             <div style="text-align: center">
-                <!-- <div style="font-size: 1.125rem">id</div> -->
+                <img 
+                    class="rounded-circle" 
+                    src="@/assets/Cat.png" 
+                    width="40" height="40" style="margin-bottom: 40px" 
+                    />
+            </div>
+          </CustomMarker>
+          <CustomMarker v-for="hotel in hotelsInfo" :key="hotel.hotel"  :options="{ position: {lat:hotel.location[0],lng:hotel.location[1]} }">
+            <div style="text-align: center">
                 <img 
                     class="rounded-circle" 
                     src="@/assets/hotel.png" 
@@ -196,7 +248,7 @@
         </CustomMarker>
         </MarkerCluster>
       </GoogleMap>
-    <StreetView :map="mapRef" :style="{left:streetViewLeft}"/>
+    <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
   </div>
 </div>
 </template>
@@ -204,7 +256,7 @@
   <script setup>
   import {
       GoogleMap,
-      Marker as MapMarker,
+      //Marker as MapMarker,
       MarkerCluster,
       InfoWindow,
       CustomMarker,
@@ -218,17 +270,24 @@
   import axios from "axios";
   import StreetView from '@/components/search/StreetView.vue'
   import SearchImage from '@/components/search/SearchImage.vue'
-  import RestaurantCard from '@/components/search/RestaurantCard.vue';
+  import RestaurantCard from '@/components/search/RestaurantCard.vue'
   import AttractionCard from '@/components/search/AttractionCard.vue';
   import Hamburgermenu from '@/components/search/HamburgerMenu.vue'
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
-  import { createObserver } from "../components/search/custom";
+  import { createObserver } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js
+  import PlanCard from "@/components/search/PlanCard.vue";
+  import HotelCard from '@/components/search/HotelCard.vue'
+  import HotelDate from '@/components/search/HotelDate.vue';
   
-  let clickCoords=ref([]);
-  function getDirection(e){
-    if(clickCoords.value.length === 2) clickCoords.value= [];
-    clickCoords.value.push([e.latLng.lat(),e.latLng.lng()]);
-  }  
+  const streetViewRight=ref('20px')
+  let showRoute= ref(false);
+  let arrivals= ref([]);
+  const departuresRef= ref(null);
+  const arrivalsRef= ref(null);
+  const planRef= ref(false);
+  const showPlan= ref(false);
+  const leftOffButton= ref(null);
+  const routeCoords=ref([]);
 
   const locationInfo=ref({
     placeName:'',
@@ -268,28 +327,38 @@
       locationInfo.value.placeRating=places.rating
       locationInfo.value.placeImage=photoUrl
   }
+
   const hotelsInfo=ref([])
   const restaurantsInfo=ref([])
   const attractionsInfo=ref([])
+  const plansInfo= ref([])
+
+  function setPlansInfo(){
+    showPlan.value= false;
+    if(plansInfo.value.length !== 0){
+      for(let i=0; i<plansInfo.value.length; i++){
+        if(plansInfo.value[i].name === places.name) return;
+      }
+    }
+    plansInfo.value.push(places)
+    infoRef.value.close();
+    showPlan.value= !showPlan.value;
+  }
   
-  /*
   async function getNearbyHotels(lat,lng){
     console.log('호텔콘솔:',[lat,lng]);
     const response= await axios.get('http://127.0.0.1:5000/booking',{params:{lat,lng}})
     console.log('response:',response);
     hotelsInfo.value=response.data
-  }*/
+    console.log('호텔리스트',hotelsInfo.value)
+  }
 
   async function getNearbyRestaurants(lat,lng){
-    console.log(lat,lng);
     const response= await axios.get('http://127.0.0.1:5000/restaurant',{params:{lat,lng}})
-    console.log('리쓰빤쓰:',response);
     restaurantsInfo.value=response.data
   }
   async function getNearbyAttractions(lat,lng){
-    console.log(lat,lng);
     const response= await axios.get('http://127.0.0.1:5000/attraction',{params:{lat,lng}})
-    console.log(response);
     attractionsInfo.value=response.data
   }
   
@@ -298,10 +367,9 @@
     // console.log(photo);
     // console.log(placesService.value);
     const location=places.geometry.location
-    //getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    console.log('places:',places);
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
     
     moveToPosition(location)
     updateInfoWindow(places)
@@ -378,6 +446,8 @@
       disableDefaultUI: true,
       gestureHandling: 'auto',
       keyboardShortcuts: false,
+      clickableIcons: false,
+      
     });
   const locations = ref([]);
 
@@ -408,6 +478,7 @@
   
   const selectedMarkerIndex=ref(null);
   
+  /*
   function getPlaceId(location){
     return new Promise((resolve, reject) => {
       geocoder.value.geocode({'location':{lat:location.lat(),lng:location.lng()}},
@@ -419,8 +490,9 @@
         }
       });
     });
-  }
-
+  }*/
+  
+  /*
   async function selectMarker(marker,index) {
     if (selectedMarkerIndex.value === index) {
       // 이미 선택된 마커를 다시 클릭하면 InfoWindow를 닫습니다.
@@ -443,7 +515,7 @@
     })
     
     moveToPosition(position);
-    }
+    }*/
     
   
   
@@ -548,7 +620,7 @@
       requestAnimationFrame(animateMap);
     } else {
       // 애니메이션 완료 후 인포 윈도우 위치 업데이트
-      windowOptions.value.position = { lat: savedPosition.lat + 0.0001, lng: savedPosition.lng };
+      windowOptions.value.position = { lat: savedPosition.lat-0.00025, lng: savedPosition.lng+0.00012 };
       infoRef.value.infoWindow.setPosition(windowOptions.value.position);
       infoRef.value.infoWindow.open(mapRef.value.map);
     }
@@ -779,6 +851,8 @@
   const directionService=ref(null);
   const directionRenderer=ref(null);
   const placesService=ref(null);
+  let places={}
+
   function initMap(googleMap) {
     console.log('mapref.value.api:',mapRef.value.api);
     const autoCompleteOptions={
@@ -793,15 +867,17 @@
     directionRenderer.value.setMap(googleMap)
     geocoder.value=new mapRef.value.api.Geocoder()
     const autoComplete=new mapRef.value.api.places.Autocomplete(searchRef.value,autoCompleteOptions);
+    new mapRef.value.api.places.Autocomplete(departuresRef.value,autoCompleteOptions);
+    new mapRef.value.api.places.Autocomplete(arrivalsRef.value,autoCompleteOptions);
   
       // 지도의 경계(뷰포트) 속성을 자동 완성 개체에 바인딩합니다,
       // 자동 완료 요청이 현재 맵 경계를 사용하도록 설정합니다
       // 요청에 bounds 옵션이 있습니다.
       autoComplete.bindTo("bounds", map);
       autoComplete.addListener('place_changed',()=>{
-      const place=autoComplete.getPlace();
-
-      searchLocation(place)
+      places=autoComplete.getPlace();
+      leftOffButton.value.click();
+      searchLocation(places)
     })
   
   
@@ -864,6 +940,43 @@
       // Always reset the GL state.
       renderer.resetState();
     }
+  }
+
+  /*경로 설정 */
+  const departuresValue= ref('')
+  const arrivalsValue= ref('')
+
+  function routeToggle(){
+    showRoute.value = !showRoute.value;
+  }
+
+  const arrivalRoute=arrival=>{
+    let latLng= [coords.value.latitude,coords.value.longitude]
+    console.log('전달받은 도착지:',arrival);
+    geocoder.value.geocode({location:{lat:latLng[0],lng:latLng[1]}})
+    .then(response=>{
+      departuresValue.value=response.results[0].formatted_address;
+      arrivalsValue.value=arrival.formatted_address
+      showRoute.value= true;
+      planRef.value.click();
+      arrivals.value.push([arrival.geometry.location.lat(), arrival.geometry.location.lng()]);
+      arrivals.value.push(latLng);
+    })
+  }
+
+  function setDraw(){
+    routeCoords.value=[]
+    geocoder.value.geocode({address: departuresRef.value.value})
+    .then(response=>{
+      if(response.results[0])
+      routeCoords.value.push([response.results[0].geometry.location.lat(), response.results[0].geometry.location.lng()])
+      geocoder.value.geocode({address: arrivalsRef.value.value})
+      .then(result=>{
+        if(result.results[0])
+        routeCoords.value.push([result.results[0].geometry.location.lat(), result.results[0].geometry.location.lng()])
+        routeToggle()
+      })
+    })
   }
 
   </script>

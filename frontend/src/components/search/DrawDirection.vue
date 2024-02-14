@@ -47,7 +47,7 @@
         drivePath.value= {
           path: direction,
           geodesic: true,
-          strokeColor: '#4B89DC',
+          strokeColor: '#FF0000',
           strokeOpacity: 1.0,
           strokeWeight: 2,
         };

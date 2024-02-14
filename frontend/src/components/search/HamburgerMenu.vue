@@ -19,7 +19,14 @@
           </a>
         </li>
         <li>
-          <a href="#" @click="closeMenu"><i class="bi bi-calendar-plus-fill" style="font-size: 25px;"></i>
+          <a href="#" 
+          type="button" 
+          data-bs-toggle="offcanvas" 
+          data-bs-target="#offcanvasPlan" 
+          aria-controls="offcanvasPlan"
+          ref="planRef"
+          @click="closeMenu">
+            <i class="bi bi-calendar-plus-fill" style="font-size: 27px;"></i>
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
           </a>
         </li>
@@ -61,7 +68,9 @@
 </template>
   
 <script setup>
-import { ref } from 'vue';
+import { ref,defineProps,watchEffect } from 'vue';
+
+const planRef= ref(null);
 
 const menuOpened = ref(false);
 
@@ -72,6 +81,16 @@ const toggleClass = () => {
 const closeMenu = () => {
   menuOpened.value = false;
 };
+
+const props= defineProps({
+  showPlan: Boolean
+})
+
+watchEffect(()=>{
+  if(props.showPlan === true) {
+    planRef.value.click();
+  }
+})
 </script>
   
 <style scoped>
