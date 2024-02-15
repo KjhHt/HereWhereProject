@@ -10,12 +10,12 @@
           <div class="arrival">
             <label for="arrival">Check-In</label>
             <br>
-            <input name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
+            <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
           </div>
           <div class="departure">
-            <label for="arrival">Check-Out</label>
+            <label for="departure">Check-Out</label>
             <br>
-            <input name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
+            <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
           </div>
         </div>
         <button type="button" class="btn">Search Hotel</button>

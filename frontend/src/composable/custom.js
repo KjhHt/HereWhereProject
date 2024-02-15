@@ -17,3 +17,21 @@ export function createObserver() {
         childList: true
     });
   }
+
+export function setPhotoUrl(photos,photoUrl){
+    if (photos && photos.length > 0) {
+      const photo = photos[0]; 
+      const photoReference = photo.photo_reference;
+    
+      if (photoReference) {
+        const apiKey='AIzaSyA16otojrK96bOUH8jhs4Fp4gC3Glt2xrY';
+        photoUrl.value = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+      } else if (photo.getUrl) {
+        photoUrl.value = photo.getUrl({maxWidth: 400});
+      } else {
+        photoUrl.value = 'place_default.png'; // 기본 이미지 URL을 설정하세요
+      }
+    } else {
+      photoUrl.value = 'place_default.png'; // 기본 이미지 URL을 설정하세요
+    }
+  }

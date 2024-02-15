@@ -7,7 +7,7 @@
       <div class="map-container">
         <div class="custom-hamburger-menu">
           <Hamburgermenu :showPlan="showPlan"/>
-        </div>  
+        </div>
         <!--검색 오프-->
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
           <div class="offcanvas-header">
@@ -15,8 +15,12 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>        
           </div>
           <div class="offcanvas-body">
+            <div style="margin-top:10px;">
+              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick"/>
+            </div>
             <div class="search-container">
-              <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" @input="handleSearchInput"  ref="searchRef"/>
+              <!--검색어-->
+              <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" ref="searchRef" />
               <button type="button" class="search-button">
                   <i class="fas fa-search"></i>         
               </button>
@@ -113,78 +117,7 @@
           <a href="#" class="btn btn-primary" @click="setDraw">검색</a>
         </div>
       </div>
-  
-    <!-- 왼쪽 모달창 -->
-    <div class="leftmodal-container" v-if="왼쪽모달창 == true">
-      <!-- 장소 정보를 나타낼 내용 -->
-      <div class="place-info">
-        <div class="place-image">
-          <!-- 장소 이미지 -->
-          <img :src="placeInfo.image" alt="Place Image">
-        </div>
-        <div class="place-details">
-          <!-- 장소 이름 -->
-          <h2>{{ placeInfo.name }}</h2>
-          <!-- 장소 별점 -->
-          <div class="rating">
-            <span v-for="star in Array.from({ length: Math.floor(placeInfo.rating) })" :key="star">★</span>
-          </div>
-          <!-- 장소 주소 -->
-          <p>{{ placeInfo.address }}</p>
-        </div>
-
-        <!-- 예약 폼 -->
-        <div class="reservation-form">
-          <h4 style="align-self: flex-start;">예약폼</h4>      
-          <div class="form-row">
-            <label for="startDate">시작</label>
-            <input
-              type="date"
-              id="startDate"
-              v-model="reservation.startDate"
-              :min="staticMinDate"
-              @input="() => autoResizeTextArea('startDate')"
-            />
-          </div>
-          <div class="form-row">
-            <label for="endDate">종료</label>
-            <input
-              type="date"
-              id="endDate"
-              v-model="reservation.endDate"
-              :min="reservation.startDate" 
-              @input="() => autoResizeTextArea('endDate')"
-            />
-          </div>
-          <div class="form-row">
-            <label for="guests">인원</label>
-            <button @click="decrementGuests">-</button>
-            <span>{{ reservation.guests }}</span>
-            <button @click="incrementGuests">+</button>
-          </div>
-
-
-          <div class="form-row">
-            <label for="memo" class="label-memo">메모</label>
-            <textarea
-              id="memo"
-              v-model="reservation.memo"
-              @input="autoResizeTextArea"
-              style="resize: none; overflow-y: auto; white-space: pre-wrap; "
-            ></textarea>
-          </div>
-
-          <button @click="confirmReservation" class="search-button" style="align-self: flex-end;">검색</button>
-        </div>
-        
-        <div class="scrollable-list">
-          <div v-for="(place, index) in placesList" :key="index" class="list-item">
-            {{ place.name }}
-          </div>
-        </div>
-
-      </div>
-    </div>   
+    
     <GoogleMap 
       :api-key="apiKey" 
       :center="mapOptions.center"
@@ -214,7 +147,7 @@
             :model-value="infoWindow"       
             ref="infoRef">
             <div class="card" style="width: 18rem; height: 24rem;">
-              <img :src="locationInfo.placeImage" class="card-img-top img-fluid" alt="...">
+              <img :src="locationInfo.placeImage" class="card-img-top img-fluid" :alt=locationInfo.placeName>
               <div class="card-body">
                 <h5 class="card-title">{{locationInfo.placeName}}</h5>
                 <p class="card-text">{{ locationInfo.placeAddress }}</p>
@@ -278,6 +211,7 @@
   import PlanCard from "@/components/search/PlanCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
+  import SearchCard from '@/components/search/SearchCard.vue'
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
@@ -288,6 +222,7 @@
   const showPlan= ref(false);
   const leftOffButton= ref(null);
   const routeCoords=ref([]);
+  let searchList= ref([])
 
   const locationInfo=ref({
     placeName:'',
@@ -345,13 +280,13 @@
     showPlan.value= !showPlan.value;
   }
   
-  async function getNearbyHotels(lat,lng){
+  /*async function getNearbyHotels(lat,lng){
     console.log('호텔콘솔:',[lat,lng]);
     const response= await axios.get('http://127.0.0.1:5000/booking',{params:{lat,lng}})
     console.log('response:',response);
     hotelsInfo.value=response.data
     console.log('호텔리스트',hotelsInfo.value)
-  }
+  }*/
 
   async function getNearbyRestaurants(lat,lng){
     const response= await axios.get('http://127.0.0.1:5000/restaurant',{params:{lat,lng}})
@@ -363,61 +298,15 @@
   }
   
   function searchLocation(places){
-    // const photo=new mapRef.value.api.places.Photo()
-    // console.log(photo);
-    // console.log(placesService.value);
     const location=places.geometry.location
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
+    //getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
     
     moveToPosition(location)
     updateInfoWindow(places)
   }
-  
-  const staticMinDate = new Date().toISOString().split('T')[0]; // 오늘 날짜를 동적으로 설정
-  const 왼쪽모달창 = ref(false); //찾기
-  
-  const reservation = ref({
-    startDate: '',
-    endDate: '',
-    memo: '',
-    guests: 1,
-  });
-  
-  
-  const placesList = ref([]);
-  
-  const confirmReservation = () => {
-    // 확인 버튼을 눌렀을 때 실행되는 로직
-    placesList.value.push({ name: `호텔 ${placesList.value.length + 1}` });
-  
-    // 기존 입력값 초기화
-    reservation.value.startDate = '';
-    reservation.value.endDate = '';
-    reservation.value.memo = '';
-    reservation.value.guests = 1;
-  };
-  
-  const autoResizeTextArea = () => {
-    const textArea = document.getElementById('memo');
-    textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 'px';
-  };
-  
-  const incrementGuests = () =>{
-    if (reservation.value.guests < 6) {
-      reservation.value.guests++;
-    }
-  };
-  
-  const decrementGuests = () => {
-    if (reservation.value.guests > 1) {
-      reservation.value.guests--;
-    }
-  };
-  
-  
+    
   const customMarkerRef=ref(null);
   function customMarkerLoaded(){
      if(customMarkerRef.value){
@@ -582,7 +471,6 @@
   }
   */
   
-  
   function animateMap() {
     if (!savedPosition) return;
   
@@ -592,10 +480,10 @@
     // const currentDistance = calculateDistance(currentPosition, savedPosition);
   
     // 이동, 회전, 틸트 속도 조절 (값은 예시로, 상황에 맞게 조절)
-    const moveSpeed = 0.01;
-    const tiltSpeed = 0.005;
-    const headingSpeed = 0.01;
-    const zoomSpeed = 0.003;
+    const moveSpeed = 0.02;
+    const tiltSpeed = 0.03;
+    const headingSpeed = 0.03;
+    const zoomSpeed = 0.03;
   
     // 현재 줌, 헤딩, 틸트 값 업데이트
     currentZoom = map.getZoom() + (targetZoom - map.getZoom()) * zoomSpeed;
@@ -621,6 +509,7 @@
     } else {
       // 애니메이션 완료 후 인포 윈도우 위치 업데이트
       windowOptions.value.position = { lat: savedPosition.lat-0.00025, lng: savedPosition.lng+0.00012 };
+      console.log('인포윈도우',infoRef.value)
       infoRef.value.infoWindow.setPosition(windowOptions.value.position);
       infoRef.value.infoWindow.open(mapRef.value.map);
     }
@@ -876,10 +765,20 @@
       autoComplete.bindTo("bounds", map);
       autoComplete.addListener('place_changed',()=>{
       places=autoComplete.getPlace();
-      leftOffButton.value.click();
-      searchLocation(places)
-    })
-  
+      console.log('플레이스',places)
+      if(Object.keys(places).length > 1) {
+        leftOffButton.value.click();
+        searchLocation(places)
+      }
+      searchList.value= [];
+      let request= {query: places.name};
+      placesService.value.textSearch(request,(result,status)=>{
+        if(status === 'OK') {
+          searchList.value= result;
+        }
+        return;
+      });
+    });  
   
     scene = new THREE.Scene();
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
@@ -977,6 +876,11 @@
         routeToggle()
       })
     })
+  }
+
+  const searchClick= searchInfo=> {
+    leftOffButton.value.click();
+    searchLocation(searchInfo.value);
   }
 
   </script>
