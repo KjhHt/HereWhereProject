@@ -1,0 +1,222 @@
+[
+    {
+        "hotel": "수원 행궁동 썬스타 모텔",
+        "address": "7-12, Jeongjo-ro 905beon-gil, Paldal-gu",
+        "location": [
+            37.287575,
+            127.013866
+        ],
+        "review": 8.0,
+        "price": "81,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/271485241.jpg?k=115de530626a59f45c926ace97b580e677a402e44681ad29c67347ff8b2b3449&o="
+    },
+    {
+        "hotel": "라마다 프라자 수원",
+        "address": "150, Jungbu-daero, Paldal-gu Suwon",
+        "location": [
+            37.2777750452842,
+            127.032364010811
+        ],
+        "review": 8.5,
+        "price": "396,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/167159471.jpg?k=c36bf45a79468c6f44608bf9db18e56bf951057b42da45b37a5b010e18fb9ec7&o="
+    },
+    {
+        "hotel": "노보텔 앰배서더 수원",
+        "address": "902, Deogyeong-daero, Paldal-gu",
+        "location": [
+            37.2655676157327,
+            126.99995610318
+        ],
+        "review": 8.5,
+        "price": "306,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/314582407.jpg?k=05cc92d9d4f6ccdf84bb4c3a60f117f7fb8694c536a5d36ab8698ee345140406&o="
+    },
+    {
+        "hotel": "포포인츠 바이 쉐라톤 수원",
+        "address": "27, Hyowon-ro 307 beon-gil, Paldal-gu",
+        "location": [
+            37.262228,
+            127.035669
+        ],
+        "review": 8.4,
+        "price": "380,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/477804064.jpg?k=5735e65e5dff32cc43831ac5a4042ee6a01c1c7dfda57f6cce30dbaecdc10de2&o="
+    },
+    {
+        "hotel": "코트야드 바이 메리어트 수원 ",
+        "address": "320, Gwanggyohosugongwon-ro, Yeongtong-gu",
+        "location": [
+            37.285056,
+            127.057861
+        ],
+        "review": 8.2,
+        "price": "480,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/515364950.jpg?k=1169be796c397aded14d1affbe2df2d5260d849c381c20bce571b1775655c0b7&o="
+    },
+    {
+        "hotel": "더 휴 라르고",
+        "address": "51-24, Gogi-ro 377beon-gil, Suji-gu",
+        "location": [
+            37.355148750449,
+            127.064776555684
+        ],
+        "review": null,
+        "price": "1,540,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/209469298.jpg?k=bf2d08504a3308f145a657a5b02f6ed0d96b89de930a94f160572538078a6308&o="
+    },
+    {
+        "hotel": "라마다 동탄",
+        "address": "199, Nojak-ro",
+        "location": [
+            37.2057871938861,
+            127.074646353722
+        ],
+        "review": 7.5,
+        "price": "330,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/127246312.jpg?k=369e9d3e3b73beff1b4bd89429917c988bffb4a16fc93de10e56a6c6644478fc&o="
+    },
+    {
+        "hotel": "신라스테이 동탄",
+        "address": "161, Nojak-ro",
+        "location": [
+            37.2022100951776,
+            127.073423266411
+        ],
+        "review": 8.1,
+        "price": "293,040원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/525315530.jpg?k=5e672b0c9466d3e955738f7f1d90efc8815d78c96924c506c3defb78ba8c10a9&o="
+    },
+    {
+        "hotel": "더블트리 바이 힐튼 서울 판교",
+        "address": "26, Baekhyeon-ro, Bundang-gu",
+        "location": [
+            37.38,
+            127.104453
+        ],
+        "review": 7.8,
+        "price": "374,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599489.jpg?k=9b5cf43612ab70cb8e2cb3e4275bb440e747b401167bd93fb3d147b68abbd51a&o="
+    },
+    {
+        "hotel": "더블트리 바이 힐튼 서울 판교 레지던스",
+        "address": "26, Baekhyeon-ro, Bundang-gu",
+        "location": [
+            37.38089,
+            127.10418
+        ],
+        "review": 8.6,
+        "price": "374,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599549.jpg?k=abb1571b76a9ebcb20e574e77e7cb82717e930960b95711a191529fe34eab84a&o="
+    },
+    {
+        "hotel": "서머셋 센트럴 분당",
+        "address": "36, Hwangsaeul-ro 311beon-gil, Bundang-gu",
+        "location": [
+            37.3864818609775,
+            127.12120950222
+        ],
+        "review": 8.3,
+        "price": "277,200원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/242051763.jpg?k=38e8387fa7e48ac457c721cfae74a34e207cb61a934e93c8b7ddab6292cce095&o="
+    },
+    {
+        "hotel": "그래비티 서울 판교 오토그래프 컬렉션 메리어트 인터내셔널",
+        "address": "2, Pangyoyeok-ro 146beon-gil, Bundang-gu",
+        "location": [
+            37.393626,
+            127.109994
+        ],
+        "review": 8.4,
+        "price": "440,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426601317.jpg?k=a898ab9740bdfc0e7ea19906eb7a1819f489720da92950111e973dcbac938a1b&o="
+    },
+    {
+        "hotel": "코트야드 바이 메리어트 서울 판교",
+        "address": "192-12, Pangyoyeok-ro, Bundang-gu",
+        "location": [
+            37.397547945482,
+            127.110566496849
+        ],
+        "review": 8.1,
+        "price": "480,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461632617.jpg?k=94e13091560280b63d1cbf6d6955a5174ed6f7ac68332602f64433d672e33ba6&o="
+    },
+    {
+        "hotel": "나인트리 프리미어 호텔 서울 판교",
+        "address": "18, Changeop-ro, Sujeong-gu, Seongnam-si,",
+        "location": [
+            37.4139500101003,
+            127.098547529053
+        ],
+        "review": 8.4,
+        "price": "325,920원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/344222128.jpg?k=92cff10d39a63c85b2ce706346b9bd204dcf0034f4a8c3cad77d5daea6880fae&o="
+    },
+    {
+        "hotel": "롤링힐스 호텔 ",
+        "address": "290, Sicheong-ro, Namyang-eup",
+        "location": [
+            37.1899995978623,
+            126.838676333427
+        ],
+        "review": 8.5,
+        "price": "447,700원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/187575665.jpg?k=d52efe1effeacbe21c02c62bb841aa354fd50526c615d32871f35026c05a2d7a&o="
+    },
+    {
+        "hotel": "오라카이 청계산 호텔",
+        "address": "1-7, Cheonggyesan-ro 9-gil, Seocho-gu",
+        "location": [
+            37.4493579084034,
+            127.054763382248
+        ],
+        "review": 8.3,
+        "price": "374,001원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/248248440.jpg?k=7825d4a3ab6376c6431408922438463bde1e2442801ac8c1b9e74d5e8a6564f5&o="
+    },
+    {
+        "hotel": "베니키아 호텔 더 에이치 호텔",
+        "address": "3-12, Yeokgol-ro, Namyang-eup",
+        "location": [
+            37.2003683267449,
+            126.828289640107
+        ],
+        "review": 8.1,
+        "price": "424,440원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/60561279.jpg?k=90a562aecfe06caa9ecafda8b531c1095a1ff08a506728b92664044034d23881&o="
+    },
+    {
+        "hotel": "테이크호텔 서울 광명",
+        "address": "22, Singi-ro",
+        "location": [
+            37.4191290519319,
+            126.883244784275
+        ],
+        "review": 7.9,
+        "price": "310,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/375079727.jpg?k=211dd9c863f85a8f3cf9ff3584db1922f0b184521526c19dc87ed8bc1b2169f6&o="
+    },
+    {
+        "hotel": "라까사호텔 광명",
+        "address": "22, Iljik-ro 12beon-gil",
+        "location": [
+            37.421210189139,
+            126.882136862366
+        ],
+        "review": 8.1,
+        "price": "250,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/174759249.jpg?k=b16b982b33c3c3590ed7c99c41f607e51675061fbc745bb1c5f183a5121985ed&o="
+    },
+    {
+        "hotel": "호텔스퀘어 안산",
+        "address": "81, Dongsan-ro, Danwon-gu",
+        "location": [
+            37.3142982470547,
+            126.799116432667
+        ],
+        "review": 7.9,
+        "price": "169,200원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/75093331.jpg?k=f7a6e1f65014241f34687f66050fa4f9ef21c725abe33a1162e83c553d4dbb26&o="
+    }
+]

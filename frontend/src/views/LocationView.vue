@@ -880,7 +880,8 @@
 
   const searchClick= searchInfo=> {
     leftOffButton.value.click();
-    searchLocation(searchInfo.value);
+    places= searchInfo.value;
+    searchLocation(places);
   }
 
   </script>

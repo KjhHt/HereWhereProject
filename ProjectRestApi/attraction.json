@@ -1,0 +1,318 @@
+[
+    {
+        "attraction": "한양수자인파크원아파트.자목마을입구",
+        "address": "수원시",
+        "rating": 5,
+        "lat": 37.2666092,
+        "lng": 126.9496143,
+        "operating_time": "운영 시간을 제공하지 않는 장소입니다",
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbDUy7nhAsWSGZFM2e3Paqaj4vxHMaEPruWRKzy2J_LZfmCAFQIkOej6OpHET2xeDJMn1Meq6KM5ISt3Dvz9RMDp1i6Xx4-1OFEh0fpRB9xXHcy8AMEbHriM4tpzT3yJEeIEUMNz78IfXkNfNm0hLszRC9M1EWDm7UXyDO9o6egaDY_&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "팔달공원",
+        "address": "수원시 팔달구 화서동",
+        "rating": 4.6,
+        "lat": 37.2775559,
+        "lng": 127.0106836,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbMq_IlZOPJGQ19sxGqS5BxuTXhQVBTXQRM7uKLOQaFYrij0va5VZ11QPm7opCWE1pekJtA79LC00L5b9wbdr2fFXxCllAlYH48ESRoHddGStja0NrSf6__lEcYIb8bJ0J-1Rz8CJQfSabPIsZZKXm_6HfY_koTzFaqluhYig5Fwwag&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "만석공원",
+        "address": "수원시 송죽동 434 KR",
+        "rating": 4.5,
+        "lat": 37.3002941,
+        "lng": 126.9984513,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJb-UYJreOcR0QCp1eGxquVRgdDIlXcjoYf48_Uew7kaO9QIp3yE0jG5GB-_nGx_PufsZgxf4Xmoq-JhkJXFD9tc0M1asaq953VYT2-KPIHRJQASi_-M7SFCYn_jaALbenFhdZ__ZFScYcYk8IemiMkRHP5jhoIFq9EUG3Vz8S2DEEm7&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "효원공원",
+        "address": "수원시 권선구 팔달구 효원로307번길 26",
+        "rating": 4.5,
+        "lat": 37.2641784,
+        "lng": 127.0384191,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJax7S6oVQMyHf-nlSATjVmXhpVsdxWuW2E1HM0Q975rxZ4zW9Pd_DqyUBuajplIT_dnPa7R3Ra92ehjHXXeVIBlWGHr2QBbDT28uNJHFGVPvgmuBmvVWrXeyiX6zmk1YHvRTddtPQsQfYtNwGL_7BEYI-yQ6myCWHUQAjjWEEa4apBK&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "서호공원",
+        "address": "수원시 팔달구 화서동 436-1",
+        "rating": 4.5,
+        "lat": 37.2803687,
+        "lng": 126.9904853,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbokQkf6YDJCzss1A3vhifd3o4xP3DoYUZTk1XqRvLl8fE-EnVnCWteYM-OvGyUTK31Ga-so7yL3QfnNBQwkNVKiGosUwCQxfuzJJhIs9KL_9YKg_dHUPmd_DsXuAT7J6gHke6EENB38T1SFpaAZRb5z2XNWvg1V4KODa-T1QvaZ8Yk&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "일월공원",
+        "address": "수원시 장안구 천천동 453-1",
+        "rating": 4.5,
+        "lat": 37.2862787,
+        "lng": 126.9768503,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJaOlHcqujzuBn8cMN51Iqfz3Wza1QemiNNbV4TCxFWmsySoY-4jBTXkTDqRhBvjY08myQPv4Km-dLg1LXrAo_7xBNXYKKgPWTHo_-8vR859MsN0ImAp6FV_svOFAvW6toa44tAaBOfw_nBkVjoU7DwBNxEjIcguSLjqk8xcHomgNKJH&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "레솔레파크(자연학습공원)",
+        "address": "의왕시 월암동",
+        "rating": 4.4,
+        "lat": 37.307045,
+        "lng": 126.9531479,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJaL2laMfrWVDWYU6jucTz-ANw2Z857CkwJEyD19RsmjCfCtuk1aV2-lKCxlGoxKMvg4lH6FU4tj9hpmihLDwg8j7b8g28q9OGgX1v7sllBq6QtiduKJd0gjHSFwyYbAaoAXN5t3doQ7GhnOo584KrFX2gcJMCvhSyb9OCM1dpgcgDU0&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "광교공원",
+        "address": "수원시 장안구 연무동 1-1",
+        "rating": 4.4,
+        "lat": 37.3016236,
+        "lng": 127.0301386,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbniSQgYywOvbauKNz14blsDY2SvCV5Et_c2cPjQd4R8-K5B8s9mOdMNC7u8dfEecYDunipWWGLiGCI-P8YV7Y23UjlA5c8CFJogPPtCVyNNIX5mbVwkXC5Z8rGrfD_ai4fExVVhp4_tn1bsWQIQXpAqxP_sEVSG0iReTwj3Uakwz5t&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "동공원",
+        "address": "수원시 장안구 연무동 산23-1",
+        "rating": 4.3,
+        "lat": 37.2909304,
+        "lng": 127.0248616,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbZ72BjwiKdLAcuuYtMXKfQTp91YmLoDUBDo2F63pkmcztWSGBjeY3zxMZrsS38Hrki9enCObsw5juMWx9XKQaXpIbC9KEyS8sdtHfvn5knhHKxb7g9BosYt9oYNZcBb0BhmNZI7OcTCh2dzagtCx0e5mdeEbQhEYrgJCCFZe_JOnhp&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "수원화성박물관",
+        "address": "수원시 팔달구 창룡대로 21",
+        "rating": 4.3,
+        "lat": 37.2826917,
+        "lng": 127.018956,
+        "operating_time": {
+            "월요일": "휴무일",
+            "화요일": "오전 9:00 ~ 오후 6:00",
+            "수요일": "오전 9:00 ~ 오후 6:00",
+            "목요일": "오전 9:00 ~ 오후 6:00",
+            "금요일": "오전 9:00 ~ 오후 6:00",
+            "토요일": "오전 9:00 ~ 오후 6:00",
+            "일요일": "오전 9:00 ~ 오후 6:00"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJZc-2EXN-Ws4wGJoOIwjTjOOGXRDTK5U9EVSSjS7Nh3XXfLdQATz5zR-Fe9zgPAwigXtrWiyEoTVFrWmMt9bSMht-jlcSDoEKBto6jhJtqQ_XSrEI-4Bg0e7bGC_Txzefx5hIMcwyEO0EO12yrIc3s3GDihON2G9kK6wEeiIP3aFMoR&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "황새말공원",
+        "address": "수원시 팔달구 화서2동 714 -dong、",
+        "rating": 4.3,
+        "lat": 37.2868515,
+        "lng": 126.9811588,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJaKf_eDzIZlE71iYLjbPgYbIYkCg1uL0ahND9d8uDedcZTe_Jqwx1ldTk6ii5a9aTVGPhZTa30ASYYRvP-o8y2WZcaHIYYt_tS5fY1jAB8jZi4XwqfJ4egTUQDFd6wTiRNYtrJgek5iix94OH8bBmuQc5HaNYkxc9WDPiTvUzq17Lid&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "수원박물관",
+        "address": "수원시 영통구 창룡대로 265",
+        "rating": 4.2,
+        "lat": 37.2975479,
+        "lng": 127.0353154,
+        "operating_time": {
+            "월요일": "휴무일",
+            "화요일": "오전 9:00 ~ 오후 6:00",
+            "수요일": "오전 9:00 ~ 오후 6:00",
+            "목요일": "오전 9:00 ~ 오후 6:00",
+            "금요일": "오전 9:00 ~ 오후 6:00",
+            "토요일": "오전 9:00 ~ 오후 6:00",
+            "일요일": "오전 9:00 ~ 오후 6:00"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJYsfB41EMTdxWmJff9Xock-EmFxdv8q0rCDxFi8In-Rq8ZxzPY3O7iupYlq06L8jaH_Or8UfHUI5Q1fgRHtRTUyQXMwmNX9rpWLVw-AmMSR-SPhLBQTkoyRQQLEMedhyBhPTsN9V2WOoTE-QLIrYuqbEZG3FjW0YbgfBwVFPV6f7rWL&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "철도박물관",
+        "address": "의왕시 철도박물관로 142",
+        "rating": 4.2,
+        "lat": 37.314123,
+        "lng": 126.9512911,
+        "operating_time": {
+            "월요일": "휴무일",
+            "화요일": "오전 9:00 ~ 오후 6:00",
+            "수요일": "오전 9:00 ~ 오후 6:00",
+            "목요일": "오전 9:00 ~ 오후 6:00",
+            "금요일": "오전 9:00 ~ 오후 6:00",
+            "토요일": "오전 9:00 ~ 오후 6:00",
+            "일요일": "오전 9:00 ~ 오후 6:00"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbCDm0YfeIc-JeZHE133vbJZ5KpnndW0HIRnbkJIO0lj2WLmhM-Fw5uvBgnqAtyrNegJ08fZtOXChmbwB7K-YFf0TtePdgS6Yj0aXZKR8M0zyD2IC5PjIHcurGRezbtzVtrfd8ylLVnAGKD1clFwvrRgb1INl75xoeVTm1R5T0ue5jO&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "의왕레일바이크",
+        "address": "의왕시 왕송못동로 221",
+        "rating": 4.2,
+        "lat": 37.3096634,
+        "lng": 126.9507664,
+        "operating_time": {
+            "월요일": "오전 10:00 ~ 오후 6:30",
+            "화요일": "오전 10:00 ~ 오후 6:30",
+            "수요일": "오전 10:00 ~ 오후 6:30",
+            "목요일": "오전 10:00 ~ 오후 6:30",
+            "금요일": "오전 10:00 ~ 오후 6:30",
+            "토요일": "오전 9:00 ~ 오후 6:30",
+            "일요일": "오전 9:00 ~ 오후 6:30"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbsWtIZ8XOi1HfVFqTeboYn_31Yq2_H7sEn7tuUQkNk0BoJlDN2aMp_0_Em_7Ud_LMcF_8D1wDqKxiq9ip35q8SEJH_apFeTCHX8rxH4u9Wp0lUvvB83vKhGANLFh-pbPL9LjeYxBoGncr9KPfh0T1yQsRMXYnomK9RDjlIpUkaWeMM&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "해우재 박물관",
+        "address": "수원시 장안구 장안로458번길 9",
+        "rating": 4.1,
+        "lat": 37.3191026,
+        "lng": 126.9779385,
+        "operating_time": {
+            "월요일": "휴무일",
+            "화요일": "오전 10:00 ~ 오후 6:00",
+            "수요일": "오전 10:00 ~ 오후 6:00",
+            "목요일": "오전 10:00 ~ 오후 6:00",
+            "금요일": "오전 10:00 ~ 오후 6:00",
+            "토요일": "오전 10:00 ~ 오후 6:00",
+            "일요일": "오전 10:00 ~ 오후 6:00"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJYzsDt6X2vCVoywd5GojLXJCSy4Z6tp0v5JV8oTElStp9VAv0Bm4hg3dtjMZf-4X3Ul4k1y1ten_7IefMTcjuK5t8BkynDeIW2ZV0GTYLnNBhaOFa3lvdSzvxlUosSyfjlMipOibXO9oeGqBXA08ORAxe9Fmz_CK4qC67c7xMe15f_M&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "수원박물관 어린이체험실",
+        "address": "수원시 영통구 창룡대로 265",
+        "rating": 4,
+        "lat": 37.2977296,
+        "lng": 127.0354579,
+        "operating_time": "운영 시간을 제공하지 않는 장소입니다",
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJYPEgL8G2frM1iTVN3GIXFOdJlBCar48w3kdp9DQtzlNHFq7x3LayDmgW6167b2Q2b9KcX-yyIlDDAfh1jgHYJA-mAJBILpnZcFKTpTDtfTomOLEHoh_HiJlzUwJDpbZEUl6D5HwEvUh3gc320a9z6EOHiaZf8tkrNSfuGI6DcQNWZW&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "연암공원",
+        "address": "수원시 영통구 이의동 906",
+        "rating": 3.8,
+        "lat": 37.2944605,
+        "lng": 127.0398941,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJbGPBFDrQSWmYDYTFbHRuM6GNBEF6TMCG3FxLm4JWXAdQFHUHy4c1uQgTErP_pD4yzxDg2e_XKC9uxeGU4vOs38wy6h3kNDf4qkAct52Nykvh1881e0HzDg4eDDjO6beKd5QW6sXBHCp86-GsUXdnPICz-YdkejmYYgHkp2D814OrMp&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "솔뫼어린이공원",
+        "address": "수원시 장안구 정자동",
+        "rating": 3.6,
+        "lat": 37.2924573,
+        "lng": 126.9875319,
+        "operating_time": {
+            "월요일": "24시간 영업",
+            "화요일": "24시간 영업",
+            "수요일": "24시간 영업",
+            "목요일": "24시간 영업",
+            "금요일": "24시간 영업",
+            "토요일": "24시간 영업",
+            "일요일": "24시간 영업"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJYhGbR8C_talXOyZNFF2L1gJ2jE67GhECYuu_GYBPzGMMprDopBYhK2UGcj8gsJ6HDgzbR7xrCgkUBPC0XzSxGQteLD6_VL5e7j74T9o0yR8r9vD01dGt0HM7lvvk3wspS12iT0XrRoxnjXppy4aWDhrkljMc804u9Af3dgeiypVfQS&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "축구박물관",
+        "address": "수원시 팔달구 우만1동 225-2",
+        "rating": 3.3,
+        "lat": 37.2860438,
+        "lng": 127.0358988,
+        "operating_time": {
+            "월요일": "오전 10:00 ~ 오후 5:00",
+            "화요일": "오전 10:00 ~ 오후 5:00",
+            "수요일": "오전 10:00 ~ 오후 5:00",
+            "목요일": "오전 10:00 ~ 오후 5:00",
+            "금요일": "오전 10:00 ~ 오후 5:00",
+            "토요일": "오전 10:00 ~ 오후 5:00",
+            "일요일": "오전 10:00 ~ 오후 5:00"
+        },
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJZOR0EhfeKjZsP2fE2ItaylZfVNkHl-BmCVsBt-e3vTd6ZbXDEP96ycznWC6G7RlS0bddAK7tke_ot9rJZ9qLTKw7vbyhTtoGWdYGhuzpj2k_lVrAYEKYw_pspm6zZjB6_PdY_ApYjBBNjKcL4wisWCt-KfV7wweDIeV-OV_7_tezRu&maxwidth=200&maxheight=200"
+    },
+    {
+        "attraction": "국립농업박물관 어린이박물관",
+        "address": "수원시 권선구 수인로 154",
+        "rating": 3,
+        "lat": 37.276165,
+        "lng": 126.9829802,
+        "operating_time": "운영 시간을 제공하지 않는 장소입니다",
+        "image": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=ATplDJajHDLub-q_4qT2_3ojwwANm8c93xm5XJJs88Mu3JxLgq6C-_t9Ge2hBHWeX0H-U77rl7B5MHKLY6dbc46w8SLX7P1Dnw0yJWjuVLP7W4uerEUcIkS9ZkWT6koiXBhmuDIBG_nEXeIQOZ7nXWPohr3ewO3aiCiVmtCwkve38c8omLfF&maxwidth=200&maxheight=200"
+    }
+]

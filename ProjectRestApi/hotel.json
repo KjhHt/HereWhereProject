@@ -1,0 +1,137 @@
+[
+    {
+        "name": "호텔 베르 (Hotel Vert)",
+        "address": "중구 3층-12층",
+        "rating": 4.9,
+        "lat": 37.56447550000001,
+        "lng": 126.9830835,
+        "place_id": "ChIJdxHS-fyjfDURmdhskfhcigs",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgqcZyc6-y34BIwKZA47NlBceseSR7NnwLfHH3_HNi4Z3n4qVAdYfz1AeEQ_tXLRdA0k7T4ydBaps9EKPMWZqeXOlwRSd9NVXs4YnkX-bSfGmb8mwnbbdWA5DTiohnlcRIfC2XXhRGGnVC5p64hxgmFrNJyNc0J58_2yeZxTSqgXYQz&maxwidth=400"
+    },
+    {
+        "name": "르서울호텔",
+        "address": "중구 남대문로1길 56 르서울호텔",
+        "rating": 4.4,
+        "lat": 37.5633566,
+        "lng": 126.9776087,
+        "place_id": "ChIJ3Sq5eBSjfDURUNQnDjOsVLs",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFiKw4rxAuxEovYn9xWOYfc1a_MERdQ-oblASXCNATFlir8KEwiS2h0AA5M2FypthTYoMSlH-Rpl7hkDBhle-wunfr6yzq-v4VasCySnm0TSKFBaw9FkvO6x1LE6JhfXEYFOcO8TfNPgDbHSJg6gpPZLNMnmremQAFzEmCDsXA6Ue0TW&maxwidth=400"
+    },
+    {
+        "name": "롯데시티호텔 마포",
+        "address": "마포구 마포대로 109",
+        "rating": 4.3,
+        "lat": 37.5448909,
+        "lng": 126.9506066,
+        "place_id": "ChIJYVieKKGYfDUR4wW1j4CkKGM",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgmILQe0UziEAlmZnt9IgF7f0SSTQC2VgHYhsBmsUTwdFBeNs3AwenaraVe5bAfgMU0VFY0OmFq2GpUaDFVzsZB7mqzkxlkQjRbR7Hmv1pa3EmnRr8WkFVmg0akUiR28QzWKpFv14C5WzAILWCIy4TVmbsj3Wf62Ln8MgfVuyD35JV1&maxwidth=400"
+    },
+    {
+        "name": "나인트리 프리미어 로카우스 호텔 서울 용산",
+        "address": "용산구 한강대로23길 25",
+        "rating": 4.3,
+        "lat": 37.527685,
+        "lng": 126.9643726,
+        "place_id": "ChIJycrBzfujfDURpyWnvaJkfLQ",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFhLZ8qFJimZmjSR3mXP4bGlDhz1wUJJ00xAg-vXk0cRKAqcIS4bxWpKjYffp2TV22kwYo13AGU-8e88yU_VHRen_18iyuefpHOKZAoirffTkg45LvUg-hJj6IaO3VwvuH0lo7JuoFeqrAp880ZkcRdz8gbtkm-7a7cR6a6bvGElc6f5&maxwidth=400"
+    },
+    {
+        "name": "서울가든호텔",
+        "address": "마포구 마포대로 58",
+        "rating": 4.1,
+        "lat": 37.5406675,
+        "lng": 126.9483461,
+        "place_id": "ChIJA0sP8KWYfDURbKHMDUCMLuE",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFhNdzVIrk4ABvhVU6ZnRQvRQ7fUMme3sNXz7wvGQhCS5KqFEvuKDI_Z4_rhJiBuKaDaAq0L7eIkAHlHLmxPe5cP1yXiczmtBQTaeTaK97sljRMN1ATm-fiVTxN-OkQZQ1KlmIXhNti1AgoOK5aD7tj9W6yZavMJQMayqwlHHPf2jMRq&maxwidth=400"
+    },
+    {
+        "name": "프린스호텔 서울",
+        "address": "중구 퇴계로 130",
+        "rating": 4.1,
+        "lat": 37.560651,
+        "lng": 126.98625,
+        "place_id": "ChIJw3NLnfCifDURQ0rPjilJiOw",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFg61IYsRoUaSD2s6Y0ehQr6fXe_Vjz7cDihxb_gzeDZ1YIF3wu1116IyHA8zU3PBZYaLy9D9Ig7r5IqW4hamvC9uTbQEDtJ3_xlEPOm4AMV0zyZLG0QWn_AgSQ6LzbMjBZy-lp6h4xMk1JaNT55jP854SoSRjb3VjDY5R0Njjzk00if&maxwidth=400"
+    },
+    {
+        "name": "호텔스카이파크 명동3호점",
+        "address": "중구 퇴계로 139",
+        "rating": 4.1,
+        "lat": 37.56128959999999,
+        "lng": 126.9872401,
+        "place_id": "ChIJBecUjvqifDURMD8U6d0R8M4",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFh6gl21Cn7dhKgGhzbekMVfILXJQsWOBxs_KrLV9FpQybQ8Z-wJbQXOm013-ploHT_UdnPhXFh0KZlRvD9ejVd9xghj2n6t-PWRC2fri-g21WuHWSKNRLze4WUncmUvDlFlP1wuRnIhj1aPrU_cLU2xro4zmBwrAmpdQxUwPq5yr26w&maxwidth=400"
+    },
+    {
+        "name": "호텔 더 디자이너스 서울역",
+        "address": "용산구 남영동 한강대로 305",
+        "rating": 4,
+        "lat": 37.545546,
+        "lng": 126.9715619,
+        "place_id": "ChIJd7uB4GuifDUREpDpoUOnuzQ",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgLfiUBjNEsX696VmxZA95uasdef5uphrEoMKBYpWS8Fk_c5uz6f0CQkIdOIexn9rVosYl-9_0C_C0YTEH0gJGBiijtNMgGtPajA3AyQ7TVZ2FXZSuSGk3NEXz61ET2c4FZeofugHZOD6YLyh0JoYkEOrSSk9HihcNC5p_EI17QBFCd&maxwidth=400"
+    },
+    {
+        "name": "해밀톤호텔",
+        "address": "용산구 이태원로 179",
+        "rating": 4,
+        "lat": 37.5347906,
+        "lng": 126.9935937,
+        "place_id": "ChIJ9-oBRUqifDUR95YLaiGPL3Q",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFhN_DRwnho9jO4LVSLgY9Pi6gH8OlSMU2ugxRHesZ-zDYbx_caFlMAf9DwQis0Wo3XM1nGLWPhUYw5FrPMUOkNHiybO4egOGtwrJxBhZ3zDSyYOTPOUJHYGb0ShhnfZyMoAWRr3EB4iEIA-MqF-YoEEJvtqMhV-P9FM_PurnGTpHrU&maxwidth=400"
+    },
+    {
+        "name": "호텔 스카이파크 동대문1호점",
+        "address": "중구 동호로 335",
+        "rating": 4,
+        "lat": 37.5641517,
+        "lng": 127.0020775,
+        "place_id": "ChIJJwyAiBmjfDURTMKbzBJ1iOQ",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFjzMyGTVZ5ZWENN56i49dC1LwkmL1rC1IFWbzYW9JtuH85XYpBA773YOwTJI5KeA1yJ0xxbxpSh8MAafvrkaYaZWh2CUJsDevQnBilpgN0l6zzmY2pSyO-KzlSz04XpuiTiCW3GvF_nj60tOTBfMzdriJsRPASHBxycK5vF03BRAvEy&maxwidth=400"
+    },
+    {
+        "name": "남산힐호텔",
+        "address": "중구 회현동 소공로3길 35",
+        "rating": 4,
+        "lat": 37.556576,
+        "lng": 126.982357,
+        "place_id": "ChIJ82EaFPaifDURnx_C79uc-nk",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFjg4YaNEhPh4-SnbNsIWUjF96xCe7CSjxeOyJ40CkgXnQPLpkg1j04YIczn7-xIns8kRf6v1acPpiAyyODI6SDmOH2rkCqdjw2DsB3PXzJp1kClu7p7oVvJblJ2n5Ek3v4X1bvYzbHQu5XWLsjWkLqPXoybb6OvdQkeOcfnD1zc4omo&maxwidth=400"
+    },
+    {
+        "name": "프레지던트호텔",
+        "address": "중구 을지로 16",
+        "rating": 4,
+        "lat": 37.565622,
+        "lng": 126.979443,
+        "place_id": "ChIJ4Yhq3R-jfDURGHxO3lvo6Oo",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFjhKe8u8AOscaQ0qQVLx0U3cIgFysxgZIlv9XYM1orxEQOLw2EYXYQzW93dV1Qx4AEERcKNA0BbyQcfSXG1xiRf_4vMbwiI_fXTIfmSx1lUX-TXAsqzh-wEa8D3mnqsJaDdstwwM2Dkd90lIbS_tTrWG5WP7xsFOKbXimU1wHaC0hDr&maxwidth=400"
+    },
+    {
+        "name": "라인 호텔 명동",
+        "address": "중구 명동3길 36",
+        "rating": 4,
+        "lat": 37.565327,
+        "lng": 126.9836741,
+        "place_id": "ChIJYWYskf-jfDURDmPIowGF2U8",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFjq-4DKOk2nNc68QnExZ-3mjXNk2qxcXZU6seuoHlP01ZUKn_5oMPJe8ID4ucGOBCGM4ioaETVne0p_CJ_gUpb0sdiyCzKZ8EH50WusvDURLgjCpC2-s0KKB7STa40qcqeRA6eQYpSBocVBAAEGYOFl5FC3aBPPvP-zEHf3y12pzLuA&maxwidth=400"
+    },
+    {
+        "name": "호텔 국도",
+        "address": "중구 을지로 164",
+        "rating": 4,
+        "lat": 37.5661408,
+        "lng": 126.9962859,
+        "place_id": "ChIJKyNVVx-jfDURy0IwiwGYwH4",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFh_NcnitxmmwwZB54IBzFLyFd6cWAJCnxjXLxf6gpemDSeBfzlrov32sbQyivT6F6L_n-MtmR_CgXyO0NBuldycxd7BWa4kTn2duDPZ7iXdV3eeeaejcZOSPOutoIbMMlUCsQfBGB9fhsVCTKRI9Qrgi51cOl1-mF2nrY5eXtctHsK4&maxwidth=400"
+    },
+    {
+        "name": "임피리얼 팰리스 부티크 호텔 이태원",
+        "address": "용산구 이태원로 221",
+        "rating": 3.9,
+        "lat": 37.5352439,
+        "lng": 126.9982367,
+        "place_id": "ChIJPRRJvrSjfDURejEqb2w62b0",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgbMSlksmGPL6DI5EKUI9E141UHt3PSVDG5DCzKZyKSrDAlNrfyVC5bFuegaD5i-EkY89Sr0fvrSNKqwUvdqhAU8UGpIXIvjGVF4SWyuIQv6d0vcrESzQCDS0CzLN-RPhTjo9Ds4vmuG4Xf-pzi1NRhtdwZzWQHKfC2Q9qrKjaayYLO&maxwidth=400"
+    }
+]

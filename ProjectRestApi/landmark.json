@@ -1,0 +1,74 @@
+[
+    {
+        "장소": "백제초기적석총",
+        "주소": "송파구 가락로7길 21",
+        "평점": 5,
+        "위도": 37.5018105,
+        "경도": 127.1027394,
+        "place_id": "ChIJNUItT8ylfDURINK2-hVD3Og",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFhG280aMhmHQkV8-5V-XAXn3XnmDrOrhj_kNZr8YlpMGhevCPMhT_Nwo1khnlJBXKxgtZ6xJNw-uKHAjBTCnCh3WoXGHzGdecFmxUmy6Tzs6EF7HCGaJtsA_DPhhYCE_V5f1PnOqHXtbEVONHnKqQc_I65ukG68VfKo9yswsP3TxFJG&maxwidth=400"
+    },
+    {
+        "장소": "올림픽공원 세계평화의문",
+        "주소": "송파구 위례성대로 51",
+        "평점": 4.5,
+        "위도": 37.5183022,
+        "경도": 127.1153214,
+        "place_id": "ChIJY2lSfGWlfDURHSUrJUHY-i4",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFjsOKRmHvz4Ih5OBjs5ARObfTjMe_X-GszapRyt3xC1CunzH-Wcr7wZdJxClqn1efUOdY26-qCgay46LbNl7ptefG5z-_EuaeKJMpG2zro3oP_qWBsnVOi5nRScfMwGR9iAdqVoGc_I7tbFdSe4vDtO9vqkukTNDAzV3_vEMOPB06Z6&maxwidth=400"
+    },
+    {
+        "장소": "서울 방이동 고분군",
+        "주소": "송파구 오금로 219",
+        "평점": 4.2,
+        "위도": 37.507454,
+        "경도": 127.1184446,
+        "place_id": "ChIJD0p6-3ilfDUR0AAa-o1WN5Y",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgsUfw4CGPp6NlSAzQiKSFR3yrhB2tEEdZ_M2sc81ZbKXl-yp1hR_BwQNgVxIA38SxU3FvDns1Ivrmtxmevoz4KoKckaXR2km5bj-7WXH83Nw_KtNglL-g3Hx7XSVRQ7iTb-1Lg4iHiySdcxNcCRsmq70na6RDgzLG0Lt-rf9zVgKMF&maxwidth=400"
+    },
+    {
+        "장소": "삼전도비",
+        "주소": "송파구 석촌호수로",
+        "평점": 4.2,
+        "위도": 37.5105213,
+        "경도": 127.1016445,
+        "place_id": "ChIJK_-W9qClfDUR4k4203M5_Xc",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgYwllVThbFDpimKNr1qkb1qtTgA83mc7dq_PIoy0Q5Tt8d2YEB-fd82jAGlKYk_ZJ5w8Le7lx15DBH8dTnUHDtN3jd-5CbqjMVjHg8gLLvylKMYcUm65wZu7A1mNthncyQ2nsXBzID51tWZXm8vSYVUpmqXNhZIopouhmSqDtrACA9&maxwidth=400"
+    },
+    {
+        "장소": "광평대군묘",
+        "주소": "강남구 일원동",
+        "평점": 4.2,
+        "위도": 37.4864884,
+        "경도": 127.0921293,
+        "place_id": "ChIJhYxiP9ClfDUR4SNkyE_Z_sM",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFh_lv3Kz4cE1mdlg5DdYzMTeFqy6_H8KEitBbT91gMElOk0WwSZvWfJS9e4RqBwllvv-VWCRbo-NRovg-UDwzT6Qi8EmHoC9DNCdY4Z0niKdbR5TfSnSVEUHqDRPjXTVEncxiwWf_opxLwAZ0oNF1wnlPdqRy1ro2L0cyh4A-HpcWMC&maxwidth=400"
+    },
+    {
+        "장소": "한유성 기념비",
+        "주소": "송파구 잠실3동 47",
+        "평점": 3,
+        "위도": 37.5086881,
+        "경도": 127.0976148,
+        "place_id": "ChIJ24GVGEulfDUReAKpucexBjA",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFiLzeBZ52HB-VNYlcUs_VDCyeBY2BpyU_tcl51xm6DbhVxGvFAH821paCyF_2Lf7DqhJLqzcI7LaerTCLHQnkkJq_4q1SOgmmMlR3YzyEZLsJFFMN_cF0oZaKbeBOo33fiCxdEiVpM7vbGxUtqt_jvYy_wt6WKkL2sxbFAmaBTEPZQ6&maxwidth=400"
+    },
+    {
+        "장소": "삼전나루 터",
+        "주소": "송파구 석촌동 185",
+        "평점": 0,
+        "위도": 37.50652900000001,
+        "경도": 127.0980151,
+        "place_id": "ChIJZRBbmRulfDUR8kHD0HkYC18",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFh6m-dal4QkOYQpE9xVuNB_QuXyE4k_AHb1s73U_RyvUSynVN1iWrUlpQlkqpNsPCl5asIquveuUaB3kcaZAxf73-A4Ju1p_yssYPbLiGW7GGDXco2zD11CzJ5xH-5Hf7HylbsE5sxQnw65kPHt7ZfurPzaogQ5uPgAYJH9aqoXr74E&maxwidth=400"
+    },
+    {
+        "장소": "송파나루터",
+        "주소": "송파구 송파1동",
+        "평점": 0,
+        "위도": 37.5092192,
+        "경도": 127.1040263,
+        "place_id": "ChIJSywI3RSlfDURPJbxbloAhvA",
+        "img_URL": "https://maps.googleapis.com/maps/api/place/photo?key=AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k&photoreference=AWU5eFgWuimURpq-r7KZp7ccTX4yuYF7gQVAhf48IuzdOZYOOdNj4TwA48zS8Qsa6aGGWDVl-OzwtwQ-oudGUqzMxZLMVix-QSGszkxljOGAti8KM0pRdjVRn1PYKfF6iHNWwshls-O6n4QcccuZWIIMYTEuyOzOTisp3E312P91RE_947mV&maxwidth=400"
+    }
+]
