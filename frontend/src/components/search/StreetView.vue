@@ -16,7 +16,7 @@ const streetViewPanorama=ref(null)
 onMounted(() => {
     watch(() => props.map?.ready, ready => {
     if (!ready || !streetView.value) return;
-    props.map.map.addListener('center_changed', () => {
+    props.map.map.addListener('idle', () => {
       const newCenter = props.map.map.getCenter();
       if (streetViewPanorama.value) {
         const newPosition = new props.map.api.LatLng(newCenter.lat(), newCenter.lng());
