@@ -5,11 +5,15 @@ module.exports = defineConfig({
     devServer: {
         proxy: {
           '/':{
-            target:'http://192.168.0.69:8080', // Spring Boot Server
+            target:process.env.VUE_APP_API_URL, // Spring Boot Server
             changeOrigin:true,
           },
+          // '/logout':{
+          //   target:process.env.VUE_APP_API_URL, // Spring Boot Server
+          //   changeOrigin:true,
+          // },
           '/oauth2':{
-            target:'http://192.168.0.69:8080', // Spring Boot Servernpm
+            target:process.env.VUE_APP_API_URL, // Spring Boot Servernpm
             changeOrigin:true,
             '^/oauth2':'/login/oauth2/code/'
           }

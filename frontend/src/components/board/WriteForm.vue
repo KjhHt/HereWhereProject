@@ -79,7 +79,7 @@ onMounted(() => {
     if(profileimage.startsWith("D:") || profileimage.startsWith("E:")){
       const pathSegments = profileimage.split('\\');
       const lastSegment = pathSegments[pathSegments.length - 1];
-      axios.get(`http://localhost:8080/profile/${lastSegment}`)
+      axios.get(`${process.env.VUE_APP_API_URL}/profile/${lastSegment}`)
       .then(res => {
         const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
         formData.value[1] = dataURI;
@@ -126,7 +126,8 @@ function post(){
     console.log(index);
     formData.append('boardImages', file);
   });
-  axios.post('http://localhost:8080/user/boardInsert', formData, {
+  
+  axios.post(`${process.env.VUE_APP_API_URL}/user/boardInsert`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

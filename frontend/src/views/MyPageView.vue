@@ -2,8 +2,8 @@
 <script setup>
 import { ref, computed} from 'vue';
 import { useStore } from 'vuex'
-import SideBar from '@/components/SideBar.vue'
-import TheSearchForm from '@/views/mypage/TheSearchForm.vue';
+import CircularMenu from '@/components/CircularMenu.vue';
+import TheSearchForm from '@/components/TheSearchForm.vue';
 // import OverlayView from '@/views/mypage/OverlayView.vue';
 const store=useStore()
 const menu=computed(()=> store.state.menuStore.menu);
@@ -11,14 +11,13 @@ console.log('menu:',menu.value)
 </script>
 <template>
     <div class="page-container">
-            <SideBar/>
+          <CircularMenu />
             <!-- <OverlayView v-if="menu==0"/> -->
-            <TheSearchForm/>
+          <TheSearchForm/>
     </div>
 </template>
 <style scoped>
 .page-container {
   display: flex;
-  height: 100vh;
 }
 </style>

@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import com.cos.security1.config.handler.CustomLogoutSuccessHandler;
 import com.cos.security1.config.jwt.JwtAuthenticationFilter;
 import com.cos.security1.config.jwt.JwtAuthorizationFilter;
 import com.cos.security1.config.jwt.OAuth2AuthenticationSuccessHandler;
@@ -53,10 +54,10 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.addFilterBefore(corsFilter, ChannelProcessingFilter.class);
 		http.csrf( (csrf) -> csrf.disable());
-		http.authorizeHttpRequests( (requests)->requests
-				.requestMatchers("/api/v1/uesr/**").hasRole("USER")
-				.requestMatchers("/api/v1/manager/**").hasRole("MANAGER")
-				.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+		
+		http
+			.authorizeHttpRequests( (requests)->requests
+				.requestMatchers("/f056c7edebcffb66.ngrok.app/**").permitAll()
 				.requestMatchers("/user/**").hasRole("USER")
 				.requestMatchers("/manager/**").hasRole("MANAGER")
 				.requestMatchers("/admin/**").hasRole("ADMIN")
@@ -83,6 +84,7 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
 				logout
 					.deleteCookies("User-Token")
 					.invalidateHttpSession(true)
+					.logoutSuccessHandler(new CustomLogoutSuccessHandler())
 			);
 			
 		return http.build();

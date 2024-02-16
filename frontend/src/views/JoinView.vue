@@ -6,13 +6,15 @@
           </h1> -->
           <div class="3">
               <div class="form_list">
-            <label for="fileInput">
+          <label for="fileInput">
               <img :src="imageData.poto" class="poto_icon rounded-image" :style="{ width: imageSize, height: imageSize }" @click.prevent="handleImageClick">
+              <p class="profill">※프로필은 선택 사항입니다.</p>
               <input type="file" id="fileInput" ref="fileInput" style="display: none" @change="handleFileUpload" >
               <span class="image_poto"></span>
+              
               <button type="button" class="btn btn-outline-dark" :class="pcfile" id="pcfile" @click="openFileInput">PC파일</button>
               <button type="button" class="btn btn-outline-dark" :class="modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">이미지생성</button>
-            </label>
+          </label>
                   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog">
                           <div class="modal-content">
@@ -26,7 +28,7 @@
                                           <label for="recipient-name" class="col-form-label">이미지 결과</label>
                                           <div id="image-container">
                                               <img v-if="image_url" :src="image_url" alt="Generated Image" :style="{ width: '50%', height: '50%' }">
-                                              <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status" v-if="loading">
+                                              <div class="spinner-border" style="width: 3rem; height: 3rem; margin-top:20px;" role="status" v-if="loading">
                                                   <span class="visually-hidden">Loading...</span>
                                               </div>
                                           </div>
@@ -47,13 +49,13 @@
                   </div>
                   <div class="modal" tabindex="-1" id="exampleModal2">
                       <div class="modal-dialog">
-                          <div class="modal-content">
+                          <div class="modal-content" style="margin-top: 230px;">
                               <div class="modal-header">
                                   <h5 class="modal-title">프로필 이미지 AI생성</h5>
                                   
                               </div>
                               <div class="modal-body">
-                                  <p style="width: 500px; height: 100px; top: 40px;">프로필 이미지가 적용되었습니다.</p>
+                                  <p style="width: 470px; height: 50px; top: 40px;  text-align: center;">프로필 이미지가 적용되었습니다.</p>
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-outline-info" :class="use" data-bs-dismiss="modal">Close</button>
@@ -63,38 +65,58 @@
                   </div>
                   <!-- 숨겨진 파일 입력 창 -->
   
-                  <div class="form_id" :class="{ 'error': !validUsername }">
+                  <div class="form_id" :class="{ 'error': !validUsername ,'success': validUsernamesuccess }">
   
                       <img :src="imageData.id" class="id_icon">
                       <input type="text" class="input" id="id" name="id" placeholder="아이디" autocomplete="off" v-model="username" @blur="validateUsername">
                       <p v-show="!validUsername" class="input-error">{{ usernameErrorMessage }}</p>
+                      <p v-show="validUsernamesuccess && validUsername" class="input-success">∙ 사용 가능한 아이디 입니다.</p>
                   </div>
   
-                  <div class="form_pwd1" id="pwd" :class="{ 'error': !validPassword }">
+                  <div class="form_pwd1" id="pwd" :class="{ 'error': !validPassword,'success': passwordsuccess }">
                       <img :src="imageData.lock" class="lock_icon">
                       <input type="password" class="input pwd" id="pwd" name="pwd" placeholder="비밀번호" autocomplete="off" v-model="password" @blur="validatePassword">
                       <p v-show="!validPassword" class="input-error">{{ passwordErrorMessage }}</p>
+                      <p v-show="passwordsuccess && validPassword" class="input-success">∙ 올바른 비밀번호 형식입니다.</p>
                   </div>
-                  <div class="form_pwd2" id="pwd" :class="{ 'error': !validPasswordConfirmation }">
+                  <div class="form_pwd2" id="pwd" :class="{ 'error': !validPasswordConfirmation,'success': passwordsuccess2 }">
                       <img :src="imageData.lock" class="lock_icon">
                       <input type="password" class="input" id="pwdConfirm" name="pwdConfirm" placeholder="비밀번호 재확인" autocomplete="off" v-model="passwordConfirm" @blur="validatePasswordConfirmation">
                       <p v-show="!validPasswordConfirmation" class="input-error">{{ valpasswordErrorMessage }}</p>
+                      <p v-show="passwordsuccess2 && validPasswordConfirmation" class="input-success">∙ 비밀번호가 일치합니다.</p>
                   </div>
-              </div>
-              <div class="form_list">
-                  <div class="form_name" :class="{ 'error': !validName }">
+                  <div class="form_name" :class="{ 'error': !validName,'success': validNamesuccess }">
                       <img :src="imageData.id" class="name_icon">
                       <input type="text" class="input" id="name" name="name" placeholder="닉네임" autocomplete="off" v-model="name" @blur="validateName">
                       <p v-show="!validName" class="input-error">{{ nameErrorMessage }}</p>
+                      <p v-show="validNamesuccess && validName" class="input-success">∙ 사용가능한 닉네임 입니다.</p>
                   </div>
-                  <div class="form_gender" id="gender">
+                  <div class="form_phone" id="phone-container" :class="{ 'error': !validPhoneNumber,'success': PhoneNumbersuccess }">
+                      <img :src="imageData.email" class="email_icon">
+                      <input type="text" class="input" id="phone" name="phone" placeholder="휴대전화 (-)제외" autocomplete="off" v-model="phoneNumber" @blur="validatePhoneNumber">
+                      <button type="button" class="btn btn-outline-dark" :class="bttn" @click="sendVerificationCode">인증</button>
+                      <p v-show="!validPhoneNumber" class="input-error">{{ phoneNumberErrorMessage }}</p>
+                      <p v-show="PhoneNumbersuccess && validPhoneNumber" class="input-success">∙ 올바른 전화번호 형식입니다. 인증 버튼을 눌러주세요.</p>
+                      <input v-if="showVerification " type="text" class="checkcode" id="verificationCode" name="verificationCode" placeholder="인증 코드" autocomplete="off" v-model="verificationCode">
+                      <button v-if="showVerification" type="button" class="btn btn-outline-dark confirm-btn"  @click="randomCode">인증 확인</button>
+                      <p v-if="timehidden" class="input-error">남은 시간: {{ formatTime(remainingTime) }}</p>
+                      <p v-if="verificationResultMessage" class="input-success">{{ verificationResultMessage }}</p>
+                      <p v-if="verificationResultMessagesuccess" class="input-error">{{ verificationResultMessagesuccess }}</p>
+                  </div>
+              </div>
+                  <div class="form_gender" id="gender" :class="{'error' : !validSelect}">
                       <div class="select">
-                          <input type="radio" id="select1" name="gender" class="gender1" v-model="selectedGender" value="male"><label for="select1">남자</label>
+                          <input  type="radio" id="select1" name="gender" class="gender1" v-model="selectedGender" value="male"><label for="select1">남자</label>
                           <input type="radio" id="select2" name="gender" class="gender2" v-model="selectedGender" value="female"><label for="select2">여자</label>
-                      </div>
-                      <div class="form_MBTI" id="MBTI">
+                          <p v-show="!validSelect" >{{selecterrorMessage}}</p>
+                        </div>
+                        
+                      
+                      <div class="form_MBTI" id="MBTI" :class="{'error' : !validMBTI,'success': validMBTIsuccess }">
                           <!-- 직접 입력을 위한 셀렉트 박스 -->
-                          <input type="text" class="test" v-model="customMBTI" placeholder="직접 입력" />
+                          <input type="text" class="test" v-model="customMBTI" placeholder="직접 입력"  @blur="validateMBTI"/>
+                          <p v-show="!validMBTI" class="input-error" style="text-align: center; margin-top: -0px;">{{MBTIerrorMessage}}</p>
+                          <p v-show="validMBTIsuccess && validMBTI" class="input-success">∙ 유효한 형식입니다.</p>
                       </div>
                       <!-- MBTI 퀴즈 모달 -->
   
@@ -107,7 +129,7 @@
                           </div>
   
                           <!--  모달창 content  -->
-                          <div id="carouselExampleFade" class="carousel slide carousel-fade" >
+                          <div id="carouselExample" class="carousel slide" >
                               <div class="carousel-inner">
                                   <div class="carousel-item active">
                                       <div class="titlemain" >
@@ -121,27 +143,26 @@
                                           <h6>자신에 MBTI에 맞게 추천 맛집과 성향에 맞는 가개를 소개해준답니다.</h6>
                                           
                                       </div>
-                                    
                                   </div>
-                                  <div class="carousel-item" direction="right">
+                                  <div class="carousel-item" >
                                       <div class="title1">
                                           <h5>[나에게 쉬는 시간이 생겼을 때~]</h5>
                                       </div>
                                       <img :src="mbtidata.problem0" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item" direction="right">
+                                  <div class="carousel-item" >
                                       <div class="title1">
                                           <h5>[내가 엘리베이터를 탔을 때!]</h5>
                                       </div>
                                       <img :src="mbtidata.problem1" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item" direction="right">
+                                  <div class="carousel-item" >
                                       <div class="title1">
                                           <h5>[만약 친구가 차사고가 났다고 연락이 왔을 때?]</h5>
                                       </div>
                                       <img :src="mbtidata.problem2" class="d-block w-75" alt="...">
                                   </div>
-                                  <div class="carousel-item" direction="right">
+                                  <div class="carousel-item" >
                                       <div class="title1">
                                           <h5>[친구들과 함께 간 여행, 숙소에서 짐을 풀고 나가자! 했을 때]</h5>
                                       </div>
@@ -155,7 +176,7 @@
                                         
                                           <div class="outer" @click="modalOpen">
                                             <div class="inner">
-                                              <label class="label2" @click="custominput"> {{ mbtiString }} fsdfds</label>
+                                              <label class="label2" @click="custominput"> {{ mbtiString }} </label>
                                             </div>
                                           </div>
                                       
@@ -164,32 +185,18 @@
                           </div>
                         <div class="button-container2">
                           <div v-for="(button, index) in buttons" :key="index" v-show="isVisible(index)" class="chose2" :style="getButtonStyle(index)">
-                              <button type="button" data-bs-target="#carouselExampleFade" @click="handleButtonClick(index)" data-bs-slide="next" class="chose" >
+                              <button type="button" data-bs-target="#carouselExample" @click="handleButtonClick(index)" data-bs-slide="next" class="chose" >
                                 <a class="underline-btn" href="#">{{ button.label }}</a>
                               </button>
                           </div>
                         </div>
-                          <!-- <div hidden>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">하..언제까지 기다려?(click)</a></button>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">추락하면 누워야 하나?(click)</a></button>
-                          </div>
-                          <div hidden>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">보험 얼마까지 될까?(click)</a></button>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">심하게 다친건 아니겠지?(click)</a></button>
-                          </div>
-                          <div hidden>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">계획은 있어야 나가지~(click)</a></button>
-                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next" class="chose"><a class="underline-btn" href="#">아 몰라! 나가서 생각하자(click)</a></button>
-                          </div> -->
-                          
-  
-  
+        
                           <div>
                               <button class="btn btn-outline-danger" @click="modalOpen" 
                               style="
                               position: fixed;
                               bottom: 0;
-                              margin-top: 700px;
+                              margin-top: 690px;
                               width: 1000px;
                               margin-left: -500px;
                               border-top-left-radius: 10px;
@@ -202,23 +209,16 @@
                         </div>
                   </div>
   
-                  <div class="form_phone" id="phone-container">
-                      <img :src="imageData.email" class="email_icon">
-                      <input type="text" class="input" id="phone" name="phone" placeholder="휴대폰" autocomplete="off" v-model="phoneNumber" @blur="validatePhoneNumber">
-                      <button type="button" class="btn btn-outline-dark" :class="bttn" @click="sendVerificationCode">보내기</button>
-                      <p v-show="!phoneNumber" class="input-error">{{ phoneNumberErrorMessage }}</p>
-                      <input v-if="showVerification" type="text" class="checkcode" id="verificationCode" name="verificationCode" placeholder="인증 코드" autocomplete="off" v-model="verificationCode">
-                      <button v-if="showVerification" type="button" class="btn btn-outline-dark confirm-btn" @click="randomCode">인증 확인</button>
-                      <p v-if="verificationResultMessage">{{ verificationResultMessage }}</p>
-                  </div>
+                  
   
-                  <div class="form_address" id="address">
+                  <div class="form_address" id="address" :class="{ 'error': !validAddress }">
                       <img :src="imageData.address" class="addr_icon">
                       <span class="information">주소 정보</span>
-                      <input type="text" v-model="zonecode" placeholder="우편번호" class="addrnumber">
-                      <input type="button" id="postcode" @click="openPostcode" value="검색" class="btn btn-outline-secondary"><br>
-                      <input type="text" v-model="roadAddress" placeholder="지번주소" class="addrnum">
-                      <input type="text" v-model="detailAddress" placeholder="상세주소" class="addradd">
+                      <input type="text" v-model="zonecode" placeholder="우편번호" class="addrnumber" @blur="validateAddress" >
+                      <input type="button" id="postcode" @click="openPostcode" value="검색" class="btn btn-outline-secondary" ><br>
+                      <input type="text" v-model="roadAddress" placeholder="지번주소" class="addrnum" @blur="validateAddress">
+                      <input type="text" v-model="detailAddress" placeholder="상세주소" class="addradd" @blur="validateAddress">
+                      <p v-show="!validAddress" class="input-error" style="margin-left: 30px; margin-top: 30px;">∙ 주소를 입력해 주세요.</p>
                   </div>
                   <div hidden>
                       <input type="text" v-model="x" placeholder="x좌표">
@@ -227,7 +227,6 @@
                   <div class="join">
                   <button type="button" class="btn btn-outline-secondary" @click="joinMember">join</button>
                 </div>
-              </div>
           </div>
       </div>
   </body>
@@ -254,20 +253,36 @@ export default {
           use: 'ues-class',
           modal: 'modal-class',
           bttn: 'custom-class',
+          passwordsuccess:false,
+          passwordsuccess2:false,
+          PhoneNumbersuccess:false,
+          validUsernamesuccess:false,
+          validNamesuccess:false,
+          validMBTIsuccess:false,
           modalCheck: false,
           loading: false,
           showModal: false,
-          showVerification: false,
           validUsername: true,
           validPassword: true,
           validName: true,
-          validphone: true,
           validPasswordConfirmation: true,
+          validPhoneNumber:true,
+          timehidden:false,
+          validSelect: true,
+          validMBTI:true,
+          validAddress:true,
+          MBTIerrorMessage:"",
+          timer: null,
+          remainingTime: 180,
+          verificationCodeSent: false,
+          showVerification: false,
+          selectedGenders: null,
           image_url: null,
-          visibleIndex: null, // 초기에는 아무 버튼도 클릭되지 않음
           specialValue: [],
           mbtiString:'',
-          customMBTI: '',
+          customMBTI: "",
+          phoneNumber: '', // 휴대폰 번호를 저장할 변수
+          selecterrorMessage:'',
           x:'',
           y:'',
           prompt: '',
@@ -275,17 +290,18 @@ export default {
           zonecode: '',
           roadAddress: '',
           detailAddress: '',
-          phoneNumber: '', // 휴대폰 번호를 저장할 변수
           codeMessage: '',
           logo: '',
           name: '',
           username: '',
           password: '',
           passwordConfirm: '',
+          selectErrorMessage: "남자 또는 여자를 선택하세요.",
           verificationResultMessage: '', // 인증 결과 메시지
+          verificationResultMessagesuccess:'',
           serverVerificationCode: '',
           verificationCode: '',
-          imageSize: '170px',
+          imageSize: '250px',
           phoneNumberErrorMessage: '',
           nameErrorMessage: '',
           passwordErrorMessage: '',
@@ -325,30 +341,130 @@ export default {
               },
           };
       },
+      watch: {
+        selectedGenders() {
+          this.validateGender();
+        }
+      },
+      
         
         methods: {
+          startTimer() {
+              if (!this.timer) {
+                this.timer = setInterval(() => {
+                  this.remainingTime -= 1;
+
+                  if (this.remainingTime === 0) {
+                    this.stopTimer();
+                  }
+                }, 1000);
+              }
+            },
+            stopTimer() {
+              clearInterval(this.timer);
+              this.timer = null;
+              console.log('3분이 지났습니다. 다시 인증 코드를 요청하세요.');
+            },
+            formatTime(seconds) {
+              const minutes = Math.floor(seconds / 60);
+              const remainingSeconds = seconds % 60;
+              return `${this.pad(minutes)}:${this.pad(remainingSeconds)}`;
+            },
+            pad(value) {
+              return value < 10 ? `0${value}` : value;
+            },
+
+          beforeDestroy() {
+            this.stopTimer();
+          },
+
+          validateAddress() {
+            // 주소 유효성 검사 로직 추가
+            this.validAddress = !!this.zonecode && !!this.roadAddress && !!this.detailAddress;
+            return this.validAddress;
+          },
+        
+    
+
+          validateMBTI() {
+            if (this.customMBTI.trim() === "") {
+              this.validMBTI = false;
+              this.MBTIerrorMessage = "※ MBTI는 필수 입력 항목입니다.";
+              console.log(this.MBTIerrorMessage)
+            } else {
+              const validMBTIPattern = /^[IESNTFJP]{4}$/; // I, E, S, N, T, F, J, P 중 4글자
+              if (!validMBTIPattern.test(this.customMBTI.toUpperCase())) {
+                this.validMBTI = false;
+                this.MBTIerrorMessage = "※ 올바른 MBTI 형식이 아닙니다. (예: I, E, S, N, T, F, J, P 중 4글자)";
+                console.log(this.MBTIerrorMessage)
+              } else {
+                this.validMBTI = true;
+                this.MBTIerrorMessage = ""; // 유효성 검사 통과 시 메시지 초기화
+                this.validMBTIsuccess = this.validMBTI
+              }
+            }
+          },
+
+          validateGender() {
+            this.validselect = this.selectedGenders !== null;
+          },
+          
           joinMember(){
-            const formData = new FormData();
-            formData.append('id', this.username);
-            formData.append('pwd', this.password);
-            formData.append('name', this.name);
-            formData.append('gender', this.selectedGender);
-            formData.append('mbti', this.customMBTI);
-            formData.append('tel', this.phoneNumber);
-            formData.append('address', this.roadAddress+' '+this.detailAddress);
-            formData.append('profileImage', this.profileImage);
-            formData.append('lat', this.x);
-            formData.append('lng', this.y);
-          axios.post('http://localhost:8080/joinMember',formData)
+            const requiredFields = [
+            this.username,
+            this.password,
+            this.passwordConfirm,
+            this.name,
+            this.phoneNumber,
+            this.selectedGender,
+            this.customMBTI
+            ];
+            const emptyFields = [
+            !this.username,
+            !this.password,
+            !this.passwordConfirm,
+            !this.name,
+            !this.phoneNumber,
+            !this.selectedGender,
+            !this.customMBTI
+            // 추가 필드가 있다면 여기에 계속 추가
+          ];
+          
+            if (requiredFields.every(field => field) && !emptyFields.some(field => field)) {
+          // 유효성 통과: 회원가입 수행
+          const formData = new FormData();
+          formData.append('id', this.username);
+          formData.append('pwd', this.password);
+          formData.append('name', this.name);
+          formData.append('gender', this.selectedGender);
+          formData.append('mbti', this.customMBTI);
+          formData.append('tel', this.phoneNumber);
+          formData.append('address', this.roadAddress+' '+this.detailAddress);
+          formData.append('profileImage', this.profileImage);
+          formData.append('lat', this.x);
+          formData.append('lng', this.y);
+          axios.post(process.env.VUE_APP_API_URL+'/joinMember',formData)
           .then(res => {
-              console.log(res);
+            console.log(res);
           })
           .catch(err => console.log(err));
+          this.joinMembering();
+            }else {
+              // 유효성 미통과: 해당 지점에 대한 간략한 설명을 표시
+              alert('회원가입에 필요한 정보를 올바르게 입력해주세요.');
+          }
+        },
+            joinMembering() {
+            // 회원가입 로직 수행
+            // ...
+            alert('회원가입이 완료되었습니다!');
           },
+
           custominput(){
             this.customMBTI = this.mbtiString
-            return ;
+            return this.modalOpen;
           },
+
           getButtonStyle(index) {
             if (index === 0) {
               return {
@@ -411,7 +527,6 @@ export default {
             }else if (this.currentGroupIndex === 4 && (index === 7 || index === 8)) {
               this.currentGroupIndex = 5;
             }
-    
 
     
   },
@@ -428,7 +543,6 @@ export default {
     }else if (this.currentGroupIndex === 4) {
       return index === 7 || index === 8;
     }
-
   },
       images_gpt() {
           this.loading = true;
@@ -445,7 +559,7 @@ export default {
           const form = new FormData();
           form.append('prompt', text);
 
-          axios.post('http://127.0.0.1:5000/images_gpt', form, {
+          axios.post(process.env.VUE_APP_PYTHON_API_URL+'/images_gpt', form, {
                   headers: {
                       'Content-Type': 'application/json',
                   },
@@ -469,10 +583,10 @@ export default {
                       const blob = new Blob([response.data], { type: 'image/jpeg' });
 
                     // Create File from Blob
-                    const file = new File([blob], `${text}.jpg`, { type: 'image/jpeg' });
+                  const file = new File([blob], `${text}.jpg`, { type: 'image/jpeg' });
 
-                    console.log(file);
-                    this.profileImage = file;
+                  console.log(file);
+                  this.profileImage = file;
                     } else {
                     console.error('이미지 생성 실패');
                     }
@@ -495,7 +609,7 @@ export default {
               const kakao = new FormData();
               kakao.append('address', this.roadAddress);
 
-              axios.post('http://127.0.0.1:5000/kakao', kakao, {
+              axios.post(process.env.VUE_APP_PYTHON_API_URL+'/kakao', kakao, {
                   headers: {
                   'Content-Type': 'application/json',
                   },
@@ -518,11 +632,13 @@ export default {
 
       sendVerificationCode() {
           if (this.validPhoneNumber) {
+            this.remainingTime = 180;
+            this.stopTimer();
               const data = {
                   to: this.phoneNumber,
               };
 
-              axios.post('http://127.0.0.1:5000/coolsms', data, {
+              axios.post(process.env.VUE_APP_PYTHON_API_URL+'/coolsms', data, {
                       headers: {
                           'Content-Type': 'application/json',
                       },
@@ -530,10 +646,13 @@ export default {
                   .then(response => {
                       if (response.data) {
                           this.serverVerificationCode = response.data.random_number;
-                          this.codeMessage = '발송되었음';
+                          this.codeMessage = '발송되었습니다.';
                           this.showVerification = true;
+                          this.timehidden = true;
                           console.log(this.random_number)
                           console.log(this.serverVerificationCode)
+                          this.remainingTime= 180;
+                          this.startTimer();
                       }
                   })
                   .catch(error => {
@@ -542,6 +661,7 @@ export default {
           } else {
               console.error('Invalid phone number');
           }
+          return 
       },
 
 
@@ -549,34 +669,64 @@ export default {
           // 입력한 인증 번호와 서버에서 받은 인증 번호 비교
           if (this.verificationCode === this.serverVerificationCode) {
               this.verificationResultMessage = '인증 성공!';
+              this.stopTimer()
           } else {
-              this.verificationResultMessage = '인증 실패. 올바른 인증 번호를 입력하세요.';
+              this.verificationResultMessagesuccess = '인증 실패. 올바른 인증 번호를 입력하세요.';
           }
       },
 
       validateUsername() {
           // 아이디 유효성 검사 로직 추가
-          const koreanPattern = /^[a-zA-Z0-9_-]{1,20}$/;
+          this.validUsername=false;
+          const koreanPattern = /^[a-zA-Z0-9_-]{5,20}$/;
           //아이디: 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다
           if (!this.username) {
-              this.usernameErrorMessage = '∙ 아이디를 입력해주세요';
+            this.usernameErrorMessage = '※ 아이디를 입력은 필수입니다.';
           } else if (!koreanPattern.test(this.username)) {
-              this.usernameErrorMessage = '아이디: 5~20자의 영문, 숫자와 특수기호(_),(-)만 사용 가능합니다';
+            this.usernameErrorMessage = '아이디: 5~20자의 영문, 숫자와 특수기호(_),(-)만 사용 가능합니다';
           } else {
-              const form = new FormData();
-              form.append('username', this.username);
-              axios.post('http://127.0.0.1:5000/duplicate', form)
-                  .then(response => {
-                      if (response.data)
-                          this.usernameErrorMessage = '∙ 중복된 아이디';
-                      else {
-                          this.usernameErrorMessage = '∙ 사용 가능한 아이디 입니다.';
-                          return;
-                      }
-                  })
-                  .catch(err => console.log(err));
+            const id = this.username;
+            axios.get(process.env.VUE_APP_API_URL+'/findById', {
+                params: {
+                    id: id
+                }
+            })
+            .then(res => {
+              console.log(res.data);
+              if(res.data){
+              this.usernameErrorMessage ='∙ 사용 가능합니다.';
+              console.log(this.validUsernamesuccess)
+              this.validUsernamesuccess= this.validUsername=true;
+              }
+              else {
+              this.usernameErrorMessage = '∙ 중복된 아이디 입니다. ';
+              }
+            })
+            .catch(err => {
+              console.error(err);
+            });
           }
-          this.validUsername = false;
+        //     const form = new FormData();
+        //     form.append('username', this.username);
+        //     axios.post('http://127.0.0.1:5000/duplicate', form)
+        //     .then(response => {
+              
+        //       if (response.data)
+        //       this.usernameErrorMessage = '∙ 중복된 아이디';
+        //     else {
+        //       this.usernameErrorMessage = ' ';
+        //       console.log(this.validUsernamesuccess)
+        //       this.validUsernamesuccess= this.validUsername=true;
+              
+              
+              
+        //       return;
+        //     }
+        //   })
+        //   .catch(err => console.log(err));
+        // }
+        
+          
       },
 
 
@@ -586,7 +736,7 @@ export default {
           console.log('Password:', this.password);
           if (!this.password) {
               this.validPassword = false;
-              this.passwordErrorMessage = '∙ 비밀번호를 입력하세요.';
+              this.passwordErrorMessage = '※ 비밀번호를 입력은 필수입니다.';
           } else {
               let errorMessage = '';
 
@@ -598,22 +748,27 @@ export default {
 
               this.validPassword = errorMessage === '';
               this.passwordErrorMessage = errorMessage;
+              
+              this.passwordsuccess= this.validPassword;
+              console.log(this.passwordsuccess)
           }
       },
       validatePasswordConfirmation() {
           if (!this.passwordConfirm) {
               this.validPasswordConfirmation = false;
-              this.valpasswordErrorMessage = '∙ 비밀번호를 다시 입력하세요.';
+              this.valpasswordErrorMessage = '※ 비밀번호를 다시 입력은 필수입니다.';
           } else {
               this.validPasswordConfirmation = this.password === this.passwordConfirm;
               this.valpasswordErrorMessage = this.validPasswordConfirmation ? '' : '∙ 비밀번호가 일치하지 않습니다.';
           }
+          this.passwordsuccess2= this.validPassword;
+          console.log(this.passwordsuccess2)
       },
 
       validateName() {
           if (!this.name) {
               this.validName = false;
-              this.nameErrorMessage = '∙ 닉네임을 입력하세요.';
+              this.nameErrorMessage = '※ 닉네임을 입력은 필수입니다.';
           } else {
               let errorMessage = '';
 
@@ -629,6 +784,7 @@ export default {
 
               this.validName = errorMessage === '';
               this.nameErrorMessage = errorMessage;
+              this.validNamesuccess = this.validName;
           }
       },
 
@@ -638,7 +794,7 @@ export default {
               // 여기에서 필요한 유효성 검사를 추가할 수 있습니다.
               // 현재는 비어있는 경우 에러 메시지만 표시합니다.
               this.validPhoneNumber = false;
-              this.phoneNumberErrorMessage = '∙ 전화번호를 입력하세요.';
+              this.phoneNumberErrorMessage = '※ 전화번호를 입력은 필수입니다.';
           } else {
               // 유효성 검사 로직을 추가할 수 있습니다.
               let errorMessage = '';
@@ -652,6 +808,7 @@ export default {
               this.validPhoneNumber = errorMessage === '';
               this.phoneNumberErrorMessage = errorMessage;
           }
+          this.PhoneNumbersuccess = this.phoneNumber
       },
 
       handleFileUpload(event) {
@@ -676,6 +833,11 @@ export default {
 
               // 파일을 읽어옵니다.
               reader.readAsDataURL(file);
+          }else{
+            console.log('No file selected');
+            // 데이터 값을 0으로 설정
+            this.profileImage = 0;
+            
           }
       },
       openFileInput() {
@@ -689,14 +851,14 @@ export default {
           if (this.image_url) {
               console.log('image_url:', this.image_url);
               this.imageData.poto = this.image_url;
-              this.imageSize = '150px';
+              this.imageSize = '250px';
 
 
           }
       },
       modalOpen() {
           this.modalCheck = !this.modalCheck
-          document.querySelector(".modal-wrap").style.zIndex = 1000;
+          document.querySelector(".modal-wrap").style.zIndex = 9999;
       },
   },
 };
@@ -718,15 +880,11 @@ export default {
   background: #ffffff;
   display: inline-block;
   width: 1000px;
-  height: 1400px;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+  height: 1300px;
 }
 
 .a1 {
-  background: #dbd3d3;
+  background: #ffffff;
 
 }
 
@@ -761,7 +919,7 @@ export default {
   border: none;
   border: 1px solid #858383;
   transition: border-color 0.2s;
-  margin-top: 10px;
+  margin-top: 20px;
   /* 위쪽 간격 조절 */
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -780,19 +938,20 @@ export default {
   box-sizing: border-box;
 }
 
-/* .select{
-position: relative;
-width: 450px;
-height: 150px;
-background: blue;
-} */
 
-.input:focus {
+
+
+.input:focus,
+.test:focus,
+.addrnumber:focus,
+.addrnum:focus,
+.addradd:focus {
   outline: none;
   border: 2px solid #4CAF50;
   border-color: #4CAF50;
   /* 초록색 테두리로 변경 */
-}
+} 
+
 
 .id_icon,
 .name_icon,
@@ -801,11 +960,12 @@ background: blue;
 .address_icon,
 .email_icon {
   /* border: 1px solid red; */
-  margin-left: 250px;
+  margin-left: 20px;
   z-index: 1;
   display: flex;
   position: absolute;
-  margin-top: 25px;
+  margin-top: 35px;
+  display: inline-block;
 }
 
 .search_icon {
@@ -865,7 +1025,6 @@ background: blue;
   text-align: center;
   font-weight: bold;
   font-size: 15px;
-  position: fixed;
   top: 0px;
   /* 선을 고정할 위치의 상단 여백 설정 */
   left: 1px;
@@ -875,7 +1034,6 @@ background: blue;
   background-color: #fff;
   color: #333;
   margin-right: -1px;
-  margin-left: 0px;
   position: relative;
   /* border-top-right-radius: 20px; */
 }
@@ -889,6 +1047,7 @@ background: blue;
 .gender1[type=radio]+label {
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
+  margin-left: -50px;
 }
 
 .gender2[type=radio]+label {
@@ -900,32 +1059,71 @@ background: blue;
 .btn {
   position: relative;
   top: 40px;
-  width: 450px;
-  height: 60px;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
+  width: 500px;
+  height: 70px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 .join {
   position: relative;
-  display: flex;
+  display: inline-block;
   border-bottom: 1px solid #858383;
   height: 0px;
   margin-top: 30px;
-  width: 450px;
-  margin-left: 30px;
+  width: 500px;
+  margin-left: 10px;
 }
 
+
+
+
+  /* 초록색 테두리 정의 */
+  .form_pwd1.success .input,
+  .form_pwd2.success .input,
+  .form_phone.success .input,
+  .form_id.success .input, 
+  .form_name.success .input,
+  .form_MBTI.success .test{
+  
+      border: 2px solid #4caf50; /* 초록색 테두리 */
+  }
+  .form_pwd1 .input-success,
+  .form_pwd2 .input-success,
+  .form_phone .input-success,
+  .form_id .input-success,
+  .form_name .input-success
+   {
+      color: #4caf50; /* 초록색 텍스트 */
+      font-size: 12px;
+      display: block;
+      margin-bottom: -10px;
+      margin-top: 6px;
+      font-size: 12px;
+      text-align: left;
+      margin-left: 250px;
+  }
+  .form_MBTI .input-success{
+      color: #4caf50; /* 초록색 텍스트 */
+      font-size: 12px;
+      display: block;
+      margin-bottom: -10px;
+      margin-top: 6px;
+      font-size: 12px;
+      text-align: center;
+      margin-left: 160px;
+  }
 .input-error {
+  display: block;
   color: red;
-  margin-bottom: -5px;
-  margin-top: 2px;
+  margin-bottom: -10px;
+  margin-top: 6px;
   font-size: 12px;
   text-align: left;
   /* border: 1px solid red; */
-  margin-left: 60px;
+  margin-left: 250px;
 }
 
 .form_id.error .input,
@@ -933,7 +1131,11 @@ background: blue;
 .form_pwd2.error .input,
 .form_pwdConfirm.error .input,
 .form_name.error .input,
-.form_phone.error .input {
+.form_phone.error .input,
+.form_MBTI.error .test,
+.form_address.error .addradd,
+.form_address.error .addrnum,
+.form_address.error .addrnumber {
   border: 2px solid red;
 }
 
@@ -948,18 +1150,22 @@ background: blue;
 
 .rounded-image {
   border-radius: 25%;
-  margin-left: 20px
+  margin-left: -230px;
+  margin-bottom:0px;
+  margin-top: 50px;
 }
 
 .test {
-  width: 90px;
-  height: 35px;
-  margin-left: 100px;
-  margin-top: 10px;
+  width: 110px;
+  height: 39.3px;
+  margin-left: 152px;
+  margin-top: 11.3px;
   border: 1px solid#858383;
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
   position: relative;
+  text-align: center;
+  z-index: 10;
 }
 
 
@@ -976,10 +1182,10 @@ background: blue;
 .form_address .btn {
 position: relative;
 width: 50px;
-height: 31px;
+height: 35px;
 font-size: 12px;
-margin-top: -81px;
-left: -190px;
+margin-top: -83px;
+left: -245px;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -988,28 +1194,40 @@ left: -190px;
 }
 
 .addrnumber {
-  margin-right: 199px;
-  margin-top: 10px;
+  margin-right: 249px;
+  margin-top: 20px;
   width: 150px;
   border: 1px solid#858383;
-  height: 30px;
+  height: 35px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .addrnum {
   position: absolute;
-  width: 350px;
+  width: 400px;
   margin-top: 13px;
   margin-right: 0px;
   border: 1px solid#858383;
-  height: 30px;
+  height: 35px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .addradd {
-    width: 200px;
-    margin-top: 55px;
+    width: 250px;
+    margin-top: 60px;
     margin-right: 200px;
     border: 1px solid#858383;
-    height: 30px;
+    height: 35px;
+    border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .form_address {
@@ -1017,7 +1235,7 @@ left: -190px;
   height: 200px;
   margin-top: 15px;
   width: 500px;
-  margin-left: 230px;
+  display: inline-block;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   border-bottom-right-radius: 15px;
@@ -1039,39 +1257,35 @@ left: -190px;
   position: absolute;
   width: 16px;
   height: 16px;
-  margin-top: 8px;
-  margin-left: -8px;
+  margin-top: 10px;
+  margin-left: 18px;
 }
 
-.form_name .input {
-  margin-top: 0px;
-}
 
-.name_icon {
-  margin-top: 16px;
-}
 
 .form_phone {
   position: relative;
-  margin-top:-20px;
-  margin-bottom:20px;
-  /* 상위 컨테이너에 position: relative; 추가 */
+  margin-bottom: 20px;
 }
 
 .custom-class {
   position: absolute;
-  display: block;
-  margin-top: -22.5px;
-  margin-left: 395px;
-  font-size: 10px;
+  display: inline-block;
+  margin-top: -12.5px;
+  margin-left: -70px;
+  font-size: 8px;
   width: 60px;
   height: 35px;
   border: 1px solid#858383;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .checkcode {
-  margin-top: 10px;
-  margin-right: 230px;
+  margin-top: 20px;
+  margin-right: 320px;
   width: 150px;
   font-style: oblique;
   /* normal,italic,oblique =폰트 종류 */
@@ -1088,7 +1302,7 @@ left: -190px;
 
 .confirm-btn {
   position: absolute;
-  display: block;
+  display: inline-block;
   width: 65px;
   height: 35px;
   font-size: 10px;
@@ -1099,15 +1313,18 @@ left: -190px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  margin-left: -315px;
+  margin-top: 63px;
 }
 
 .modal-class {
+  position: absolute;
+  display: inline-block;
   width: 100px;
-  height: 40px;
-  font-size: 10px;
-  top: 0;
-  margin-bottom: 20px;
-  margin-left: 10px;
+  height: 50px;
+  font-size: 12px;
+  top: 280px;
+  margin-left: 51px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -1138,11 +1355,14 @@ left: -190px;
 
 .pcfile-class {
   width: 100px;
-  height: 40px;
-  font-size: 10px;
+  height: 50px;
+  font-size: 12px;
   top: 0;
-  margin-bottom: 20px;
-  margin-left: 0px;
+  margin-left: 50px;
+  position:absolute;
+  display: inline-block;
+  /*z-index: 9990;*/
+  margin-top: 210px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -1150,16 +1370,16 @@ left: -190px;
 }
 
 .mbtimodal {
-  width: 100px;
-  height: 35.2px;
+  width: 117px;
+  height: 40px;
   font-size: 13px;
   top: 0;
-  margin-top: -65px;
-  margin-left: 288px;
+  margin-top: -59px;
+  margin-left: 379px;
   border-top-left-radius: 0px;
-  border-top-right-radius: 10px;
+  border-top-right-radius: 15px;
   border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 15px;
 }
 
 .white-bg {
@@ -1239,6 +1459,7 @@ width: 420px;
   text-transform: uppercase;
   text-decoration: none;
   position: relative;
+  top:-6px;
   &:before,
   &:after {
       content: '';
@@ -1278,6 +1499,7 @@ width: 420px;
   margin-right: 100px;
   width: 200px;
   height: 60px;
+  margin-top:20px;
   border: 1px solid rgb(204, 206, 202);
   background-color: #000000;
   border-top-left-radius: 10px;
@@ -1293,11 +1515,7 @@ margin-left: 70px;
 }
 /* mbti 버튼 스타일 --------------------------------------------------*/
 
-* {
-padding: 0;
-margin: 0;
-box-sizing: border-box;
-}
+
 
 
 
@@ -1366,8 +1584,16 @@ bottom: 0;
   position: relative;
 }
 .fade{
-  position: relative;
+ top: 150px;
+ z-index: 9999;
 }
+.profill{
+  position: absolute;
+  display: inline-block;
+  margin-top: 15px;
+  margin-left: -200px;
+}
+
 
 
 

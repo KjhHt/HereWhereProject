@@ -85,9 +85,6 @@ public class IndexController {
 		return "loginForm";
 	}
 	
-	
-
-	
 	@PostMapping("/join")
 	public String join(@RequestParam Map map) {
 		String id = map.get("id").toString();
