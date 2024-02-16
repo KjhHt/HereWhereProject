@@ -13,11 +13,14 @@
   />
 
 
-  <div v-for="(boardItem) in boardList" :key="boardItem.board_no" ref="boardRef">
+  <div v-for="(boardItem,index) in boardList" :key="boardItem.board_no" ref="boardRef">
       <div class="item">
       <div class="image">
-          <div>
-            <img :src="boardItem['profileimage']" />
+          <div class="profile-dropdown">
+            <img :src="boardItem['profileimage']" @click="toggleDropdown(index)"/>
+            <div v-if="dropdownStates[index]" class="dropdown-menu">
+              <div class="dropdown-item" @click="followRequest(boardItem.id,index)">팔로우 요청</div>
+            </div>
           </div>
       </div>
       <div class="details">
@@ -71,10 +74,14 @@
 </template>
 
 <script setup>
-  import { ref , onMounted  } from 'vue';
+  import { ref , onMounted, defineProps } from 'vue';
   import WriteForm from '@/components/board/WriteForm.vue'
   import DetailForm from '@/components/detail/DetailView.vue'
   import axios from 'axios';
+
+  const props = defineProps({
+    stompClient: Object,
+  });
 
   const boardList = ref([]);
   const imageSrc = ref({});
@@ -85,6 +92,30 @@
   const open=ref(false);
   const detailOpen=ref(false);
   const boardDetail=ref([]);
+  const dropdownStates = ref([]);
+
+  const followRequest = (rid,index) => {
+    // 내 자신한테 팔로우 거는건 말이안됨, 애초에 게시판 생성될때
+    // 막아 둘수있도록 나중에 바꾸자 아 클릭이벤트에 걸면 되겠네
+    dropdownStates.value[index] = false;
+    const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+    const id = vuexStore.loginStore.userInfo.id;
+    console.log(id,'내 자신');
+    console.log(rid,'보낸사람 아이디');
+    //팔로우 요청 서버보내기
+    const stompClient = props.stompClient;
+    stompClient.send("/app/followRequest", {}, JSON.stringify({ follow_senderid: id, follow_recipientid: rid }));
+  
+    axios.post(`${process.env.VUE_APP_API_URL}/pushSend`, {
+      id : rid,  // 알림을 받을 사용자의 ID
+      title: '팔로우 요청이 있습니다.',  // 알림의 제목
+    });
+  
+  }
+
+  const toggleDropdown = (index) =>{
+    dropdownStates.value[index] = !dropdownStates.value[index];
+  }
 
   const writeForm=()=>{
       open.value=!open.value;
@@ -128,7 +159,8 @@
 
   function like(no){
     console.log(no);
-    axios.get('http://localhost:8080/user/like?board_no='+no)
+    
+    axios.get(`${process.env.VUE_APP_API_URL}/user/like?board_no=`+no)
     .then(res => {
       console.log(res.data);
       if(res.data){
@@ -154,7 +186,8 @@
 
   async function list(num) {
     try {
-      const res = await axios.get('http://localhost:8080/board?num=' + num);
+      
+      const res = await axios.get(`${process.env.VUE_APP_API_URL}/board?num=` + num);
       const newBoardList = res.data;
       for (const board of newBoardList) {
         const filenames = board.board_imageFileName ? board.board_imageFileName.split(',') : [];
@@ -195,7 +228,8 @@
           const lastSegment = pathSegments[pathSegments.length - 1];
           
           try {
-            const res = await axios.get(`http://localhost:8080/profile/${lastSegment}`);
+            
+            const res = await axios.get(`${process.env.VUE_APP_API_URL}/profile/${lastSegment}`);
             const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
             board['profileimage'] = dataURI;
           } 
@@ -221,7 +255,7 @@
   async function updateMessage(key,imageName) {
       try {
           const res = 
-              await axios.get(`http://localhost:8080/image/${imageName}`,
+              await axios.get(`${process.env.VUE_APP_API_URL}/image/${imageName}`,
               { responseType: 'arraybuffer' });
           const base64Image = await arrayBufferToBase64(res.data);
           imageSrc.value[key] = imageSrc.value[key] || [];
@@ -292,9 +326,10 @@
     justify-content: space-between;
     align-items: center;
   }
+
   .item {
     display: flex;
-    max-width: 60%;
+    max-width: 600px;
     margin: 0 auto;
     .image {
       padding: 1.5em 2em;
@@ -317,6 +352,7 @@
         max-width: 60px;
         border-radius: 50%;
         height: 4em;
+        cursor: pointer;
       }
       span {
         display: block;
@@ -364,4 +400,40 @@
   #commentDiv {
     cursor: pointer;
   }
+
+
+/* 드롭다운 메뉴 스타일 위치 */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+/* Cat 이미지 스타일 */
+.cat-image {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 100px;
+  cursor: pointer;
+}
+/* 드롭다운 메뉴 스타일 추가 */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dropdown-item {
+  padding: 8px;
+  text-align: center;
+  text-decoration: none;
+  color: #000;
+  cursor: pointer;
+}
+
   </style>

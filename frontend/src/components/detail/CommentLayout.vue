@@ -31,7 +31,8 @@ onMounted(() => {
 
 const getComment = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/comment', {
+    
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/comment`, {
       params: {
         board_no: props.boardDetail[0]
       }
@@ -47,7 +48,7 @@ const getComment = async () => {
         if(profileimage.startsWith("D:") || profileimage.startsWith("E:") ){
           const pathSegments = profileimage.split('\\');
           const lastSegment = pathSegments[pathSegments.length - 1];
-          const imgResponse = await axios.get(`http://localhost:8080/profile/${lastSegment}`);
+          const imgResponse = await axios.get(`${process.env.VUE_APP_API_URL}/profile/${lastSegment}`);
           const dataURI = `data:${imgResponse.headers['content-type']};base64,${imgResponse.data}`;
           res.data[key].profileimage = dataURI;
         }
@@ -73,7 +74,8 @@ const sendMessage = (msg) => {
     comment_content : msg,
     comment_writer : name
   }
-  axios.post('http://localhost:8080/user/commentInsert',data)
+  
+  axios.post(`${process.env.VUE_APP_API_URL}/user/commentInsert`,data)
   .then( res => {
     if(res.status === 200){
       getComment();

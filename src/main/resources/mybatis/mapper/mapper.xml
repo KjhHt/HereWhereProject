@@ -21,7 +21,7 @@
 	</select>
 	
 	<select id="findByMemberInfo" resultType="UserDto" parameterType="String">
-		SELECT name,profileimage FROM member WHERE id = #{id}
+		SELECT id,name,profileimage FROM member WHERE id = #{id}
 	</select>
 	
 	<insert id="joinSocialMember" parameterType="UserDto">
@@ -105,5 +105,101 @@
 		DELETE like_table WHERE like_id = #{id} AND board_no = #{board_no}
 	</delete>
 	
+	<select id="pushFindToken" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM push_table WHERE id = #{id}
+	</select>
+	<insert id="pushInsert" parameterType="String">
+		INSERT INTO push_table VALUES(#{id},#{token})
+	</insert>
+	<update id="pushUpdate" parameterType="String">
+		UPDATE push_table SET push_token = #{token} WHERE id = #{id}
+	</update>
+
+	<select id="findTokenByUserId" resultType="String">
+	    SELECT push_token FROM push_table WHERE id = #{id}
+	</select>
+	
+	<delete id="deletePushToken" parameterType="String">
+		DELETE push_table WHERE id = #{id}
+	</delete>
+	
+	<select id="checkFollowRequest" resultType="int" parameterType="FollowDto">
+		SELECT COUNT(*) AS request_count 
+		FROM follow_table
+		WHERE (follow_senderid = #{follow_senderid} AND follow_recipientid = #{follow_recipientid})
+	       OR (follow_senderid = #{follow_recipientid} AND follow_recipientid = #{follow_senderid})
+	</select>
+	
+	<insert id="insertFollow" parameterType="FollowDto">
+		INSERT INTO follow_table VALUES(seq_follow.nextval,#{follow_senderid},#{follow_recipientid},sysdate,'F',NULL,#{notice_no})
+	</insert>
+	
+	<select id="getNoticeNo" parameterType="FollowDto">
+		SELECT notice_no
+		FROM notice_table
+		WHERE id = #{follow_recipientid}
+        order by notice_createtime desc
+        fetch first 1 row only
+	</select>
+	
+	<select id="getFollowList" parameterType="String" resultType="FollowDto">
+		SELECT m.id,m.name, m.profileimage
+		FROM follow_table f
+		JOIN member m ON m.id = 
+		    CASE
+		        WHEN f.follow_senderid = #{id} THEN f.follow_recipientid
+		        WHEN f.follow_recipientid = #{id} THEN f.follow_senderid
+		    END
+		WHERE (f.follow_senderid = #{id} OR f.follow_recipientid = #{id}) 
+		AND f.follow_is = 'Y'
+	</select>
+	
+	<select id="findById" resultType="int" parameterType="String">
+		SELECT count(*) FROM member WHERE id = #{id}
+	</select>
+	
+	<select id="getDmNo" resultType="ChatDto" parameterType="String">
+		SELECT *
+		FROM dm_table
+		WHERE (DM_SENDER_ID = #{rid} AND DM_RECIPIENT_ID = #{id})
+	    OR (DM_SENDER_ID = #{id} AND DM_RECIPIENT_ID = #{rid})
+	</select>
+	
+	<select id="chatList" resultType="ChatDto" parameterType="String">
+		SELECT ms.* 
+		FROM dm_table dm JOIN dm_message ms 
+		ON dm.dm_no = ms.dm_no
+		WHERE dm.dm_no = #{dm_no}
+		ORDER BY dm_sendtime
+	</select>
+
+	<insert id="insertChatRoom" parameterType="String">
+		INSERT INTO dm_table VALUES(SEQ_DM.nextval,#{id},#{rid},'0')
+	</insert>
+	<select id="getSeqDmNo" resultType="string">
+    	SELECT SEQ_DM.nextval FROM dual
+	</select>
+	<insert id="insertMessage" parameterType="ChatDto">
+		INSERT INTO dm_message VALUES(#{dm_no},#{dm_sender_id},#{dm_content},sysdate)
+	</insert>
+	<insert id="insertNotice" parameterType="NoticeDto">
+		INSERT INTO notice_table VALUES(SEQ_NOTICE_TABLE.nextval,#{notice_content},sysdate,#{id})
+	</insert>
+	
+	<select id="noticeList" parameterType="String" resultType="NoticeDto">
+		SELECT * FROM notice_table WHERE id = #{id}
+	</select>
+
+	<update id="successFollow" parameterType="String">
+		UPDATE follow_table SET follow_is = 'Y',follow_responsetime=sysdate WHERE notice_no = #{notice_no}
+	</update>
+	<delete id="FailFollow" parameterType="String">
+		DELETE follow_table WHERE notice_no = #{notice_no}
+	</delete>
+	<delete id="deleteNotice" parameterType="String">
+		DELETE notice_table WHERE notice_no = #{notice_no}
+	</delete>
+
+
 
 </mapper>

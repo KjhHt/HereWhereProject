@@ -41,11 +41,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 		    for (Cookie cookie : cookies) {
 		        if (cookie.getName().equals("User-Token")) { 
 		        	jwttoken = cookie.getValue();
+		        	
 		            break;
 		        }
 		    }
 		}
 		
+
 		if(jwttoken == null ) {
 			System.out.println("해당 쿠키가 없다");
 			chain.doFilter(request, response);

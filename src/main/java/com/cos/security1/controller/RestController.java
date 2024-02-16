@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cos.security1.service.MemberService;
 import com.cos.security1.service.dto.BoardDto;
+import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.FollowDto;
+import com.cos.security1.service.dto.NoticeDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
@@ -39,12 +43,6 @@ public class RestController {
 	
 	@Autowired
 	private MemberService service;	
-	
-	@GetMapping("/test")
-	public String test() {
-		System.out.println("vue build 12");
-		return "test";
-	}
 	
 	@GetMapping("/user/test")
 	public String userTest() {
@@ -331,4 +329,124 @@ public class RestController {
 	    if(islike) return true;
 	    else return false;
     }
+    
+    @GetMapping("/user/followList")
+    public List<FollowDto> followList(HttpServletRequest req) throws IOException {
+		String token = null;
+		Cookie[] cookies = req.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	                String cookieValue = cookie.getValue();
+	                token = cookieValue;
+	            }
+	        }
+	    }
+	    Map username = JWTTokens.getTokenPayloads(token);
+	    String id = (String)username.get("username");
+    	
+	    List<FollowDto> followList = service.getFollowList(id);
+    	if(followList.size() > 0) {
+		    for(FollowDto value : followList) {
+		    	if(value.getProfileImage().equals("0")) {
+		    		value.setProfileImage("/img/dino.e5443f55.jpg");
+		    	}
+		    	else if(value.getProfileImage().startsWith("D:") || value.getProfileImage().startsWith("E:") ) {
+		    	    String imagePath = value.getProfileImage();
+		            Path imagePathInFileSystem = Paths.get(imagePath);
+		            Resource resource = new UrlResource(imagePathInFileSystem.toUri());
+		            byte[] imageBytes = resource.getInputStream().readAllBytes();
+		            String base64Image = Base64.encodeBase64String(imageBytes);
+		            value.setProfileImage("data:image/png;base64," + base64Image);
+		    	}
+		    	else {
+		    		// 소셜일때는 가공필요없음
+		    	}
+		    }
+    	}
+    	
+    	return followList;
+    }
+    
+    @GetMapping("/user/chatList")
+    public List<ChatDto> chatList(HttpServletRequest req,@RequestParam String rid){
+		String token = null;
+		Cookie[] cookies = req.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	                String cookieValue = cookie.getValue();
+	                token = cookieValue;
+	            }
+	        }
+	    }
+	    Map username = JWTTokens.getTokenPayloads(token);
+	    String id = (String)username.get("username");
+    	String dm_no = service.getDmNo(id,rid);
+    	List<ChatDto> chatList = service.chatList(dm_no);
+    	for(ChatDto value : chatList) {
+    		
+    		if (id.compareTo(rid) < 0) {
+    			value.setDm_chat_id(id + "-" + rid);
+    		} 
+    		else {
+    			value.setDm_chat_id(rid + "-" + id);
+    		}
+    		
+    		if(id.equalsIgnoreCase(value.getDm_sender_id())) {
+    			value.setDm_type("me");
+    		}
+    		else {
+    			value.setDm_type("you");
+    		}
+    	}
+    	return chatList;
+    }
+    
+    
+    @GetMapping("/findById")
+    public boolean findById(@RequestParam String id) {
+    	return service.findById(id);
+    }
+    
+    @PostMapping("/user/insertMessage")
+    public void insertMessage(@RequestBody ChatDto chatdto) {
+    	String id = chatdto.getDm_sender_id();
+    	String rid = chatdto.getDm_recipient_id();
+    	chatdto.setDm_no(service.getDmNo(id,rid));
+    	service.insertMessage(chatdto);
+    }
+    
+    @GetMapping("/noticeList")
+    public List<NoticeDto> noticeList(HttpServletRequest req){
+		String token = null;
+		Cookie[] cookies = req.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	                String cookieValue = cookie.getValue();
+	                token = cookieValue;
+	            }
+	        }
+	    }
+	    Map username = JWTTokens.getTokenPayloads(token);
+	    String id = (String)username.get("username");
+    	List<NoticeDto> noticeList = service.noticeList(id);
+    	return noticeList;
+    }
+    
+    @GetMapping("/successFollow")
+    public String SuccessFollow(@RequestParam String notice_no) {
+    	System.out.println(notice_no);
+    	service.successFollow(notice_no);
+    	return "success";
+    	
+    }
+    @GetMapping("/failFollow")
+    public String FailFollow(@RequestParam String notice_no) {
+    	service.FailFollow(notice_no);
+    	service.deleteNotice(notice_no);
+    	return "fail";
+    }
+    
 }

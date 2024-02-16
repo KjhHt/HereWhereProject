@@ -6,7 +6,10 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.cos.security1.service.dto.BoardDto;
+import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.FollowDto;
+import com.cos.security1.service.dto.NoticeDto;
 import com.cos.security1.service.dto.UserDto;
 
 @Mapper
@@ -37,5 +40,29 @@ public interface MybatisMapper {
 	int islike(String id,String board_no);
 	void insertLike(String id, String board_no);
 	void deleteLike(String id, String board_no);
+	//알림
+	void pushInsert(String id, String token);
+	int pushFindToken(String id);
+	void pushUpdate(String id, String token);
+	String findTokenByUserId(String id);
+	void deletePushToken(String id);
+	//팔로우
+	List<FollowDto> getFollowList(String id);
+	int findById(String id);
+	int checkFollowRequest(FollowDto followRequest);
+	void insertFollow(FollowDto followRequest);
+	//채팅
+	ChatDto getDmNo(String id, String rid);
+	List<ChatDto> chatList(String dm_no);
+	void insertChatRoom(String id, String rid);
+	String getSeqDmNo();
+	void insertMessage(ChatDto chatdto);
+	//알림
+	List<NoticeDto> noticeList(String id);
+	void insertNotice(NoticeDto dto);
+	String getNoticeNo(FollowDto followRequest);
+	void successFollow(String notice_no);
+	void FailFollow(String notice_no);
+	void deleteNotice(String notice_no); 
 	
 }

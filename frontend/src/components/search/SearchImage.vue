@@ -21,7 +21,7 @@ function uploadImage(event) {
     const formData = new FormData();
     formData.append('image', files[0]);
 
-    axios.post('http://127.0.0.1:5000/searchImage', formData, {
+    axios.post(process.env.VUE_APP_PYTHON_API_URL+'/searchImage', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
