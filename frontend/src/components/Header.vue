@@ -13,6 +13,14 @@
           </a>
         </div>
         <nav class="nav">
+          <!-- 테스트 페이지 -->
+          <a @click="$emit('selectPage','test')" class="nav-item" @mouseover="showTooltip('테스트')" @mouseout="hideTooltip">
+            <div class="tooltip-wrapper">
+              <img src="@/assets/location.png" alt="Location Icon" class="nav-icon" />
+              <span v-if="tooltip === '테스트'" class="tooltip">테스트</span>
+            </div>
+          </a>
+          <!-- 테스트 페이지 -->
           <a @click="$emit('selectPage','location')" class="nav-item" @mouseover="showTooltip('위치검색')" @mouseout="hideTooltip">
             <div class="tooltip-wrapper">
               <img src="@/assets/location.png" alt="Location Icon" class="nav-icon" />
@@ -53,6 +61,14 @@
           <span v-if="tooltip === '회원가입'" class="tooltip">회원가입</span>
         </div>
       </a>
+
+      <a @click="$emit('selectPage','trip-moment')" class="nav-item" @mouseover="showTooltip('트립모먼트')" @mouseout="hideTooltip">
+        <div class="tooltip-wrapper">
+          <img src="@/assets/trip-moment.png" alt="Trip-moment Icon" class="nav-icon" />
+          <span v-if="tooltip === '트립모먼트'" class="tooltip">트립모먼트</span>
+        </div>
+      </a>
+      
           <div class="text-end">
             <!-- 로그인 전 상태: -->
               <div v-if="!isLoggedIn">
@@ -61,6 +77,37 @@
 
               <!-- 로그인 후 상태: -->
               <div v-else>
+                <div class="profile-dropdown" id="notification">
+                <img src="@/assets/notice_on.png" alt="Notice" class="cat-image" @click="toggleNoticeDropdown" />
+                <div id="count" v-if="noticeCountData > 0">{{ noticeCountData }}</div>
+                <!-- 드롭다운 메뉴 -->
+                  <div v-if="isNoticeDropdownOpen" class="dropdown-menu">
+
+                  <div v-for="(notice, index) in noticeListData" :key="index">
+                    <div>
+                      <div class="cont">
+                        <p class="alarm">알&nbsp;&nbsp;림</p>
+                      </div>
+                    </div>
+                    <div class="mes">
+                      <div class="request">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                          <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+                        </svg>
+                        <span>&nbsp;&nbsp;{{ notice.id }}님이 {{ notice.notice_content }}</span>
+                      </div>
+                      <br/>
+                      <div class="chose">
+                        <button type="button" class="btn btn-dark" id="btnSuccess" @click="followSuccess(notice.notice_no)">확인</button>
+                        <button type="button" class="btn btn-dark" id="btnFail" @click="followFail(notice.notice_no)">거절</button>
+                      </div>
+                      <div class="timer">{{ notice.notice_createtime }}</div>
+                    </div>
+                  </div>
+                    
+                  </div>
+                </div>
+
                 <div class="profile-dropdown">
                 <img :src="src" alt="Login" class="cat-image" @click="toggleDropdown" />
                 <!-- 드롭다운 메뉴 -->
@@ -82,17 +129,21 @@
 import LoginModal from '@/views/LoginModal.vue';
 import axios from 'axios';
 //import loginStore from '../store/index'
-
 export default {
   name: 'app-header',
   components: {
     LoginModal,
+  },
+  props: {
+    noticeListData : Array,
+    noticeCountData : Object
   },
   data() {
     return {
       src : '',
       loginModalVisible: false,
       isDropdownOpen: false,
+      isNoticeDropdownOpen: false,
       tooltip: '',
     };
   },
@@ -122,7 +173,7 @@ export default {
             if(profileimage.startsWith("D:") || profileimage.startsWith("E:")){
               const pathSegments = profileimage.split('\\');
               const lastSegment = pathSegments[pathSegments.length - 1];
-              axios.get(`http://localhost:8080/profile/${lastSegment}`)
+              axios.get(`${process.env.VUE_APP_API_URL}/profile/${lastSegment}`)
               .then(res => {
                 const dataURI = `data:${res.headers['content-type']};base64,${res.data}`;
                 this.src = dataURI;
@@ -141,6 +192,31 @@ export default {
     },
   },
   methods: {
+    followSuccess(notice_no){
+      console.log('followSuccess 함수');
+      axios.get(process.env.VUE_APP_API_URL+'/successFollow',{
+        params : {
+          notice_no:notice_no
+        }
+      })
+      .then(res=>{
+        console.log(res,' followSuccess 서버에서 옴');
+      })
+      .catch(err=>console.log(err))
+      
+    },
+    followFail(notice_no){
+      console.log('followFail 함수');
+      axios.get(process.env.VUE_APP_API_URL+'/failFollow',{
+        params : {
+          notice_no:notice_no
+        }
+      })
+      .then(res=>{
+        console.log(res,' FailFollow 서버에서 옴');
+      })
+      .catch(err=>console.log(err))
+    },
     showTooltip(text) {
       this.tooltip = text;
     },
@@ -155,6 +231,10 @@ export default {
       // 드롭다운 메뉴 열고 닫기 전환
       this.isDropdownOpen = !this.isDropdownOpen;
     },
+    toggleNoticeDropdown() {
+      // 드롭다운 메뉴 열고 닫기 전환
+      this.isNoticeDropdownOpen = !this.isNoticeDropdownOpen;
+    },
     logoutAndNavigateToMain() {
       this.$store.dispatch('logout')
     },
@@ -164,12 +244,87 @@ export default {
 </script>
 
 <style scoped>
+  #notification {
+    position: relative;
+    display: inline-block;
+  }
+  #count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+  }
 
+
+
+/* 알림창 커스텀 */
+.bi-bell-fill{
+  width: 40px;
+  height: 40px;
+}
+#btnSuccess,#btnFail{
+  width: 70px;
+  height: 35px;
+  color: white;
+  margin-right: 3px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.alarm{
+margin-top: 4px;
+margin-left: 150px;
+  position: absolute;
+}
+.chose{
+  position: absolute;
+  margin-top: 10px;
+  margin-left:200px ;
+}
+.cont{
+  background-color: #74BCF7;
+  position: center;
+  height: 40px;
+  margin-top: -10px;
+  font-size: 25px;
+  color: #fff;
+  text-align: center;
+}
+.mes{
+  height: 90px;
+  border-bottom: 1px solid gainsboro;
+}
+.request{
+  font-weight: bold;
+  /* border: 1px solid red; */
+  height: 29px;
+  margin-top: 0px;
+  background-color: rgb(255, 255, 255);
+}
+.timer{
+  color: #ADADAD;
+  position: absolute;
+  margin-left: 140px;
+  margin-top: 25px;
+  font-size: 15px;
+  text-align: left;
+}
+/* 알림창 커스텀 끝*/
 
 /* 드롭다운 메뉴 스타일 위치 */
 .profile-dropdown {
   position: relative;
   display: inline-block;
+  margin-right: 20px;
 }
 /* Cat 이미지 스타일 */
 .cat-image {
@@ -191,6 +346,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 360px;
 
   
 }

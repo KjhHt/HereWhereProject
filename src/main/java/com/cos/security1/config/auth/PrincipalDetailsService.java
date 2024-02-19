@@ -19,7 +19,6 @@ public class PrincipalDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserDto userEntity = service.findByUsername(username);
 		if(userEntity != null) {
-			
 			return new PrincipalDetails(userEntity);
 		}
 		return null;

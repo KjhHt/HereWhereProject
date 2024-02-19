@@ -11,7 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cos.security1.service.dto.BoardDto;
+import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.FollowDto;
+import com.cos.security1.service.dto.NoticeDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 
@@ -152,6 +155,88 @@ public class MemberService {
 		else { // 등록된거있음
 			return true;
 		}
+	}
+
+	public String findTokenByUserId(String id) {
+		return mapper.findTokenByUserId(id);
+	}
+
+	public void deletePushToken(String id) {
+		mapper.deletePushToken(id);
+	}
+
+	public List<FollowDto> getFollowList(String id) {
+		return mapper.getFollowList(id);
+	}
+
+	public boolean findById(String id) {
+		int count = mapper.findById(id);
+		if(count == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public String getDmNo(String id, String rid) {
+		ChatDto dto = mapper.getDmNo(id,rid);
+		String dm_no = "";
+		if(dto != null) {
+			dm_no = dto.getDm_no();
+			return dm_no;
+		}
+		else {
+			mapper.insertChatRoom(id,rid);
+			dm_no = mapper.getSeqDmNo();
+			return dm_no;
+		}
+		
+	}
+
+	public List<ChatDto> chatList(String dm_no) {
+		return mapper.chatList(dm_no);
+	}
+
+	public void insertMessage(ChatDto chatdto) {
+		mapper.insertMessage(chatdto);		
+	}
+
+	public boolean checkFollowRequest(FollowDto followRequest) {
+		int count = mapper.checkFollowRequest(followRequest);
+		if(count != 0 ) 
+			return true;
+		else
+			return false;
+	}
+
+	public void insertFollow(FollowDto followRequest) {
+		mapper.insertFollow(followRequest);	
+	}
+
+	public List<NoticeDto> noticeList(String id) {
+		return mapper.noticeList(id);
+	}
+
+	public void insertNotice(NoticeDto dto) {
+		mapper.insertNotice(dto);
+	}
+
+	public String getNoticeNo(FollowDto followRequest) {
+		// TODO Auto-generated method stub
+		return mapper.getNoticeNo(followRequest);
+	}
+
+	public void successFollow(String notice_no) {
+		mapper.successFollow(notice_no);
+	}
+
+	public void FailFollow(String notice_no) {
+		mapper.FailFollow(notice_no);
+	}
+
+	public void deleteNotice(String notice_no) {
+		mapper.deleteNotice(notice_no);
 	}
 
 

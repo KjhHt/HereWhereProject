@@ -9,25 +9,51 @@
           <Hamburgermenu :showPlan="showPlan"/>
         </div>
         <!--검색 오프-->
-        <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>  
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>        
+      <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 430px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="search-container">
+            <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" @input="handleSearchInput"  ref="searchRef"/>
+            <button type="button" class="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+            <SearchImage @searchLocation="searchLocation"/>
           </div>
-          <div class="offcanvas-body">
-            <div style="margin-top:10px;">
-              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick"/>
+        <div class="youtubeseach-box">
+          <h5 v-if="youtubeData.length>0" class="youtubesearch"><i class="bi bi-youtube"></i> YouTube</h5>
+          <div id="youtubeCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+            <div class="carousel-inner">
+              <div v-for="(youtube, index) in youtubeData" :key="youtube.id" :class="{ 'carousel-item': true, 'active': index === 0 }">
+                <YoutubeCard :youtube="youtube" />
+              </div>
             </div>
-            <div class="search-container">
-              <!--검색어-->
-              <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" ref="searchRef" />
-              <button type="button" class="search-button">
-                  <i class="fas fa-search"></i>         
-              </button>
-              <SearchImage @searchLocation="searchLocation"/>            
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#youtubeCarousel"
+              data-bs-slide="prev"
+              v-if="youtubeData.length > 0"
+            >
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#youtubeCarousel"
+              data-bs-slide="next"
+              v-if="youtubeData.length > 0"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
             </div>
           </div>
         </div>
+      </div>
 
     <!--여행플랜 오프-->
     <div class="offcanvas offcanvas-start"
@@ -126,7 +152,7 @@
       :map-id="mapOptions.mapId"
       :disable-default-ui="mapOptions.disableDefaultUI"
       ref="mapRef"
-      style="width:100vw; height:calc(100vh - 81px);"
+      style="width:100vw; height:calc(100vh - 86px);"
       >
         <DrawDirection :coords="routeCoords" />
       
@@ -211,7 +237,8 @@
   import PlanCard from "@/components/search/PlanCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
-  import SearchCard from '@/components/search/SearchCard.vue'
+  // import SearchCard from '@/components/search/SearchCard.vue'
+  import YoutubeCard from "@/components/search/YoutubeCard.vue";
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
@@ -267,6 +294,7 @@
   const restaurantsInfo=ref([])
   const attractionsInfo=ref([])
   const plansInfo= ref([])
+  const youtubeData=ref([])
 
   function setPlansInfo(){
     showPlan.value= false;
@@ -279,21 +307,27 @@
     infoRef.value.close();
     showPlan.value= !showPlan.value;
   }
-  
-  /*async function getNearbyHotels(lat,lng){
+  async function getYoutubeData(address){
+  console.log(address);
+  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
+  console.log(response);
+  youtubeData.value=response.data
+}
+
+  async function getNearbyHotels(lat,lng){
     console.log('호텔콘솔:',[lat,lng]);
-    const response= await axios.get('http://127.0.0.1:5000/booking',{params:{lat,lng}})
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/booking',{params:{lat,lng}})
     console.log('response:',response);
     hotelsInfo.value=response.data
     console.log('호텔리스트',hotelsInfo.value)
-  }*/
+  }
 
   async function getNearbyRestaurants(lat,lng){
-    const response= await axios.get('http://127.0.0.1:5000/restaurant',{params:{lat,lng}})
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/restaurant',{params:{lat,lng}})
     restaurantsInfo.value=response.data
   }
   async function getNearbyAttractions(lat,lng){
-    const response= await axios.get('http://127.0.0.1:5000/attraction',{params:{lat,lng}})
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/attraction',{params:{lat,lng}})
     attractionsInfo.value=response.data
   }
   
@@ -301,8 +335,8 @@
     const location=places.geometry.location
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    //getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
-    
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
+    getYoutubeData(places.name)
     moveToPosition(location)
     updateInfoWindow(places)
   }
@@ -878,11 +912,11 @@
     })
   }
 
-  const searchClick= searchInfo=> {
-    leftOffButton.value.click();
-    places= searchInfo.value;
-    searchLocation(places);
-  }
+  // const searchClick= searchInfo=> {
+  //   leftOffButton.value.click();
+  //   places= searchInfo.value;
+  //   searchLocation(places);
+  // }
 
   </script>
 
@@ -1122,4 +1156,36 @@
     top: 50px;
     left: 100px;
   }
+  .carousel-control-prev,
+.carousel-control-next {
+  background-color: #000; /* 배경색 */
+  border-radius: 50%; /* 모서리 둥글게 */
+  width: 50px; /* 너비 */
+  height: 50px; /* 높이 */
+  opacity: 0.6; /* 투명도 */
+  margin-top: 70px;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  display: inline-block;
+  width: 20px; /* 아이콘 너비 */
+  height: 20px; /* 아이콘 높이 */
+  background: no-repeat 50%/100% 100%;
+}
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'%3e%3c/path%3e%3c/svg%3e");
+}
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'%3e%3c/path%3e%3c/svg%3e");
+}
+.youtubesearch {
+  color: red; /* 글자 색상 */
+  font-size: 24px; /* 글자 크기 */
+  font-family: 'Arial', sans-serif; /* 폰트 */
+  text-align: center; /* 중앙 정렬 */
+  margin-bottom: 20px; /* 아래쪽 마진 */
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+}
   </style> 

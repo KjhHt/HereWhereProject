@@ -95,6 +95,18 @@
             <artifactId>sdk</artifactId>
             <version>4.3.0</version>
         </dependency>
+        
+	    <!-- Other dependencies... -->
+	    <dependency>
+	        <groupId>com.google.firebase</groupId>
+	        <artifactId>firebase-admin</artifactId>
+	        <version>6.8.1</version>
+	    </dependency>
+	    
+	    <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
 		
 	</dependencies>
 

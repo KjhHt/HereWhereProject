@@ -13,7 +13,8 @@ public class CorsConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true); 
-		config.addAllowedOrigin("http://localhost:8080");
+		config.addAllowedOrigin("https://f056c7edebcffb66.ngrok.app/");
+		//config.addAllowedOrigin("http://localhost:8080");
 		config.addAllowedOriginPattern("*"); 
 		config.addAllowedHeader("*"); 
 		config.addAllowedMethod("*"); 
@@ -22,6 +23,7 @@ public class CorsConfig {
 		source.registerCorsConfiguration("/user/**",config);
 		source.registerCorsConfiguration("/manager/**",config);
 		source.registerCorsConfiguration("/admin/**",config);
+		source.registerCorsConfiguration("/f056c7edebcffb66.ngrok.app/**",config);
 		return new CorsFilter(source);
 	}
 }
