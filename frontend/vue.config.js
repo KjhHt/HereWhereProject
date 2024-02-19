@@ -3,6 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   outputDir: '../src/main/resources/static', // Build Directory
     devServer: {
+      /*
         proxy: {
           '/':{
             target:process.env.VUE_APP_API_URL, // Spring Boot Server
@@ -18,5 +19,6 @@ module.exports = defineConfig({
             '^/oauth2':'/login/oauth2/code/'
           }
         }
+        */
     }
 })

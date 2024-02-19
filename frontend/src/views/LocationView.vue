@@ -8,15 +8,18 @@
         <div class="custom-hamburger-menu">
           <Hamburgermenu :showPlan="showPlan"/>
         </div>
-        <!--검색 오프-->
+       <!--검색 오프-->
       <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 430px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>
         </div>
         <div class="offcanvas-body">
+          <div style="margin-top:10px;">
+              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick"/>
+            </div>
           <div class="search-container">
-            <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" @input="handleSearchInput"  ref="searchRef"/>
+            <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" ref="searchRef"/>
             <button type="button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
@@ -62,7 +65,7 @@
           tabindex="-1"
           id="offcanvasPlan"
           aria-labelledby="offcanvasPlan"
-          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          style="width: 410px; height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
       <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
         <h5>여행플랜</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="planRef"></button>
@@ -78,7 +81,7 @@
           tabindex="-1"
           id="offcanvasRestaurant"
           aria-labelledby="offcanvasRestaurantLabel"
-          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          style="width: 410px; height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
           <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
               <h5>주변 음식점 리스트</h5>
               <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -94,7 +97,7 @@
           tabindex="-1"
           id="offcanvasHotel"
           aria-labelledby="offcanvasHotelLabel"
-          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          style="width: 410px;  height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
         <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
           <h5>주변 호텔 리스트</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -111,7 +114,7 @@
           tabindex="-1"
           id="offcanvasAttraction"
           aria-labelledby="offcanvasAttractionLabel"
-          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          style="width: 410px;  height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
         <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
           <h5>주변 관광지 리스트</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -150,11 +153,13 @@
       :zoom="mapOptions.zoom"
       :tilt="mapOptions.tilt"
       :map-id="mapOptions.mapId"
+      :styles="mapOptions.styles"
       :disable-default-ui="mapOptions.disableDefaultUI"
       ref="mapRef"
       style="width:100vw; height:calc(100vh - 86px);"
+      @click="e=>clickIcons(e)"
       >
-        <DrawDirection :coords="routeCoords" />
+        <DrawDirection :coords="routeCoords" @dataSend="moveToMarkerInfo" @cameraSend="cameraCenter" />
       
         <CustomMarker :options="{ position: mapOptions.center, anchorPoint: 'BOTTOM_CENTER' }">
             <div style="text-align: center">
@@ -182,12 +187,24 @@
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster>
+        <MarkerCluster> <!--pick누르면 나오는 마커-->
           <!--인포윈도우 마커표시<MapMarker v-if="targetLocation" :options="{position:targetLocation}" @click="selectMarker"/>-->
           <CustomMarker v-for="plan in plansInfo" :key="plan.name" 
                         :options="{ position: {lat:plan.geometry.location.lat(),
                                                lng:plan.geometry.location.lng() }}"
-                        @click="()=>searchLocation(plan)" >
+                        @click="()=>searchLocation(plan)">
+            <div style="text-align: center">
+                <img 
+                    class="rounded-circle" 
+                    src="@/assets/Cat.png" 
+                    width="40" height="40" style="margin-bottom: 40px" 
+                    />
+            </div>
+          </CustomMarker>
+          <CustomMarker v-if="moveMarker"
+                        :options="{ position: {lat:markerPosition.lat,
+                                               lng:markerPosition.lng }}"
+                    >
             <div style="text-align: center">
                 <img 
                     class="rounded-circle" 
@@ -233,12 +250,12 @@
   import AttractionCard from '@/components/search/AttractionCard.vue';
   import Hamburgermenu from '@/components/search/HamburgerMenu.vue'
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
-  import { createObserver } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js
+  import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js
   import PlanCard from "@/components/search/PlanCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
-  // import SearchCard from '@/components/search/SearchCard.vue'
-  import YoutubeCard from "@/components/search/YoutubeCard.vue";
+  import SearchCard from '@/components/search/SearchCard.vue'
+  //import YoutubeCard from '@/components/search/YoutubeCard.vue'
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
@@ -307,13 +324,14 @@
     infoRef.value.close();
     showPlan.value= !showPlan.value;
   }
-  async function getYoutubeData(address){
-  console.log(address);
-  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
-  console.log(response);
-  youtubeData.value=response.data
-}
 
+  async function getYoutubeData(address){
+    console.log(address);
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
+    console.log(response);
+    youtubeData.value=response.data
+  }
+  
   async function getNearbyHotels(lat,lng){
     console.log('호텔콘솔:',[lat,lng]);
     const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/booking',{params:{lat,lng}})
@@ -336,7 +354,7 @@
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
-    getYoutubeData(places.name)
+    getYoutubeData(places.formatted_address)
     moveToPosition(location)
     updateInfoWindow(places)
   }
@@ -365,12 +383,10 @@
       heading: 90,
       zoom: 17,
       center: currPos,
-      mapId: '6f1fd356b8cfee3b',
+      mapId: 'c1b04704f8464294',
       disableDefaultUI: true,
       gestureHandling: 'auto',
       keyboardShortcuts: false,
-      clickableIcons: false,
-      
     });
   const locations = ref([]);
 
@@ -880,7 +896,7 @@
   const arrivalsValue= ref('')
 
   function routeToggle(){
-    showRoute.value = !showRoute.value;
+    showRoute.value = false;
   }
 
   const arrivalRoute=arrival=>{
@@ -906,17 +922,81 @@
       geocoder.value.geocode({address: arrivalsRef.value.value})
       .then(result=>{
         if(result.results[0])
+        console.log('리절트',result.results[0])
         routeCoords.value.push([result.results[0].geometry.location.lat(), result.results[0].geometry.location.lng()])
         routeToggle()
       })
     })
   }
+  /*마커움직이기 만들다맘
+  const markerPosition=ref({});
+  const moveMarker= ref(false);
+  
+  const moveToMarkerInfo=(data)=>{
+    moveMarker.value= true;
+    console.log(data);
+    markerPosition.value= data;
+    let i=0;
+    const moveMarkerInterval = setInterval(()=>{
+      if(i<=data.length) {
+        moveMarker.value= false;
+        clearInterval(moveMarkerInterval);
+        return;
+      }
+      markerPosition.value.lat= data[i].lat;
+      markerPosition.value.lng= data[i].lng;
+      console.log('markerPosition',markerPosition)
+      i++;
+    })
+  }*/
 
-  // const searchClick= searchInfo=> {
-  //   leftOffButton.value.click();
-  //   places= searchInfo.value;
-  //   searchLocation(places);
-  // }
+  const cameraCenter=(data)=>{
+    let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
+    console.log('디스탄스',distance);
+    if(distance<100) map.moveCamera({zoom:12})
+    mapRef.value.map.setCenter(data[parseInt(data.length/2)]);
+  }
+
+  const searchClick= searchInfo=> {
+    leftOffButton.value.click();
+    places= searchInfo.value;
+    searchLocation(places);
+  }
+
+  /*
+  async function getYoutubeData(address){
+    console.log(address);
+    const response= await axios.get('http://127.0.0.1:5000/youtube',{params:{address}})
+    console.log(response);
+    youtubeData.value=response.data
+  }*/
+
+  const clickIcons=(e)=>{
+    if(e.placeId===undefined) return;
+    e.stop();
+    let service= new mapRef.value.api.places.PlacesService(mapRef.value.map);
+    let request= {
+      placeId:e.placeId
+    }
+    service.getDetails(request, (place, status)=>{
+      if(status !== 'OK') {console.log('스테이터스',status);return;}
+      showPlan.value = false;
+      var closeInfo= document.querySelector('.gm-ui-hover-effect');
+            
+      if(closeInfo !== null) {
+        closeInfo.click();
+      }
+      let closeButton= document.querySelectorAll('.btn-close');
+      if(closeButton.forEach(x=>{
+        x.click();
+      }))
+      console.log('클로즈버튼',closeButton);
+
+      places= place;
+      searchLocation(place);
+    });
+  }
+  
 
   </script>
 
@@ -1157,7 +1237,7 @@
     left: 100px;
   }
   .carousel-control-prev,
-.carousel-control-next {
+  .carousel-control-next {
   background-color: #000; /* 배경색 */
   border-radius: 50%; /* 모서리 둥글게 */
   width: 50px; /* 너비 */

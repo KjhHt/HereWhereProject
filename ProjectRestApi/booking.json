@@ -11,17 +11,6 @@
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/271485241.jpg?k=115de530626a59f45c926ace97b580e677a402e44681ad29c67347ff8b2b3449&o="
     },
     {
-        "hotel": "라마다 프라자 수원",
-        "address": "150, Jungbu-daero, Paldal-gu Suwon",
-        "location": [
-            37.2777750452842,
-            127.032364010811
-        ],
-        "review": 8.5,
-        "price": "396,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/167159471.jpg?k=c36bf45a79468c6f44608bf9db18e56bf951057b42da45b37a5b010e18fb9ec7&o="
-    },
-    {
         "hotel": "노보텔 앰배서더 수원",
         "address": "902, Deogyeong-daero, Paldal-gu",
         "location": [
@@ -29,8 +18,19 @@
             126.99995610318
         ],
         "review": 8.5,
-        "price": "306,000원",
+        "price": "369,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/314582407.jpg?k=05cc92d9d4f6ccdf84bb4c3a60f117f7fb8694c536a5d36ab8698ee345140406&o="
+    },
+    {
+        "hotel": "라마다 프라자 수원",
+        "address": "150, Jungbu-daero, Paldal-gu Suwon",
+        "location": [
+            37.2777750452842,
+            127.032364010811
+        ],
+        "review": 8.4,
+        "price": "396,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/167159471.jpg?k=c36bf45a79468c6f44608bf9db18e56bf951057b42da45b37a5b010e18fb9ec7&o="
     },
     {
         "hotel": "포포인츠 바이 쉐라톤 수원",
@@ -40,7 +40,7 @@
             127.035669
         ],
         "review": 8.4,
-        "price": "380,000원",
+        "price": "360,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/477804064.jpg?k=5735e65e5dff32cc43831ac5a4042ee6a01c1c7dfda57f6cce30dbaecdc10de2&o="
     },
     {
@@ -64,6 +64,17 @@
         "review": null,
         "price": "1,540,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/209469298.jpg?k=bf2d08504a3308f145a657a5b02f6ed0d96b89de930a94f160572538078a6308&o="
+    },
+    {
+        "hotel": "스타즈 호텔 프리미어 동탄",
+        "address": "171, Dongtanbanseok-ro",
+        "location": [
+            37.2040320925455,
+            127.07030349472
+        ],
+        "review": 8.3,
+        "price": "238,800원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/263744740.jpg?k=43a585a2b0fdca69059d895b042dac6d9e70b74d165eb1f74b2d3883a6c63302&o="
     },
     {
         "hotel": "라마다 동탄",
@@ -95,7 +106,7 @@
             127.104453
         ],
         "review": 7.8,
-        "price": "374,000원",
+        "price": "440,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599489.jpg?k=9b5cf43612ab70cb8e2cb3e4275bb440e747b401167bd93fb3d147b68abbd51a&o="
     },
     {
@@ -110,17 +121,6 @@
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599549.jpg?k=abb1571b76a9ebcb20e574e77e7cb82717e930960b95711a191529fe34eab84a&o="
     },
     {
-        "hotel": "서머셋 센트럴 분당",
-        "address": "36, Hwangsaeul-ro 311beon-gil, Bundang-gu",
-        "location": [
-            37.3864818609775,
-            127.12120950222
-        ],
-        "review": 8.3,
-        "price": "277,200원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/242051763.jpg?k=38e8387fa7e48ac457c721cfae74a34e207cb61a934e93c8b7ddab6292cce095&o="
-    },
-    {
         "hotel": "그래비티 서울 판교 오토그래프 컬렉션 메리어트 인터내셔널",
         "address": "2, Pangyoyeok-ro 146beon-gil, Bundang-gu",
         "location": [
@@ -130,6 +130,17 @@
         "review": 8.4,
         "price": "440,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426601317.jpg?k=a898ab9740bdfc0e7ea19906eb7a1819f489720da92950111e973dcbac938a1b&o="
+    },
+    {
+        "hotel": "서머셋 센트럴 분당",
+        "address": "36, Hwangsaeul-ro 311beon-gil, Bundang-gu",
+        "location": [
+            37.3864818609775,
+            127.12120950222
+        ],
+        "review": 8.3,
+        "price": "277,200원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/242051763.jpg?k=38e8387fa7e48ac457c721cfae74a34e207cb61a934e93c8b7ddab6292cce095&o="
     },
     {
         "hotel": "코트야드 바이 메리어트 서울 판교",
@@ -165,17 +176,6 @@
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/187575665.jpg?k=d52efe1effeacbe21c02c62bb841aa354fd50526c615d32871f35026c05a2d7a&o="
     },
     {
-        "hotel": "오라카이 청계산 호텔",
-        "address": "1-7, Cheonggyesan-ro 9-gil, Seocho-gu",
-        "location": [
-            37.4493579084034,
-            127.054763382248
-        ],
-        "review": 8.3,
-        "price": "374,001원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/248248440.jpg?k=7825d4a3ab6376c6431408922438463bde1e2442801ac8c1b9e74d5e8a6564f5&o="
-    },
-    {
         "hotel": "베니키아 호텔 더 에이치 호텔",
         "address": "3-12, Yeokgol-ro, Namyang-eup",
         "location": [
@@ -185,6 +185,17 @@
         "review": 8.1,
         "price": "424,440원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/60561279.jpg?k=90a562aecfe06caa9ecafda8b531c1095a1ff08a506728b92664044034d23881&o="
+    },
+    {
+        "hotel": "호텔스퀘어 안산",
+        "address": "81, Dongsan-ro, Danwon-gu",
+        "location": [
+            37.3142982470547,
+            126.799116432667
+        ],
+        "review": 7.9,
+        "price": "169,200원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/75093331.jpg?k=f7a6e1f65014241f34687f66050fa4f9ef21c725abe33a1162e83c553d4dbb26&o="
     },
     {
         "hotel": "테이크호텔 서울 광명",
@@ -207,16 +218,5 @@
         "review": 8.1,
         "price": "250,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/174759249.jpg?k=b16b982b33c3c3590ed7c99c41f607e51675061fbc745bb1c5f183a5121985ed&o="
-    },
-    {
-        "hotel": "호텔스퀘어 안산",
-        "address": "81, Dongsan-ro, Danwon-gu",
-        "location": [
-            37.3142982470547,
-            126.799116432667
-        ],
-        "review": 7.9,
-        "price": "169,200원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/75093331.jpg?k=f7a6e1f65014241f34687f66050fa4f9ef21c725abe33a1162e83c553d4dbb26&o="
     }
 ]

@@ -45,7 +45,7 @@ watchEffect(()=>{
 .search-card {
     border: 1px solid #ddd;
     width: 375px;
-    height: 190px;
+    height: 150px;
     cursor: pointer;
     margin-bottom: 13px;
     border-radius: 10px;
