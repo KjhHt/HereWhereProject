@@ -9,8 +9,6 @@ let props=defineProps({
     map:Object
 })
 
-
-
 const streetView=ref(null)
 const streetViewPanorama=ref(null)
 onMounted(() => {
@@ -30,7 +28,7 @@ onMounted(() => {
       visible: true,
       disableDefaultUI: true
     });
-    props.map.map.setStreetView(streetViewPanorama);
+    props.map.map.setStreetView(streetViewPanorama.value);
     streetView.value.addEventListener('click', () => {
         toggleFullScreen(streetView.value);
         });
@@ -47,9 +45,6 @@ watch(() => props.map?.map?.center, newCenter => {
   }
 }, { deep: true });
 
-
-
-
 function toggleFullScreen(element) {
   if (!document.fullscreenElement) {
     if (element.requestFullscreen) {
@@ -63,30 +58,26 @@ function toggleFullScreen(element) {
     }
   } 
 }
-
-
 </script>
+
 <style scoped>
 .streetview-container {
   position: absolute;
-  bottom: 50px;
-  width: 100px; /* 스트리트뷰 너비 */
-  height: 100px; /* 스트리트뷰 높이 */
+  top: 20px;
+  width: 130px; /* 스트리트뷰 너비 */
+  height: 130px; /* 스트리트뷰 높이 */
   border: 1px solid #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
-
 .streetview-container:-webkit-full-screen {
   width: 100%;
   height: 100%;
 }
-
 .streetview-container:-moz-full-screen {
   width: 100%;
   height: 100%;
 }
-
 .streetview-container:fullscreen {
   width: 100%;
   height: 100%;

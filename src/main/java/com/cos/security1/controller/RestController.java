@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cos.security1.service.MemberService;
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
@@ -118,7 +119,11 @@ public class RestController {
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
 	    
+	    System.out.println("sadsadsad : "+id);
+	    
 		UserDto info = service.findByMemberInfo(id);
+		
+		System.out.println("시발? : "+info.getId());
 		service.updateRecentLoginTime(id);
 		
 		return info;
@@ -330,5 +335,18 @@ public class RestController {
 	    boolean islike = service.islike(id,board_no);
 	    if(islike) return true;
 	    else return false;
+    }
+    
+    @PostMapping("/insertReservation")
+    public void insertReservation(@RequestBody ReservationDto reservationDto) {
+
+    	System.out.println("1 : "+reservationDto.getId());
+    	System.out.println("2 : "+reservationDto.getReservation_pricename());
+    	System.out.println("3 : "+reservationDto.getReservation_receipturl());
+    	System.out.println("4 : "+reservationDto.getReservation_lat());
+    	System.out.println("5 : "+reservationDto.getReservation_lng());
+    	System.out.println("6 : "+reservationDto.getReservation_price());
+    	
+    	service.insertReservation(reservationDto);
     }
 }

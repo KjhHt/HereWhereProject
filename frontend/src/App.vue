@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import PanolensPage from './views/PanolensPage.vue';
 import MainPage from './views/MainPage.vue';
 import Header from './components/Header.vue';
@@ -9,7 +9,64 @@ import Admin from './views/AdminView.vue';
 import Location from './views/LocationView.vue';
 import MyPageView from './views/MyPageView.vue';
 import BoardView from './views/BoardView.vue';
+import TestView from './views/TestView.vue';
+import TripMoment from './views/TripMoment.vue';
 import { Chat } from "@chat-ui/vue3";
+import { getStompClient } from '@/services/websocket.js'; 
+import axios from 'axios';
+
+const stompClient = ref(null);
+const noticeListData = ref([]);
+const noticeCountData = ref(0);
+const locationValue = ref('');
+
+onMounted(() => {
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const userInfo = vuexStore.loginStore.userInfo;
+  if (userInfo != null && userInfo.id != null) {
+    stompClient.value = getStompClient();  // 웹소켓 연결을 가져옵니다.
+    stompClient.value.connect({}, () => {
+      stompClient.value.subscribe(`/user/${userInfo.id}/queue/notification`, function(notification) {
+        // 알림 메시지를 받으면 실행할 코드...
+        noticeCountData.value++;
+        const data = JSON.parse(notification.body);
+        if(data.follow_isRequest == 'ok'){//팔로우 첫 요청일때
+          const currentTime = new Date().toLocaleString();
+          const lastNotice = noticeListData.value[noticeListData.value.length - 1];
+          const newNoticeNo = lastNotice ? lastNotice.notice_no + 1 : 1;
+          noticeListData.value.splice(0, 0, {
+            id : data.follow_senderid,
+            notice_content : '팔로우 요청을 보냈습니다',
+            notice_createtime : currentTime,
+            notice_no : newNoticeNo,
+          });
+          console.log(noticeListData.value);
+        
+        }
+        console.log(data);
+        console.log(data.follow_senderid);//보낸사람
+        console.log(data.follow_requesttime);//시간
+        console.log('요청여부 : ',data.follow_isRequest); //요청여부
+      });
+    });
+    console.log("웹소켓 연결 및 구독 성공!");
+    noticeList(userInfo.id);
+  }
+});
+
+function noticeList(){
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const userInfo = vuexStore.loginStore.userInfo;
+  if (userInfo != null && userInfo.id != null) {
+    axios.get(process.env.VUE_APP_API_URL+'/noticeList')
+    .then(res=>{
+      console.log(res);
+      noticeListData.value = res.data;
+      console.log(noticeListData.value);
+    })
+    .catch(err=>console.log(err))
+  }
+}
 
 // 챗봇 : @Chat-ui\vue3 -> dist -> components -> (240~250 라인) chat-ui.vue3.es.js 모듈수정해야함 
 function handleSendEvent(input){
@@ -55,6 +112,13 @@ const data = ref([
   { message: 'How can i help you?', type: 'chatbot', timestamp: '3:47 PM' },
 ])
 
+//메인페이지에서 지도 페이지로 값 넘기기
+const handleImgClick = (value) =>{
+  console.log('app.vue에서 : ',locationValue.value);
+  locationValue.value = value;
+  console.log('app.vue에서 : ',locationValue.value);
+  page_.value = 'location';
+}
 
 const page_=ref('main')
 
@@ -66,21 +130,21 @@ console.log(ref)
 
 function selectPage(page){
   page_.value=page
-  
 }
 </script>
 <template>
-  <PanolensPage/>
-   <Header @selectPage="selectPage"/>
-    <MainPage v-if="page_=='main'"/>
+  <PanolensPage/>    
+   <Header @selectPage="selectPage" :noticeListData="noticeListData" :noticeCountData="noticeCountData"/>
+    <MainPage v-if="page_=='main'" @imgClick="handleImgClick"/>
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>
-    <Location v-if="page_=='location'"/>
+    <Location v-if="page_=='location'" :locationValue="locationValue"/>
     <MyPageView v-if="page_=='mypage'"/>
-    <BoardView v-if="page_=='board'"/>
+    <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <Chat :onSend="handleSendEvent" :chat="data" />
-
+    <TestView v-if="page_=='test'"/>
+    <TripMoment v-if="page_=='trip-moment'"/>
 </template>
 
 <style>

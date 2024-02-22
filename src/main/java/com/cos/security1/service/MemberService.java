@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 
@@ -154,7 +155,9 @@ public class MemberService {
 		}
 	}
 
-
+	public void insertReservation(ReservationDto reservationDto) {
+		mapper.insertReservation(reservationDto);
+	}
 
     
 

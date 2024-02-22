@@ -21,7 +21,7 @@
 	</select>
 	
 	<select id="findByMemberInfo" resultType="UserDto" parameterType="String">
-		SELECT name,profileimage FROM member WHERE id = #{id}
+		SELECT id,name,profileimage FROM member WHERE id = #{id}
 	</select>
 	
 	<insert id="joinSocialMember" parameterType="UserDto">
@@ -105,5 +105,8 @@
 		DELETE like_table WHERE like_id = #{id} AND board_no = #{board_no}
 	</delete>
 	
-
+	<!-- 예약 -->
+	<insert id="insertReservation" parameterType="ReservationDto">
+		INSERT INTO reservation_table VALUES(SEQ_RESERVATION_TABLE.nextval,#{reservation_lat},#{reservation_lng},#{reservation_pricename},#{reservation_price},sysdate,#{reservation_receipturl},#{id})
+	</insert>
 </mapper>

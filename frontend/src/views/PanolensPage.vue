@@ -32,7 +32,7 @@
           // 현재 시간을 기준으로 낮과 밤에 맞는 이미지 경로를 선택
           const currentTime = new Date().getHours();
           if (currentTime >= 6 && currentTime < 18) {
-            this.currentPanoramaImage = require('@/assets/AdobeStock_358983728.jpeg');
+            this.currentPanoramaImage = require('@/assets/AdobeStock_358983728.webp');
           } else {
             this.currentPanoramaImage = require('@/assets/AdobeStock_495919355.jpeg');
           }

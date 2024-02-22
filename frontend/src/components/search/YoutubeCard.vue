@@ -1,7 +1,7 @@
 <template>
-  <div class="youtube-card">
-    <iframe :src="youtube.id" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="YouTube video player"></iframe>
-  </div>
+    <div class="youtube-card">    
+      <iframe :src="youtube.id" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="YouTube video player"></iframe>
+    </div>
 </template>
 
 <script setup>
@@ -13,9 +13,7 @@ const props = defineProps({
   youtube: Object,
 });
 
-
 watchEffect(()=>{
-  console.log('유튜브',props.youtube)
   youtube= props.youtube
 })
 </script>

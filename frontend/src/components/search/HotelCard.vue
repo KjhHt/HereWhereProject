@@ -31,9 +31,13 @@
         data-bs-backdrop="false" 
         tabindex="-1" 
         style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
-    <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 40px;">
-        <h5>호텔 상세정보</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"></button>
+    <!-- 2.21일 수정 -->
+    <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+      <div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+      </div>
+      <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Hotel Details</h5>
+      <div style="width: same-as-button;"></div>
     </div>
     <div class="offcanvas-body">
       <div class="card product-detail">
@@ -68,7 +72,7 @@
         </div>
         <div class="card-footer">
           <button class="btn btn-line"><i class="bi bi-cart-plus-fill"></i> 장바구니에 담기</button>
-          <button class="btn btn-fill"><i class="bi bi-calendar-plus-fill"></i> 예약하러 가기</button>
+          <button class="btn btn-fill" @click="payHandler()"><i class="bi bi-calendar-plus-fill"></i> 예약하러 가기</button>
         </div>
       </div>
     </div>
@@ -77,26 +81,110 @@
   
 <script setup>
 import { defineProps, ref } from 'vue';
-const props=defineProps({
-  hotel:Object
-})
-console.log(props.hotel)
+import { Bootpay } from '@bootpay/client-js';
+import axios from 'axios';
 
+
+// 부모 컴포넌트로부터 전달받은 props 정의
+const props = defineProps({
+  hotel: Object
+});
+
+// 상태 변수 선언
 const isDetailVisible = ref(false);
 const selectedHotel = ref({});
+const insertReservationData = ref({});
 
+// 호텔 상세 정보 표시 함수
 const showDetail = (hotel) => {
   selectedHotel.value = hotel;
   isDetailVisible.value = true;
 };
 
+// 호텔 상세 정보 숨기는 함수
 const hideDetail = () => {
   isDetailVisible.value = false;
 };
 
+// 결제 처리 함수
+const payHandler = async () => {
+  // 쉼표(,) 제거 후 숫자로 변환
+  const price = parseInt(selectedHotel.value.price.replace(/,/g, ''));
+  try {
+    const response = await Bootpay.requestPayment({
+      "application_id": process.env.VUE_APP_BOOTPAY,
+      "price": price,
+       
+      "order_name": selectedHotel.value.hotel,
+      "order_id": "TEST_ORDER_ID",
+      "tax_free": 0,
+      "user": {
+        "id": "OSH",
+        "username": "김길동",
+        "phone": "01000000000",
+        "email": "test@test.com"
+      },
+      "items": [
+        {
+          "id": "item_id",
+          "name": "챌린지 참여비",
+          "qty": 1,
+          "price": price
+        }
+      ],
+      "extra": {
+        "open_type": "iframe",
+        "card_quota": "0,2,3",
+        "escrow": false
+      }
+    });
+
+    // 결제 처리 결과 확인
+    paycheck(response);
+  } catch (error) {
+    console.log(error.message); // 오류 처리
+  }
+};
+
+// 결제 완료 후 동작 처리 함수
+const paycheck = (response) => {
+  console.log('paycheck : ',response);
+  const status_locale = response.data.status_locale;
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const id = vuexStore.loginStore.userInfo.id;
+  const lat = selectedHotel.value.lat;
+  const lng = selectedHotel.value.lng;
+  // 결제 완료 후의 동작 추가
+  if (status_locale === '결제완료') {
+    // 결제가 성공적으로 완료된 경우
+    insertReservationData.value['reservation_lat']=lat;
+    insertReservationData.value['reservation_lng']=lng;
+    insertReservationData.value['reservation_pricename']=response.data.order_name;
+    insertReservationData.value['reservation_price']=response.data.price;
+    insertReservationData.value['reservation_receipturl']=response.data.receipt_url;
+    insertReservationData.value['id']=id;
+    alert('결제가 완료되었습니다.');
+    payListInsert();
+  } else {
+    // 결제가 실패한 경우
+    alert('결제에 실패하였습니다.');
+  }
+};
+
+// 결제 정보를 서버에 전송하는 함수
+const payListInsert = async () => {
+  try {
+    const response = await axios.post(process.env.VUE_APP_API_URL+'/insertReservation',insertReservationData.value)
+    console.log('성공');
+    console.log(response.data);
+  } catch (error) {
+    console.log('실패');
+  }
+};
 </script>
 
 <style scoped>
+
 .hotel-card {
   border: 1px solid #ddd;
   width: 375px;
@@ -128,34 +216,7 @@ const hideDetail = () => {
 .card-hotel-name{
   font-weight: bold;
 }
-.offcanvas {
-    /* 다른 스타일들 */
 
-    transition: visibility 0s, opacity 0.3s;
-    opacity: 0;
-    visibility: hidden;
-}
-
-.offcanvas.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.hide-animation {
-    transition: visibility 0s, opacity 0.3s;
-    opacity: 0;
-    visibility: hidden;
-}
-/* default */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  letter-spacing: 0.014em;
-  line-height: 170%;
-}
 *::selection {
   background-color: #4364F7;
   color: #fff;
@@ -175,20 +236,13 @@ li {
   list-style: none;
 }
 
-button {
-  background: none;
-  border: none;
-  outline: none
-}
-
-/* card style */
 .card {
   width : 300px;
   height : fit-content;
   border-radius: 10px;
   padding: 20px;
   background-color: #fff;
-  margin : 3px;
+
 }
 
 .card-content {
@@ -211,6 +265,15 @@ button {
   font-size: 18px;
   cursor: pointer;
 }
+.btn-close {
+    background: none;
+  }
+.btn-close::before, .btn-close::after {
+  content: none;
+}
+.btn-close i {
+  display: inline;
+}
 
 .btn-line {
   border: 2px solid #224AFF;
@@ -222,46 +285,9 @@ button {
   background: rgb(105,132,255);
   background: linear-gradient(180deg, rgba(105,132,255,1) 0%, rgba(34,74,255,1) 100%);
 }
-
-/* remove radio style */
-.remove-radio-style>input{
-  visibility:hidden;
-  width: 0;
-  height: 0;
-  position: absolute;
-  left: -9999px;
-}
-
-.remove-radio-style>label{
-  cursor: pointer;
-}
-
-/* custom radio */
-
-.blue-radio>label{
-  display: block;
-  font-size: 12px;
-  line-height: 15.2px;
-  width: 30px;
-  height: 30px;
-  padding : 7.4px 0 ;
-  text-align: center;
-  border: 1.3px solid #000;
-  border-radius: 3px;
-  font-weight: medium;
-}
-
-.remove-radio-style>input:checked + label{
-  color: #fff;
-  border: 0;
-  background: rgb(105,132,255);
-  background: linear-gradient(180deg, rgba(105,132,255,1) 0%, rgba(34,74,255,1) 100%);
-}
-
-/* card detail */
+/* <!-- 2.21일 수정 --> */
 .product-detail {
-  width: 90%;
-  
+  width: 99%;
 }
 .hotel-name{
   margin-top: 10px;
@@ -294,17 +320,12 @@ button {
   border-radius: 10px;
 }
 
-
 .product-detail h1 {
   margin-bottom: 9px;
 }
 
 .score-area {
   text-align: left;
-}
-
-.score {
-  font-style: normal;
 }
 
 #choose-size {
@@ -332,4 +353,5 @@ button {
   text-align: right;
   font-size: 30px;
 }
+
 </style>

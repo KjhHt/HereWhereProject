@@ -31,9 +31,13 @@
         data-bs-backdrop="false" 
         tabindex="-1" 
         style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
-    <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 40px;">
-        <h5>음식점 상세정보</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"></button>
+    <!-- 2.21일 수정 -->
+    <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+      <div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+      </div>
+      <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Restaurant Details</h5>
+      <div style="width: same-as-button;"></div>
     </div>
     <div class="offcanvas-body">
       <div class="card product-detail">
@@ -188,7 +192,10 @@ img {
     opacity: 1;
     visibility: visible;
 }
-
+/* 2.21일 수정 */
+.btn-close {
+    background: none;
+  }
 .hide-animation {
     transition: visibility 0s, opacity 0.3s;
     opacity: 0;

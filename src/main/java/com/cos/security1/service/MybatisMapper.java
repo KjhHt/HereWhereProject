@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 
 @Mapper
@@ -38,4 +39,5 @@ public interface MybatisMapper {
 	void insertLike(String id, String board_no);
 	void deleteLike(String id, String board_no);
 	
+	void insertReservation(ReservationDto reservationDto);
 }
