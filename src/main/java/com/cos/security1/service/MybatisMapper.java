@@ -38,6 +38,7 @@ public interface MybatisMapper {
 	int islike(String id,String board_no);
 	void insertLike(String id, String board_no);
 	void deleteLike(String id, String board_no);
-	
+	//호텔 예약
 	void insertReservation(ReservationDto reservationDto);
+	List<ReservationDto> findReservationsByUserId(String id);
 }

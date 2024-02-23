@@ -14,6 +14,7 @@ const props = defineProps({
 });
 
 watchEffect(()=>{
+  console.log('유튜브',props.youtube)
   youtube= props.youtube
 })
 </script>

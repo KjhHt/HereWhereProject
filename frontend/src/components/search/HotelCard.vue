@@ -112,22 +112,22 @@ const payHandler = async () => {
   const price = parseInt(selectedHotel.value.price.replace(/,/g, ''));
   try {
     const response = await Bootpay.requestPayment({
-      "application_id": process.env.VUE_APP_BOOTPAY,
+      "application_id": process.env.VUE_APP_BOOTPAY_API_KEY,
       "price": price,
        
       "order_name": selectedHotel.value.hotel,
-      "order_id": "TEST_ORDER_ID",
+      "order_id": "JYK",
       "tax_free": 0,
       "user": {
-        "id": "OSH",
-        "username": "김길동",
-        "phone": "01000000000",
+        "id": "JYK",
+        "username": "진영규",
+        "phone": "010-1234-5678",
         "email": "test@test.com"
       },
       "items": [
         {
           "id": "item_id",
-          "name": "챌린지 참여비",
+          "name": "호텔 예약",
           "qty": 1,
           "price": price
         }

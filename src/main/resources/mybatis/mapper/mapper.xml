@@ -109,4 +109,8 @@
 	<insert id="insertReservation" parameterType="ReservationDto">
 		INSERT INTO reservation_table VALUES(SEQ_RESERVATION_TABLE.nextval,#{reservation_lat},#{reservation_lng},#{reservation_pricename},#{reservation_price},sysdate,#{reservation_receipturl},#{id})
 	</insert>
+	
+	<select id="findReservationsByUserId" resultType="ReservationDto" parameterType="String">
+    	SELECT * FROM reservation_table WHERE id = #{id}
+	</select>
 </mapper>

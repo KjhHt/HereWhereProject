@@ -158,7 +158,10 @@ public class MemberService {
 	public void insertReservation(ReservationDto reservationDto) {
 		mapper.insertReservation(reservationDto);
 	}
-
+	
+	public List<ReservationDto> findReservationsByUserId(String id) {
+	    return mapper.findReservationsByUserId(id);
+	}
     
 
 	

@@ -85,7 +85,7 @@ import { defineProps, ref, computed } from 'vue';
 const props = defineProps({
   attraction: Object
 });
-console.log(props.attraction)
+
 const isDetailVisible = ref(false);
 const selectedAttraction = ref({});
 
@@ -177,13 +177,6 @@ function imgError(event){
 img {
   width: 172.5px;
   height: 172.5px;
-}
-.offcanvas {
-    /* 다른 스타일들 */
-
-    transition: visibility 0s, opacity 0.3s;
-    opacity: 0;
-    visibility: hidden;
 }
 
 .offcanvas.show {

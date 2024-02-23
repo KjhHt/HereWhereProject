@@ -12,9 +12,3 @@ loading: Boolean,
 });
 
 </script>
-
-<style scoped>
-.loading-overlay {
-    color: black;
-}
-</style>

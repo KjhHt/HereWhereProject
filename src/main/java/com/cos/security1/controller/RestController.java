@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -349,4 +350,17 @@ public class RestController {
     	
     	service.insertReservation(reservationDto);
     }
+    
+    @GetMapping("/reservation")
+    public List<ReservationDto> getReservation(@RequestParam String userId) {
+        if (userId == null) {
+            // 예외 처리 또는 다른 로직 추가
+            return null;
+        }
+        
+        List<ReservationDto> reservations = service.findReservationsByUserId(userId);
+        System.out.println("wefwef"+reservations);
+        return reservations;
+    }
+    
 }

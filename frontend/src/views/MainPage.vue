@@ -47,7 +47,7 @@ import CarouselComponent from '@/components/CarouselComponent.vue';
 const emit = defineEmits(['imgClick']);
 
 const handleImgClick = (value) => {
-  console.log('과연 ??~~',value);
+  console.log('과연 ??~~~',value);
   emit('imgClick', value);
 }
 

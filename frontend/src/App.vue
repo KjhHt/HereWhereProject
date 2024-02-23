@@ -12,8 +12,8 @@ import BoardView from './views/BoardView.vue';
 import TestView from './views/TestView.vue';
 import TripMoment from './views/TripMoment.vue';
 import { Chat } from "@chat-ui/vue3";
-import { getStompClient } from '@/services/websocket.js'; 
-import axios from 'axios';
+//import { getStompClient } from '@/services/websocket.js'; 
+//import axios from 'axios';
 
 const stompClient = ref(null);
 const noticeListData = ref([]);
@@ -21,7 +21,8 @@ const noticeCountData = ref(0);
 const locationValue = ref('');
 
 onMounted(() => {
-  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  /*
   const userInfo = vuexStore.loginStore.userInfo;
   if (userInfo != null && userInfo.id != null) {
     stompClient.value = getStompClient();  // 웹소켓 연결을 가져옵니다.
@@ -51,9 +52,10 @@ onMounted(() => {
     });
     console.log("웹소켓 연결 및 구독 성공!");
     noticeList(userInfo.id);
-  }
+  }*/
 });
 
+/*
 function noticeList(){
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;
@@ -66,7 +68,7 @@ function noticeList(){
     })
     .catch(err=>console.log(err))
   }
-}
+}*/
 
 // 챗봇 : @Chat-ui\vue3 -> dist -> components -> (240~250 라인) chat-ui.vue3.es.js 모듈수정해야함 
 function handleSendEvent(input){

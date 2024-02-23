@@ -70,8 +70,6 @@ watch(checkInDate, setMinCheckOutDate);
 
 // Function to handle searchHotel button click
 const searchHotel = () => {
-  console.log('dddd')
-  console.log(props.places)
   const searchData = {
     guests: guests.value,
     checkInDate: checkInDate.value,
@@ -79,7 +77,6 @@ const searchHotel = () => {
     lat: props.places.geometry.location.lat(),
     lng: props.places.geometry.location.lng()
   };
-  console.log("Search Data:", searchData);
   instance.emit('search-event', searchData);
 };
 </script>
