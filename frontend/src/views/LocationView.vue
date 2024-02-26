@@ -207,7 +207,7 @@
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" :locationLatLng = "locationLatLng" 
+        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng"
             @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
@@ -258,6 +258,7 @@
   const weatherData=ref([]);
   const newsData=ref([]);
   let clickInfo= ref({})
+  let placeLatLng = ref(null);
 
   const locationInfo=ref({
     placeName:'',
@@ -367,49 +368,49 @@
     console.log(response);
     youtubeData.value=response.data
   }*/
-  // async function getNearbyHotels(lat, lng, number, check_in, check_out) {
-  //   try {
-  //     loadinghotel.value = true;
-  //     hotelsInfo.value = []
-  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-  //     hotelsInfo.value = response.data;
-  //   } catch (error) {
-  //     console.error("An error occurred while fetching hotel data:", error);
-  //   } finally {
-  //     loadinghotel.value = false;
-  //   }
-  // }
+  async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+    try {
+      loadinghotel.value = true;
+      hotelsInfo.value = []
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+      hotelsInfo.value = response.data;
+    } catch (error) {
+      console.error("An error occurred while fetching hotel data:", error);
+    } finally {
+      loadinghotel.value = false;
+    }
+  }
 
   async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
       const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
       hotelsInfo.value = response.data;
   }
 
-async function getNearbyRestaurants(lat, lng) {
-  try {
-    loadingrestaurant.value = true;
-    restaurantsInfo.value = []
-    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
-    restaurantsInfo.value = response.data;
-  } catch (error) {
-    console.error("An error occurred while fetching restaurant data:", error);
-  } finally {
-    loadingrestaurant.value = false;
-  }
-}
+// async function getNearbyRestaurants(lat, lng) {
+//   try {
+//     loadingrestaurant.value = true;
+//     restaurantsInfo.value = []
+//     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
+//     restaurantsInfo.value = response.data;
+//   } catch (error) {
+//     console.error("An error occurred while fetching restaurant data:", error);
+//   } finally {
+//     loadingrestaurant.value = false;
+//   }
+// }
 
-async function getNearbyAttractions(lat, lng) {
-  try {
-    loadingattraction.value = true;
-    attractionsInfo.value = []
-    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
-    attractionsInfo.value = response.data;
-  } catch (error) {
-    console.error("An error occurred while fetching attraction data:", error);
-  } finally {
-    loadingattraction.value = false;
-  }
-}
+// async function getNearbyAttractions(lat, lng) {
+//   try {
+//     loadingattraction.value = true;
+//     attractionsInfo.value = []
+//     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
+//     attractionsInfo.value = response.data;
+//   } catch (error) {
+//     console.error("An error occurred while fetching attraction data:", error);
+//   } finally {
+//     loadingattraction.value = false;
+//   }
+// }
 
 async function getWeather(lat,lng){
   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
@@ -423,13 +424,12 @@ async function getNews(lat,lng){
   
   function searchLocation(places){
     let location= places.geometry.location;
-    getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    // getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
-    //getYoutubeData(places.name)
+    // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
+    // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    // getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
-    console.log('로케이션',location)
     moveToPosition(location)
     updateInfoWindow(places)
   }
@@ -621,7 +621,6 @@ async function getNews(lat,lng){
   let places={}
 
   function initMap(googleMap) {
-    console.log('mapref.value.api:',mapRef.value.api);
     const autoCompleteOptions={
       fields:['formatted_address','geometry','name','rating','photos'],
       strictBounds:false
@@ -718,11 +717,12 @@ async function getNews(lat,lng){
       renderer.resetState();
     }
 
-    function getPlaceData(place) {
+    const getPlaceData = (place) => {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
-      getNearbyRestaurants(lat, lng);
-      getNearbyAttractions(lat, lng);
+      placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
+      // getNearbyRestaurants(lat, lng);
+      // getNearbyAttractions(lat, lng);
       // getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
       map.setCenter({ lat, lng });
       updateInfoWindow(place);
@@ -744,7 +744,7 @@ async function getNews(lat,lng){
         }
       });
     }
-    else if (props.locationLatLng) {
+    else if (props.locationLatLng && props.locationLatLng.length >=1 ) {
       const latNumber = parseFloat(props.locationLatLng[0]);
       const lngNumber = parseFloat(props.locationLatLng[1]);
       const dataLatLng = {
@@ -752,8 +752,8 @@ async function getNews(lat,lng){
         lng: lngNumber,
       };
       map.setCenter(dataLatLng);
-      getNearbyRestaurants(latNumber, lngNumber);
-      getNearbyAttractions(latNumber, lngNumber);
+      // getNearbyRestaurants(latNumber, lngNumber);
+      // getNearbyAttractions(latNumber, lngNumber);
       getWeather(latNumber, lngNumber);
       getNews(latNumber, lngNumber);
     }

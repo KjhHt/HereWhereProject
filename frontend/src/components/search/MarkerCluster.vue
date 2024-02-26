@@ -44,8 +44,17 @@
           <div style="text-align: center">
               <img 
                   class="rounded-circle" 
-                  src="@/assets/locationmarker.png" 
-                  width="30" height="50" style="margin-bottom: 15px" 
+                  src="@/assets/mapiconlg.png" 
+                  width="50" height="50" style="margin-bottom: 15px" 
+                  />
+          </div>
+        </CustomMarker>
+        <CustomMarker v-if="props.placeLatLng" :options="{position: {lat:props.placeLatLng.lat,lng:props.placeLatLng.lng}}">
+          <div style="text-align: center">
+              <img 
+                  class="rounded-circle" 
+                  src="@/assets/mapiconlg.png" 
+                  width="50" height="50" style="margin-bottom: 15px" 
                   />
           </div>
         </CustomMarker>
@@ -61,10 +70,10 @@ const props= defineProps({
     intersInfo: Object,
     hotelsInfo: Object,
     restaurantsInfo: Object,
-    locationLatLng : Object
-    
+    locationLatLng : Object,
+    placeLatLng : Object
+
 })
-console.log("으으악",props.locationLatLng)
 
 const emit= defineEmits(['clickMarker'])
 
