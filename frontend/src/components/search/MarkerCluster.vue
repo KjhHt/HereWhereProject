@@ -40,6 +40,15 @@
                   />
           </div>
         </CustomMarker>
+        <CustomMarker :options="{position: {lat:parseFloat(props.locationLatLng[0]),lng:parseFloat(props.locationLatLng[1])}}">
+          <div style="text-align: center">
+              <img 
+                  class="rounded-circle" 
+                  src="@/assets/locationmarker.png" 
+                  width="30" height="50" style="margin-bottom: 15px" 
+                  />
+          </div>
+        </CustomMarker>
     </MarkerCluster>
 </template>
 
@@ -51,8 +60,11 @@ const props= defineProps({
     attractionsInfo: Object,
     intersInfo: Object,
     hotelsInfo: Object,
-    restaurantsInfo: Object
+    restaurantsInfo: Object,
+    locationLatLng : Object
+    
 })
+console.log("으으악",props.locationLatLng)
 
 const emit= defineEmits(['clickMarker'])
 

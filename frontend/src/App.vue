@@ -19,6 +19,7 @@ const stompClient = ref(null);
 const noticeListData = ref([]);
 const noticeCountData = ref(0);
 const locationValue = ref('');
+const locationLatLng = ref([]);
 
 onMounted(() => {
   //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
@@ -116,11 +117,19 @@ const data = ref([
 
 //메인페이지에서 지도 페이지로 값 넘기기
 const handleImgClick = (value) =>{
-  console.log('app.vue에서 : ',locationValue.value);
   locationValue.value = value;
-  console.log('app.vue에서 : ',locationValue.value);
   page_.value = 'location';
 }
+const handleItemClick = (value) =>{
+  locationLatLng.value = value;
+  console.log('아래',locationLatLng.value)
+  page_.value = 'location';
+}
+
+const disconnectLocation= ()=> {
+  locationValue.value= '',
+  locationLatLng.value = [];
+} 
 
 const page_=ref('main')
 
@@ -141,8 +150,8 @@ function selectPage(page){
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>
-    <Location v-if="page_=='location'" :locationValue="locationValue"/>
-    <MyPageView v-if="page_=='mypage'"/>
+    <Location v-if="page_=='location'" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
+    <MyPageView v-if="page_=='mypage'" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <Chat :onSend="handleSendEvent" :chat="data" />
     <TestView v-if="page_=='test'"/>

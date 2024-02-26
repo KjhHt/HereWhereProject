@@ -207,7 +207,7 @@
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
+        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" :locationLatLng = "locationLatLng" 
             @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
@@ -225,7 +225,7 @@
   import { ThreeJSOverlayView } from '@googlemaps/three';
   // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import * as THREE from 'three';
-  import { ref, watch, computed, onMounted, defineProps } from "vue";
+  import { ref, watch, computed, onMounted, defineProps, defineEmits, onUnmounted } from "vue";
   import { geoLocation } from '@/composable/geoLocation'
   import gsap from 'gsap'
   import axios from "axios";
@@ -268,7 +268,8 @@
   const profileImage = ref('');
 
   const props = defineProps({
-    locationValue: Object,
+    locationValue: String,
+    locationLatLng : Object
   });
 
   onMounted(()=>{
@@ -276,6 +277,15 @@
     profileImage.value=localStorage.getItem('profileImage');
     createObserver();
   });
+
+  const emit= defineEmits(['disconnect'])
+  const disconnect=()=>{
+    emit('disconnect')
+  }
+  onUnmounted(()=>{
+    console.log('연결해제')
+    disconnect()
+  })
 
   function updateInfoWindow(places){
     let photoUrl;
@@ -357,18 +367,18 @@
     console.log(response);
     youtubeData.value=response.data
   }*/
-  async function getNearbyHotels(lat, lng, number, check_in, check_out) {
-    try {
-      loadinghotel.value = true;
-      hotelsInfo.value = []
-      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-      hotelsInfo.value = response.data;
-    } catch (error) {
-      console.error("An error occurred while fetching hotel data:", error);
-    } finally {
-      loadinghotel.value = false;
-    }
-  }
+  // async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+  //   try {
+  //     loadinghotel.value = true;
+  //     hotelsInfo.value = []
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching hotel data:", error);
+  //   } finally {
+  //     loadinghotel.value = false;
+  //   }
+  // }
 
   async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
       const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
@@ -415,7 +425,7 @@ async function getNews(lat,lng){
     let location= places.geometry.location;
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    // getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
     //getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
@@ -437,10 +447,17 @@ async function getNews(lat,lng){
      }
   }
   const {coords} = geoLocation()
-  const currPos = computed(()=>({
-      lat: parseFloat(coords.value.latitude),
-      lng: parseFloat(coords.value.longitude)
-  }))
+  const currPos = computed(() => {
+    return props.locationLatLng.length === 0
+      ? {
+          lat: parseFloat(coords.value.latitude),
+          lng: parseFloat(coords.value.longitude),
+        }
+      : {
+          lat: parseFloat(props.locationLatLng[0]),
+          lng: parseFloat(props.locationLatLng[1]),
+        };
+  });
   const apiKey= process.env.VUE_APP_GOOGLE_API_KEY; /* 여기에 해당 apikey설정할 것!!!! */
   
   const mapOptions=ref({
@@ -511,9 +528,7 @@ async function getNews(lat,lng){
     // 위치 업데이트
     const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed;
     const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed;
-  
     map.setCenter({ lat: newLat, lng: newLng });
-  
     // 카메라 이동
     map.moveCamera({
       zoom: currentZoom,
@@ -702,25 +717,47 @@ async function getNews(lat,lng){
       // Always reset the GL state.
       renderer.resetState();
     }
+
+    function getPlaceData(place) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      getNearbyRestaurants(lat, lng);
+      getNearbyAttractions(lat, lng);
+      // getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
+      map.setCenter({ lat, lng });
+      updateInfoWindow(place);
+      getWeather(lat, lng);
+      getNews(lat, lng);
+    }
     //22일 매인 페이지에서 로케이션으로 값 및 검색 자동으로 추가 
-    if (props.locationValue) {  
-      if(searchRef.value) placesService.value.textSearch({query:props.locationValue},(result,status)=>{
-        if(status==='OK') places=result[0]
-        console.log(places.geometry.location.lat())
-        // const location = places.geometry.location
-        getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-        getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-        getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-03")
-        //getYoutubeData(places.name)
-        map.setCenter({ lat: places.geometry.location.lat(), lng: places.geometry.location.lng() });
-        // moveToPosition(location)
-        updateInfoWindow(places)
-        getWeather(places.geometry.location.lat(),places.geometry.location.lng())
-        getNews(places.geometry.location.lat(),places.geometry.location.lng())        
-      })
+    if (props.locationValue && searchRef.value) {
+      placesService.value.textSearch({query:props.locationValue}, (result, status) => {
+        if (status === 'OK') {
+          getPlaceData(result[0]);
+        } 
+        else {
+          placesService.value.textSearch({query:props.locationValue + '역'}, (result, status) => {
+            if (status === 'OK') {
+              getPlaceData(result[0]);
+            }
+          });
+        }
+      });
+    }
+    else if (props.locationLatLng) {
+      const latNumber = parseFloat(props.locationLatLng[0]);
+      const lngNumber = parseFloat(props.locationLatLng[1]);
+      const dataLatLng = {
+        lat: latNumber,
+        lng: lngNumber,
+      };
+      map.setCenter(dataLatLng);
+      getNearbyRestaurants(latNumber, lngNumber);
+      getNearbyAttractions(latNumber, lngNumber);
+      getWeather(latNumber, lngNumber);
+      getNews(latNumber, lngNumber);
     }
   }
-
   /*경로 설정 */
   const arrivalsValue= ref({})
 
