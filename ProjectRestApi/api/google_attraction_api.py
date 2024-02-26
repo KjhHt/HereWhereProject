@@ -10,7 +10,6 @@ class Attraction(Resource):
         api_key = 'AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k'
         lat = args['lat']
         lng = args['lng']
-        max_results = 25
-        info = find_nearby_places(api_key, lat, lng, max_results)  # lat와 lng를 제대로 전달
+        info = find_nearby_places(api_key, lat, lng)  # lat와 lng를 제대로 전달
 
         return info

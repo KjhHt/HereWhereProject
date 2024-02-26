@@ -6,24 +6,30 @@
       </header> -->
       <div class="map-container">
         <div class="custom-hamburger-menu">
-          <Hamburgermenu :showPlan="showPlan"/>
+          <Hamburgermenu :showInter="showInter"/>
         </div>
-       <!--검색 오프-->
+        <!--검색 오프-->
       <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 430px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="leftOffButton"></button>
+          <!-- 2.21일 수정 -->
+          <div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"  ref="leftOffButton"><i class="bi bi-chevron-double-left"></i></button> 
+          </div>
         </div>
         <div class="offcanvas-body">
-          <div style="margin-top:10px;">
-              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick"/>
-            </div>
+          <div class="mt-3">
+              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick" />
+          </div>
           <div class="search-container">
-            <input v-model="searchQuery" placeholder="Here Where검색, 이미지검색" ref="searchRef"/>
+            <input placeholder="Here Where검색, 이미지검색" ref="searchRef"/>
             <button type="button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
             <SearchImage @searchLocation="searchLocation"/>
+          </div>
+          <div>
+            <Weather :weather="weatherData"/>
           </div>
         <div class="youtubeseach-box">
           <h5 v-if="youtubeData.length>0" class="youtubesearch"><i class="bi bi-youtube"></i> YouTube</h5>
@@ -55,23 +61,28 @@
             </button>
             </div>
           </div>
+          <News :news="newsData"/>
         </div>
       </div>
 
-    <!--여행플랜 오프-->
+    <!--관심여행 오프-->
     <div class="offcanvas offcanvas-start"
           data-bs-scroll="true"
           data-bs-backdrop="false"
           tabindex="-1"
-          id="offcanvasPlan"
-          aria-labelledby="offcanvasPlan"
-          style="width: 410px; height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
-      <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
-        <h5>여행플랜</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="planRef"></button>
-      </div>
+          id="offcanvasInter"
+          aria-labelledby="offcanvasInter"
+          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+      <!-- 2.21일 수정 -->
+      <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+            <div>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="interRef" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+            </div>
+            <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Travel Plan</h5>
+            <div style="width: same-as-button;"></div>
+          </div>
       <div class="offcanvas-body">
-        <PlanCard v-for="plan in plansInfo" :key="plan.id" :plan="plan" @passArrival="arrivalRoute"/>
+        <InterCard v-for="inter in intersInfo" :key="inter.id" :inter="inter" @passArrival="arrivalRoute"/>
       </div>
     </div>
     <!--음식점 오프-->
@@ -81,12 +92,17 @@
           tabindex="-1"
           id="offcanvasRestaurant"
           aria-labelledby="offcanvasRestaurantLabel"
-          style="width: 410px; height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
-          <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
-              <h5>주변 음식점 리스트</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          style="width: 410px; height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          <!-- 2.21일 수정 -->
+          <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+            <div>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+            </div>
+            <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Restaurant List</h5>
+            <div style="width: same-as-button;"></div>
           </div>
         <div class="offcanvas-body">
+          <LoadingOverlay :loading="loadingrestaurant" />
           <RestaurantCard v-for="restaurant in restaurantsInfo" :key="restaurant.id" :restaurant="restaurant"/>
         </div>
       </div>
@@ -97,14 +113,20 @@
           tabindex="-1"
           id="offcanvasHotel"
           aria-labelledby="offcanvasHotelLabel"
-          style="width: 410px;  height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
-        <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
-          <h5>주변 호텔 리스트</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
+          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          <!-- 2.21일 수정 -->
+          <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+            <div>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+            </div>
+            <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Hotel List</h5>
+            <div style="width: same-as-button;"></div>
+          </div>
         <div class="offcanvas-body">
-          <HotelDate/>
-          <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>
+          <HotelDate :places="places" @search-event="handleSearchEvent"/>
+          <LoadingOverlay :loading="loadinghotel" />
+          <LoadingOverlay :loading="loadingdetail" />
+          <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>      
         </div>
       </div>
       <!--관광지 오프-->
@@ -114,52 +136,49 @@
           tabindex="-1"
           id="offcanvasAttraction"
           aria-labelledby="offcanvasAttractionLabel"
-          style="width: 410px;  height: calc(100vh - 86px); bottom: 0; top: auto; border: none;">
-        <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 35px;">
-          <h5>주변 관광지 리스트</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
+          style="width: 410px;  height: calc(100vh - 81px); bottom: 0; top: auto; border: none;">
+          <!-- 2.21일 수정 -->
+          <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
+            <div>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+            </div>
+            <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Attraction List</h5>
+            <div style="width: same-as-button;"></div>
+          </div>
         <div class="offcanvas-body">
+          <LoadingOverlay :loading="loadingattraction" />
           <AttractionCard v-for="attraction in attractionsInfo" :key="attraction" :attraction="attraction"/>
         </div>
       </div>
 
       <!--경로 오프-->
-      <div :class="{ 'offcanvas offcanvas-bottom': true, 'show': showRoute }" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height:40vh">
+      <div :class="{ 'offcanvas offcanvas-start': true, 'show': showRoute }" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height:100vh; width:410px;">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasBottomLabel">경로지정</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"></button>
+          <button type="button" id="btn_close" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"></button>
         </div>
-        <div class="offcanvas-body small">
-          <div class="row mb-3">
-            <label for="departures" class="col-sm-2 col-form-label">출발지</label>
-            <div class="col-sm-6">
-              <input v-model="departuresValue" type="text" class="form-control" id="departures" ref="departuresRef">
-            </div>
+        <div class="offcanvas-form" id="modal_form">
+          <div class="offcanvas-start">
+            <RouteRecommendation @setDraw="drivePath=>setDraw(drivePath)" 
+                  @passRouteLocation="e=>routeCoords=e" :routeInfo="clickInfo" 
+                  :arrivals="arrivalsValue" :map="mapRef"
+            />
           </div>
-          <div class="row mb-3">
-            <label for="arrivals" class="col-sm-2 col-form-label">도착지</label>
-            <div class="col-sm-6">
-              <input v-model="arrivalsValue" type="text" class="form-control" id="arrivals" ref="arrivalsRef">
-            </div>
-          </div>
-          <a href="#" class="btn btn-primary" @click="setDraw">검색</a>
         </div>
       </div>
-    
+      <TravelPlan />
+
     <GoogleMap 
       :api-key="apiKey" 
       :center="mapOptions.center"
       :zoom="mapOptions.zoom"
       :tilt="mapOptions.tilt"
       :map-id="mapOptions.mapId"
-      :styles="mapOptions.styles"
       :disable-default-ui="mapOptions.disableDefaultUI"
       ref="mapRef"
-      style="width:100vw; height:calc(100vh - 86px);"
-      @click="e=>clickIcons(e)"
+      style="width:100vw; height:calc(100vh - 81px);"
+      @click="e=>clickHandler(e)"
       >
-        <DrawDirection :coords="routeCoords" @dataSend="moveToMarkerInfo" @cameraSend="cameraCenter" />
+      <DrawDirection :coords="routeCoords" @cameraSend="data=>cameraCenter(data)" />
       
         <CustomMarker :options="{ position: mapOptions.center, anchorPoint: 'BOTTOM_CENTER' }">
             <div style="text-align: center">
@@ -178,51 +197,18 @@
             :model-value="infoWindow"       
             ref="infoRef">
             <div class="card" style="width: 18rem; height: 24rem;">
-              <img :src="locationInfo.placeImage" class="card-img-top img-fluid" :alt=locationInfo.placeName>
+              <img :src="locationInfo.placeImage" class="card-img-top img-fluid" :alt=locationInfo.placeName style="height: 250px">
               <div class="card-body">
                 <h5 class="card-title">{{locationInfo.placeName}}</h5>
                 <p class="card-text">{{ locationInfo.placeAddress }}</p>
                 <p class="card-text">{{ locationInfo.placeRating }}</p>
-                <a href="#" class="btn btn-primary" @click="setPlansInfo">Pick</a>
+                <a href="#" class="btn btn-primary" @click="setIntersInfo">Pick</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="#" class="btn btn-primary" @click="arrivalRoute(places)">경로</a>
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster> <!--pick누르면 나오는 마커-->
-          <!--인포윈도우 마커표시<MapMarker v-if="targetLocation" :options="{position:targetLocation}" @click="selectMarker"/>-->
-          <CustomMarker v-for="plan in plansInfo" :key="plan.name" 
-                        :options="{ position: {lat:plan.geometry.location.lat(),
-                                               lng:plan.geometry.location.lng() }}"
-                        @click="()=>searchLocation(plan)">
-            <div style="text-align: center">
-                <img 
-                    class="rounded-circle" 
-                    src="@/assets/Cat.png" 
-                    width="40" height="40" style="margin-bottom: 40px" 
-                    />
-            </div>
-          </CustomMarker>
-          <CustomMarker v-if="moveMarker"
-                        :options="{ position: {lat:markerPosition.lat,
-                                               lng:markerPosition.lng }}"
-                    >
-            <div style="text-align: center">
-                <img 
-                    class="rounded-circle" 
-                    src="@/assets/Cat.png" 
-                    width="40" height="40" style="margin-bottom: 40px" 
-                    />
-            </div>
-          </CustomMarker>
-          <CustomMarker v-for="hotel in hotelsInfo" :key="hotel.hotel"  :options="{ position: {lat:hotel.location[0],lng:hotel.location[1]} }">
-            <div style="text-align: center">
-                <img 
-                    class="rounded-circle" 
-                    src="@/assets/hotel.png" 
-                    width="40" height="40" style="margin-top: 8px" 
-                    />
-            </div>
-        </CustomMarker>
-        </MarkerCluster>
+        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
+            @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
   </div>
@@ -233,14 +219,13 @@
   import {
       GoogleMap,
       //Marker as MapMarker,
-      MarkerCluster,
       InfoWindow,
       CustomMarker,
   } from "vue3-google-map";
   import { ThreeJSOverlayView } from '@googlemaps/three';
   // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import * as THREE from 'three';
-  import { ref, watch, computed, onMounted } from "vue";
+  import { ref, watch, computed, onMounted, defineProps } from "vue";
   import { geoLocation } from '@/composable/geoLocation'
   import gsap from 'gsap'
   import axios from "axios";
@@ -249,24 +234,30 @@
   import RestaurantCard from '@/components/search/RestaurantCard.vue'
   import AttractionCard from '@/components/search/AttractionCard.vue';
   import Hamburgermenu from '@/components/search/HamburgerMenu.vue'
+  import RouteRecommendation from "@/components/search/RouteRecommendation.vue";
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
-  import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js
-  import PlanCard from "@/components/search/PlanCard.vue";
+  import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js, 경로검색 placeholder토글
+  import InterCard from "@/components/search/InterestingCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
   import SearchCard from '@/components/search/SearchCard.vue'
-  //import YoutubeCard from '@/components/search/YoutubeCard.vue'
+  import YoutubeCard from "@/components/search/YoutubeCard.vue";
+  import Weather from "@/components/search/WeatherCard.vue";
+  import News from "@/components/search/NewsCard.vue";
+  import MarkerCluster from "@/components/search/MarkerCluster.vue";
+  import TravelPlan from "@/components/search/TravelPlan.vue";
+  import LoadingOverlay from '@/components/search/LoadingModal.vue';
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
-  let arrivals= ref([]);
-  const departuresRef= ref(null);
-  const arrivalsRef= ref(null);
-  const planRef= ref(false);
-  const showPlan= ref(false);
+  const interRef= ref(false);
+  const showInter= ref(false);
   const leftOffButton= ref(null);
-  const routeCoords=ref([]);
-  let searchList= ref([])
+  const routeCoords=ref({});
+  let searchList= ref([]);
+  const weatherData=ref([]);
+  const newsData=ref([]);
+  let clickInfo= ref({})
 
   const locationInfo=ref({
     placeName:'',
@@ -276,85 +267,159 @@
   })
   const profileImage = ref('');
 
+  const props = defineProps({
+    locationValue: Object,
+  });
+
   onMounted(()=>{
+    searchRef.value.value=props.locationValue
     profileImage.value=localStorage.getItem('profileImage');
     createObserver();
   });
 
-
   function updateInfoWindow(places){
     let photoUrl;
-    console.log('photos',places.photos) //검색 결과 이미지 배열
+    if("restaurant" in places){
+      locationInfo.value.placeName= places.restaurant
+      locationInfo.value.placeAddress= places.address
+      locationInfo.value.placeRating= places.rating
+      if(places.image !== '이미지를 제공하지 않는 음식점 입니다')
+        locationInfo.value.placeImage= places.image
+      else
+        locationInfo.value.placeImage= 'place_default.png';
+    }else if("hotel" in places){
+      locationInfo.value.placeName= places.hotel
+      locationInfo.value.placeAddress= places.address
+      locationInfo.value.placeRating= places.review
+      locationInfo.value.placeImage= places.img_urls
+    }else if("attraction" in places){
+      locationInfo.value.placeName= places.attraction
+      locationInfo.value.placeAddress= places.address
+      locationInfo.value.placeRating= places.rating
+      locationInfo.value.placeImage= places.image
+    }else{
+      console.log('photos',places.photos) //검색 결과 이미지 배열
 
-    if (places.photos && places.photos.length > 0) {
-      const photo = places.photos[0]; 
-      const photoReference = photo.photo_reference;
-    
-      if (photoReference) {
-        photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-      } else if (photo.getUrl) {
-        photoUrl = photo.getUrl({maxWidth: 400});
+      if (places.photos && places.photos.length > 0) {
+        const photo = places.photos[0]; 
+        const photoReference = photo.photo_reference;
+        console.log('레퍼런스',photoReference)
+      
+        if (photoReference) {
+          photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference=${photoReference}&key=${apiKey}`;
+        } else if (photo.getUrl) {
+          photoUrl = photo.getUrl({maxWidth: 300});
+        } else {
+          photoUrl = 'place_default.png'; // 기본 이미지 URL을 설정하세요
+        }
       } else {
         photoUrl = 'place_default.png'; // 기본 이미지 URL을 설정하세요
       }
-    } else {
-      photoUrl = 'place_default.png'; // 기본 이미지 URL을 설정하세요
+      
+        locationInfo.value.placeName=places.name
+        locationInfo.value.placeAddress=places['formatted_address']
+        locationInfo.value.placeRating=places.rating
+        locationInfo.value.placeImage=photoUrl
+        console.log('포토유알엘',photoUrl)
     }
-    
-      locationInfo.value.placeName=places.name
-      locationInfo.value.placeAddress=places['formatted_address']
-      locationInfo.value.placeRating=places.rating
-      locationInfo.value.placeImage=photoUrl
   }
 
   const hotelsInfo=ref([])
   const restaurantsInfo=ref([])
   const attractionsInfo=ref([])
-  const plansInfo= ref([])
+  const intersInfo= ref([])
   const youtubeData=ref([])
+  const loadinghotel = ref(false);
+  const loadingrestaurant = ref(false);
+  const loadingattraction = ref(false);
+  const loadingdetail = ref(false)
 
-  function setPlansInfo(){
-    showPlan.value= false;
-    if(plansInfo.value.length !== 0){
-      for(let i=0; i<plansInfo.value.length; i++){
-        if(plansInfo.value[i].name === places.name) return;
+  function setIntersInfo(){
+    showInter.value= false;
+    if(intersInfo.value.length !== 0){
+      for(let i=0; i<intersInfo.value.length; i++){
+        if(intersInfo.value[i].name === places.name) {
+          infoRef.value.close()
+          showInter.value= !showInter.value
+          return;
+        }
       }
     }
-    plansInfo.value.push(places)
-    infoRef.value.close();
-    showPlan.value= !showPlan.value;
+    intersInfo.value.push(places)
+    console.log('관심여행지',intersInfo.value)
+    infoRef.value.close()
+    showInter.value= !showInter.value
   }
-
+  /*
   async function getYoutubeData(address){
     console.log(address);
     const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
     console.log(response);
     youtubeData.value=response.data
-  }
-  
-  async function getNearbyHotels(lat,lng){
-    console.log('호텔콘솔:',[lat,lng]);
-    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/booking',{params:{lat,lng}})
-    console.log('response:',response);
-    hotelsInfo.value=response.data
-    console.log('호텔리스트',hotelsInfo.value)
+  }*/
+  async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+    try {
+      loadinghotel.value = true;
+      hotelsInfo.value = []
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+      hotelsInfo.value = response.data;
+    } catch (error) {
+      console.error("An error occurred while fetching hotel data:", error);
+    } finally {
+      loadinghotel.value = false;
+    }
   }
 
-  async function getNearbyRestaurants(lat,lng){
-    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/restaurant',{params:{lat,lng}})
-    restaurantsInfo.value=response.data
+  async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+      hotelsInfo.value = response.data;
   }
-  async function getNearbyAttractions(lat,lng){
-    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/attraction',{params:{lat,lng}})
-    attractionsInfo.value=response.data
+
+async function getNearbyRestaurants(lat, lng) {
+  try {
+    loadingrestaurant.value = true;
+    restaurantsInfo.value = []
+    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
+    restaurantsInfo.value = response.data;
+  } catch (error) {
+    console.error("An error occurred while fetching restaurant data:", error);
+  } finally {
+    loadingrestaurant.value = false;
   }
+}
+
+async function getNearbyAttractions(lat, lng) {
+  try {
+    loadingattraction.value = true;
+    attractionsInfo.value = []
+    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
+    attractionsInfo.value = response.data;
+  } catch (error) {
+    console.error("An error occurred while fetching attraction data:", error);
+  } finally {
+    loadingattraction.value = false;
+  }
+}
+
+async function getWeather(lat,lng){
+  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
+  weatherData.value=response.data
+}
+
+async function getNews(lat,lng){
+  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
+  newsData.value=response.data
+}
   
   function searchLocation(places){
-    const location=places.geometry.location
+    let location= places.geometry.location;
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng())
-    getYoutubeData(places.formatted_address)
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    //getYoutubeData(places.name)
+    getWeather(places.geometry.location.lat(),places.geometry.location.lng())
+    getNews(places.geometry.location.lat(),places.geometry.location.lng())
+    console.log('로케이션',location)
     moveToPosition(location)
     updateInfoWindow(places)
   }
@@ -372,11 +437,18 @@
      }
   }
   const {coords} = geoLocation()
-  const currPos = computed(()=>({
-      lat: parseFloat(coords.value.latitude),
-      lng: parseFloat(coords.value.longitude)
-  }))
-  const apiKey='AIzaSyA16otojrK96bOUH8jhs4Fp4gC3Glt2xrY'; /* 여기에 해당 apikey설정할 것!!!! */
+  const currPos = computed(() => {
+  return !props.locationLatLng
+    ? {
+        lat: parseFloat(coords.value.latitude),
+        lng: parseFloat(coords.value.longitude),
+      }
+    : {
+        lat: props.locationLatLng.lat,
+        lng: props.locationLatLng.lng,
+      };
+});
+  const apiKey= process.env.VUE_APP_GOOGLE_API_KEY; /* 여기에 해당 apikey설정할 것!!!! */
   
   const mapOptions=ref({
       tilt: 67.5,
@@ -416,111 +488,14 @@
   });  
   
   const selectedMarkerIndex=ref(null);
-  
-  /*
-  function getPlaceId(location){
-    return new Promise((resolve, reject) => {
-      geocoder.value.geocode({'location':{lat:location.lat(),lng:location.lng()}},
-        (result,status)=>{
-          if (status === 'OK') {
-          resolve(result[0].place_id); // 성공하면 'resolve'를 호출
-        } else {
-          reject(status); // 실패하면 'reject'를 호출
-        }
-      });
-    });
-  }*/
-  
-  /*
-  async function selectMarker(marker,index) {
-    if (selectedMarkerIndex.value === index) {
-      // 이미 선택된 마커를 다시 클릭하면 InfoWindow를 닫습니다.
-      selectedMarkerIndex.value = null;
-    } else {
-      // 새로운 마커를 클릭하면 InfoWindow를 해당 마커에 엽니다.
-      selectedMarkerIndex.value = index;
-    }
     
-    const position=marker.latLng; //객체(lat 얻으려면 position.lat())
-    const placeId= await getPlaceId(position)
-    console.log('플레이스아이디:',placeId)
-    const request={
-      placeId,
-      fields:['formatted_address','geometry','name','rating','photos']
-    }
-    placesService.value.getDetails(request,(place,status)=>{
-      console.log('status:',status);
-      //updateInfoWindow(place); 주석풀면 검색했을때와 마커를 클릭하였을때의 이미지가 달라짐
-    })
-    
-    moveToPosition(position);
-    }*/
-    
-  
-  
   let targetZoom = 18; // 최종적으로 도달하고자 하는 zoom 수준
   let targetHeading = 160; // 최종적으로 도달하고자 하는 헤딩 값
   let targetTilt = 47.5; // 최종적으로 도달하고자 하는 틸트 값
   let savedPosition;//,startPosition,startTime=null;
   let currentZoom,currentHeading,currentTilt;
   // let duration=3000;
-  /*
-  function animateMap() {
-    if (!savedPosition) return;
-  
-    // 현재 위치와 목표 위치 사이의 차이 계산
-    const diffLat = Math.abs(map.getCenter().lat() - savedPosition.lat);
-    const diffLng = Math.abs(map.getCenter().lng() - savedPosition.lng);
-    const currentDistance = calculateDistance({ lat: map.getCenter().lat(), lng: map.getCenter().lng() }, savedPosition);
-    // const speedFactor = Math.min(currentDistance * 100, 1); // 최대 속도 제한
-    const maxZoom = 18; // 최대 줌 레벨
-    // 줌, 헤딩, 틸트의 목표 값과의 차이 계산
-    const diffZoom = Math.abs(map.getZoom() - targetZoom);
-    const diffHeading = Math.abs(map.getHeading() - targetHeading);
-    const diffTilt = Math.abs(map.getTilt() - targetTilt);
-  
-    // if (currentDistance > 0.0001) {
-    //   const newLat = map.getCenter().lat() + (savedPosition.lat - map.getCenter().lat()) * speedFactor * 0.03;
-    //   const newLng = map.getCenter().lng() + (savedPosition.lng - map.getCenter().lng()) * speedFactor * 0.03;
-    //   map.setCenter({ lat: newLat, lng: newLng });
-    // }
-    // 조건에 따른 값 업데이트
-    if (diffLat > 0.0001 || diffLng > 0.0001) {
-      const newLat = map.getCenter().lat() + (savedPosition.lat - map.getCenter().lat()) * 0.03;
-      const newLng = map.getCenter().lng() + (savedPosition.lng - map.getCenter().lng()) * 0.03;
-      map.setCenter({ lat: newLat, lng: newLng });
-    }
-    if (currentDistance < 0.01) { // 목표 위치에 근접했을 때
-      currentZoom -= (currentZoom - targetZoom) * 0.01;
-    } else { // 목표 위치로 이동 중
-      const tempZoom = Math.min(maxZoom, currentZoom + 0.3); // 점차적으로 줌 레벨 증가
-      currentZoom += (tempZoom - currentZoom) * 0.01;
-    }
-    if (diffHeading > 1) {
-      currentHeading += (targetHeading - currentHeading) * 0.03;
-    }
-    if (diffTilt > 1) {
-      currentTilt += (targetTilt - currentTilt) * 0.03;
-    }
-  
-    map.moveCamera({
-      zoom: currentZoom,
-      heading: currentHeading,
-      tilt: currentTilt
-    });
-  
-    // 모든 조건이 충족될 때까지 재귀 호출
-    if (diffLat > 0.0001 || diffLng > 0.0001 || diffZoom > 0.1 || diffHeading > 1 || diffTilt > 1) {
-      requestAnimationFrame(animateMap);
-    } else {
-      // 애니메이션 완료 후 인포 윈도우 위치 업데이트
-      windowOptions.value.position = { lat: savedPosition.lat + 0.0005, lng: savedPosition.lng };
-      infoRef.value.infoWindow.setPosition(windowOptions.value.position);
-      infoRef.value.infoWindow.open(mapRef.value.map);
-    }
-  }
-  */
-  
+   
   function animateMap() {
     if (!savedPosition) return;
   
@@ -565,73 +540,6 @@
     }
   }
   
-  
-  
-  // let lastFrameTime = Date.now();
-  // const frameInterval = 200;
-  
-  // function animateMap() {
-  //   if (!savedPosition) return;
-  
-  //   const currentPosition = { lat: map.getCenter().lat(), lng: map.getCenter().lng() };
-  //   const diffLat = Math.abs(currentPosition.lat - savedPosition.lat);
-  //   const diffLng = Math.abs(currentPosition.lng - savedPosition.lng);
-  //   const currentDistance = calculateDistance(currentPosition, savedPosition);
-  
-  //   // 동적 이동 속도 계산
-  //   const speedFactor = Math.min(currentDistance, 1); // 거리에 따라 속도 조절, 최대값을 1로 제한
-  //   const moveSpeed = 0.02;
-  //   const tiltSpeed = 0.02;
-  //   const headingSpeed = 0.01;
-  //   const zoomSpeed = 0.005;
-  //   // 현재 줌, 헤딩, 틸트 값 업데이트 (속도 계수를 적용)
-  //   currentZoom += (targetZoom - currentZoom) * zoomSpeed * speedFactor;
-  //   currentHeading += (targetHeading - currentHeading) * headingSpeed * speedFactor;
-  //   currentTilt += (targetTilt - currentTilt) * tiltSpeed * speedFactor;
-  
-  //   // 위치 업데이트 (속도 계수를 적용하여 더 멀리 이동할 때 더 빠르게 이동)
-  //   const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed * speedFactor;
-  //   const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed * speedFactor;
-  
-  //   map.setCenter({ lat: newLat, lng: newLng });
-  
-  
-  //   const now = Date.now();
-  //   const elapsed = now - lastFrameTime;
-  
-  //   if (elapsed > frameInterval) {
-  //     // 여기에 애니메이션 로직을 넣습니다.
-  //     // 예: map.setCenter(), map.moveCamera() 등
-  //     // 카메라 이동
-  //     map.moveCamera({
-  //         zoom: currentZoom,
-  //         heading: currentHeading,
-  //         tilt: currentTilt
-  //       });
-  //     lastFrameTime = now - (elapsed % frameInterval);
-  //   }
-  
-  //   // 모든 조건이 충족될 때까지 재귀 호출
-  //   if (diffLat > 0.0001 || diffLng > 0.0001 || Math.abs(currentZoom - targetZoom) > 0.01 || Math.abs(currentHeading - targetHeading) > 0.1 || Math.abs(currentTilt - targetTilt) > 0.1) {
-      
-  //     requestAnimationFrame(animateMap);
-  //   } else {
-  //     // 애니메이션 완료 후 처리, 예를 들면 인포 윈도우 위치 업데이트
-  //     if (infoRef.value && infoRef.value.infoWindow) {
-  //         windowOptions.value.position = { lat: savedPosition.lat, lng: savedPosition.lng };
-  //         infoRef.value.infoWindow.setPosition(windowOptions.value.position);
-  //         infoRef.value.infoWindow.open(mapRef.value.map);
-  //     }
-  //   }
-  // }
-  
-  
-  // function calculateDistance(pos1, pos2) {
-  //   // 두 위치 사이의 거리를 계산하는 로직
-  //   // Haversine 공식 등을 사용할 수 있음
-  //   return Math.sqrt(Math.pow(pos2.lat - pos1.lat, 2) + Math.pow(pos2.lng - pos1.lng, 2));
-  // }
-  
   function getPositionValue(value) {
     if (typeof value === 'function') {
       // value가 함수인 경우, 함수를 호출합니다.
@@ -649,47 +557,11 @@
     };
     targetLocation.value=savedPosition
   
-    
-  
     animateMap()
 
-    //direction
-    /*
-    const origin={
-      lat:currPos.value.lat,
-      lng:currPos.value.lng
-    }
-    
-    
-    const destination={
-      lat:savedPosition.lat,
-      lng:savedPosition.lng
-    }
-    
-  
-    getDirection(origin,destination)
-    */ 
   }
-  
   
   const geocoder=ref(null)
-  
-  
-  //direction
-  /*
-  async function getGeoCode(lat, lng) {
-    return new Promise((resolve, reject) => {
-      geocoder.value.geocode({ 'location': { lat, lng } }, function(results, status) {
-        if (status === 'OK' && results[0]) {
-          resolve(results[0].geometry.location);
-        } else {
-          console.error('Geocode was not successful for the following reason: ' + status);
-          reject(status);
-        }
-      });
-    });
-  }
-  */
 
   // eslint-disable-next-line no-unused-vars
   async function calculateNearestPoints(lat,lng) {
@@ -708,56 +580,6 @@
   
     return points
   }
-  
-  //direction
-  /*
-  async function getDirection(origin,destination){
-    const originGeocode=await getGeoCode(origin.lat,origin.lng)
-    const destinationGeocode= await getGeoCode(destination.lat,destination.lng)
-    console.log('origin:',originGeocode)
-    console.log('destination',destinationGeocode)
-    // const origins=await calculateNearestPoints(originGeocode.lat(), originGeocode.lng())[0]
-    // const destinations=await calculateNearestPoints(destination.lat,destination.lng)[0]
-    try {
-      // const nearestRoadForOrigin = await getNearestRoadLocation(origin.lat, origin.lng);
-      // const nearestRoadForDestination = await getNearestRoadLocation(destination.lat, destination.lng);
-  
-      let request = {
-        origin:{lat:originGeocode.lat(),lng:originGeocode.lng()},
-        destination:{lat:destinationGeocode.lat(),lng:destinationGeocode.lng()},
-  
-        travelMode:'DRIVING',
-        drivingOptions: {
-          departureTime: new Date(),
-        },
-      };
-  
-      const result = await new Promise((resolve, reject) => {
-        directionService.value.route(request, (result, status) => {
-          if (status === 'OK') {
-            //zero result
-
-            resolve(result);
-          } else {
-            reject('Directions request failed due to ' + status);
-          }
-        });
-      });
-  
-      console.log('result:',result);
-      directionRenderer.value.setDirections(result);
-      
-    } catch (error) {
-      console.error('Error in getDirection:', error);
-    }
-  
-  }*/
-  
-  
-  // function calculateDirection(currentPosition, targetPosition) {
-  //   // 현재 위치의 경도와 목표 위치의 경도 비교
-  //   return currentPosition.lng < targetPosition.lng ? 'right' : 'left';
-  // }
   
   // InfoWindow의 위치를 업데이트하는 함수
   function updateInfoWindowPosition(targetPosition) {
@@ -784,8 +606,6 @@
     }
   });
   
-  
-  
   const matrixService=ref(null);
   const directionService=ref(null);
   const directionRenderer=ref(null);
@@ -806,28 +626,28 @@
     directionRenderer.value.setMap(googleMap)
     geocoder.value=new mapRef.value.api.Geocoder()
     const autoComplete=new mapRef.value.api.places.Autocomplete(searchRef.value,autoCompleteOptions);
-    new mapRef.value.api.places.Autocomplete(departuresRef.value,autoCompleteOptions);
-    new mapRef.value.api.places.Autocomplete(arrivalsRef.value,autoCompleteOptions);
   
-      // 지도의 경계(뷰포트) 속성을 자동 완성 개체에 바인딩합니다,
-      // 자동 완료 요청이 현재 맵 경계를 사용하도록 설정합니다
-      // 요청에 bounds 옵션이 있습니다.
-      autoComplete.bindTo("bounds", map);
-      autoComplete.addListener('place_changed',()=>{
+    // 지도의 경계(뷰포트) 속성을 자동 완성 개체에 바인딩합니다,
+    // 자동 완료 요청이 현재 맵 경계를 사용하도록 설정합니다
+    // 요청에 bounds 옵션이 있습니다.
+    autoComplete.bindTo("bounds", map);
+    autoComplete.addListener('place_changed',()=>{
       places=autoComplete.getPlace();
       console.log('플레이스',places)
       if(Object.keys(places).length > 1) {
         leftOffButton.value.click();
         searchLocation(places)
+      }else{
+        searchList.value= [];
+        let request= {query: places.name};
+        placesService.value.textSearch(request,(result,status)=>{
+          if(status === 'OK') {
+            searchList.value= result;
+            console.log('리절트',result)
+          }
+          return;
+        });
       }
-      searchList.value= [];
-      let request= {query: places.name};
-      placesService.value.textSearch(request,(result,status)=>{
-        if(status === 'OK') {
-          searchList.value= result;
-        }
-        return;
-      });
     });  
   
     scene = new THREE.Scene();
@@ -889,71 +709,52 @@
       // Always reset the GL state.
       renderer.resetState();
     }
+    //22일 매인 페이지에서 로케이션으로 값 및 검색 자동으로 추가 
+    if (props.locationValue) {  
+      if(searchRef.value) placesService.value.textSearch({query:props.locationValue},(result,status)=>{
+        if(status==='OK') places=result[0]
+        console.log(places.geometry.location.lat())
+        // const location = places.geometry.location
+        getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
+        getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
+        getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-03")
+        //getYoutubeData(places.name)
+        map.setCenter({ lat: places.geometry.location.lat(), lng: places.geometry.location.lng() });
+        // moveToPosition(location)
+        updateInfoWindow(places)
+        getWeather(places.geometry.location.lat(),places.geometry.location.lng())
+        getNews(places.geometry.location.lat(),places.geometry.location.lng())        
+      })
+    }
   }
 
   /*경로 설정 */
-  const departuresValue= ref('')
-  const arrivalsValue= ref('')
+  const arrivalsValue= ref({})
 
   function routeToggle(){
     showRoute.value = false;
   }
 
   const arrivalRoute=arrival=>{
-    let latLng= [coords.value.latitude,coords.value.longitude]
-    console.log('전달받은 도착지:',arrival);
-    geocoder.value.geocode({location:{lat:latLng[0],lng:latLng[1]}})
-    .then(response=>{
-      departuresValue.value=response.results[0].formatted_address;
-      arrivalsValue.value=arrival.formatted_address
-      showRoute.value= true;
-      planRef.value.click();
-      arrivals.value.push([arrival.geometry.location.lat(), arrival.geometry.location.lng()]);
-      arrivals.value.push(latLng);
-    })
-  }
-
-  function setDraw(){
-    routeCoords.value=[]
-    geocoder.value.geocode({address: departuresRef.value.value})
-    .then(response=>{
-      if(response.results[0])
-      routeCoords.value.push([response.results[0].geometry.location.lat(), response.results[0].geometry.location.lng()])
-      geocoder.value.geocode({address: arrivalsRef.value.value})
+    geocoder.value.geocode({location:arrival.geometry.location})
       .then(result=>{
-        if(result.results[0])
-        console.log('리절트',result.results[0])
-        routeCoords.value.push([result.results[0].geometry.location.lat(), result.results[0].geometry.location.lng()])
-        routeToggle()
+        arrivalsValue.value= result.results[0]
+        infoRef.value.close()
+        showRoute.value= true
       })
-    })
   }
-  /*마커움직이기 만들다맘
-  const markerPosition=ref({});
-  const moveMarker= ref(false);
-  
-  const moveToMarkerInfo=(data)=>{
-    moveMarker.value= true;
-    console.log(data);
-    markerPosition.value= data;
-    let i=0;
-    const moveMarkerInterval = setInterval(()=>{
-      if(i<=data.length) {
-        moveMarker.value= false;
-        clearInterval(moveMarkerInterval);
-        return;
-      }
-      markerPosition.value.lat= data[i].lat;
-      markerPosition.value.lng= data[i].lng;
-      console.log('markerPosition',markerPosition)
-      i++;
-    })
-  }*/
+  const setDraw=(drivePath)=>{
+    routeCoords.value= drivePath
+  }
 
   const cameraCenter=(data)=>{
+    console.log('데이타',data)
     let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
-    console.log('디스탄스',distance);
-    if(distance<100) map.moveCamera({zoom:12})
+    console.log('디스탄스',distance)
+    if(distance<1) map.moveCamera({zoom:17})
+    else if(distance<5) map.moveCamera({zoom:15})
+    else if(distance<20) map.moveCamera({zoom:12})
+    else if(distance<100) map.moveCamera({zoom:8})
     mapRef.value.map.setCenter(data[parseInt(data.length/2)]);
   }
 
@@ -963,44 +764,87 @@
     searchLocation(places);
   }
 
-  /*
-  async function getYoutubeData(address){
-    console.log(address);
-    const response= await axios.get('http://127.0.0.1:5000/youtube',{params:{address}})
-    console.log(response);
-    youtubeData.value=response.data
-  }*/
-
-  const clickIcons=(e)=>{
-    if(e.placeId===undefined) return;
-    e.stop();
-    let service= new mapRef.value.api.places.PlacesService(mapRef.value.map);
-    let request= {
-      placeId:e.placeId
+  const clickHandler=(e)=>{
+    infoRef.value.close()
+    e.stop()
+    if(showRoute.value===true) {
+      geocoder.value.geocode({location:{lat:e.latLng.lat(), lng:e.latLng.lng()}})
+      .then(result=>{
+        clickInfo.value= result.results[0]
+        console.log('클릭',clickInfo.value)
+        return
+      })
     }
-    service.getDetails(request, (place, status)=>{
-      if(status !== 'OK') {console.log('스테이터스',status);return;}
-      showPlan.value = false;
-      var closeInfo= document.querySelector('.gm-ui-hover-effect');
-            
-      if(closeInfo !== null) {
-        closeInfo.click();
+    if(e.placeId!==undefined && showRoute.value!==true){
+      let service= new mapRef.value.api.places.PlacesService(mapRef.value.map)
+      let request= {
+        placeId:e.placeId
       }
-      let closeButton= document.querySelectorAll('.btn-close');
-      if(closeButton.forEach(x=>{
-        x.click();
-      }))
-      console.log('클로즈버튼',closeButton);
-
-      places= place;
-      searchLocation(place);
-    });
+      service.getDetails(request, (place, status)=>{
+        if(status !== 'OK') {console.log('스테이터스',status);return}
+        showInter.value = false
+        let closeInfo= document.querySelector('.gm-ui-hover-effect')
+              
+        if(closeInfo !== null) {
+          closeInfo.click()
+        }
+        let closeButton= document.querySelectorAll('.btn-close')
+        if(closeButton.forEach(x=>{
+          x.click()
+        }))
+        console.log('클로즈버튼',closeButton)
+        places= place
+        searchLocation(place)
+        return;
+      });
+    }
   }
-  
+
+  //21일 추가 호텔 검색 로딩
+  const handleSearchEvent = (searchData) => {
+    loadingdetail.value = true;
+    hotelsInfo.value = []; 
+    getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
+    .then(() => {
+      loadingdetail.value = false;
+    });
+  };
+
+  function clickCustomMarker(info){
+    if("attraction" in info || "restaurant" in info || "hotel" in info){
+      geocoder.value.geocode({location:{lat:info.lat,lng:info.lng}})
+      .then(result=>{
+        console.log('리썰트',result)
+        places= result.results[0]
+        searchLocation(places)
+      })
+    }else {
+      places= info
+      searchLocation(places)
+    }
+  }
 
   </script>
 
   <style scoped>
+  /********************************************************************경로 지정 */
+  #modal_form {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    padding: 0 100px 10px;
+    position: relative;
+    top: -30px;
+
+  }
+  #btn_close {
+    /* display: inline; */
+    margin-left: 350px;
+    margin-top: 80px;
+    z-index: 1100;
+    padding: 8px 16px;
+  }
+  /********************************************************************경로 지정 */
   .map-container {
     position: relative;
   }
@@ -1032,85 +876,7 @@
     cursor: pointer;
   }
   
-  .modal-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    background-color: white;
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    bottom: 5px;
-    width: 330px; /* 가로 길이를 늘림 */
-    display: flex; /* Flex container로 설정 */
-    flex-direction: row; /* 가로로 나란히 배열하도록 설정 */
-    gap: 10px; /* 각 버튼 사이의 간격 설정 */
-  }
-  
-  .modal-container button {
-    flex: 1; /* 버튼이 나눠서 영역을 차지하도록 설정 */
-    padding: 8px 0;
-    background-color: hsl(200, 80%, 95%); /* 아주 밝은 하늘색으로 변경 */
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    height: 50px; /* 세로 길이를 줄임 */
-    color: black;
-    font-weight: bold;
-  }
-  
-  .leftmodal-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    background-color: white;
-    
-    border-radius: 30px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    bottom: 5px;
-    width: 362px; /* 가로 길이를 늘림 */
-    display: flex; /* Flex container로 설정 */
-    flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
-    gap: 10px; /* 각 버튼 사이의 간격 설정 */
-    flex-grow: 1; /* 남은 공간을 균등하게 분배 */
-  }
-  .side-close-button {
-    position: absolute;
-    top: 320px;
-    right: 340px; /* 원하는 위치로 조절하세요 */
-    z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
-    padding: 20px 3px; /* 조절 가능한 패딩 값으로 변경 */
-    background-color: white;
-    color: black;
-    border-radius: 7px 0 0 7px; /* 직사각형의 경계를 조절하는 값으로 변경 */
-    cursor: pointer;
-    font-weight: bold;
-    
-  }
-  .side-open-button {
-    position: absolute;
-    top: 320px;
-    right: 0px; /* 원하는 위치로 조절하세요 */
-    z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
-    padding: 20px 3px; /* 조절 가능한 패딩 값으로 변경 */
-    background-color: white;
-    color: black;
-    border-radius: 7px 0 0 7px; /* 직사각형의 경계를 조절하는 값으로 변경 */
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  .modal-container button.selected,
-  .accommodation-button.selected,
-  .restaurant-button.selected,
-  .landmark-button.selected {
-    filter: invert(1); /* 선택된 버튼에 대한 흑백 반전 효과 추가 */
-  }
-  
+ 
   .place-info {
     display: flex;
     flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
@@ -1231,13 +997,16 @@
     width: 65px;
     height: 50px;
   }
+  .btn-close {
+    background: none;
+  }
   .pac-container {
     z-index: 9999px;
     top: 50px;
     left: 100px;
   }
   .carousel-control-prev,
-  .carousel-control-next {
+.carousel-control-next {
   background-color: #000; /* 배경색 */
   border-radius: 50%; /* 모서리 둥글게 */
   width: 50px; /* 너비 */
@@ -1268,4 +1037,5 @@
   margin-top: 20px;
   font-weight: bold;
 }
+
   </style> 

@@ -28,7 +28,11 @@
       </div>
     </div>
       <div class="features">
-        <CarouselComponent :current-index="currentIndex" @update:currentIndex="currentIndex = $event"/>
+        <CarouselComponent 
+          :current-index="currentIndex" 
+          @update:currentIndex="currentIndex = $event"
+          @imgClick="handleImgClick"
+          />
       </div>
     
   </div>
@@ -37,8 +41,15 @@
 <script setup>
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,defineEmits } from 'vue';
 import CarouselComponent from '@/components/CarouselComponent.vue';
+
+const emit = defineEmits(['imgClick']);
+
+const handleImgClick = (value) => {
+  console.log('과연 ??~~~',value);
+  emit('imgClick', value);
+}
 
 let currentIndex = ref(0);
 

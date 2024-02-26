@@ -4,7 +4,7 @@ import store from '@/store'
 import axios from 'axios';
 import AirTicketPage from '../views/AirTicketTemp.vue' 
 import ExchangePage from '../views/CurrencyView.vue'  
-import TravelPage from '../views/Travel.vue' 
+import TravelPage from '../views/TravelView.vue' 
 const routes = [
   {
     path: '/',

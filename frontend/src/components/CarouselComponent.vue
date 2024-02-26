@@ -2,7 +2,7 @@
   <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" ref="carouselRef">
     <div class="carousel-inner">
       <div class="carousel-item" v-for="(component, index) in components" :key="index" :class="{active: index === currentIndex}">
-        <component :is="component"/>
+        <component :is="component" @imgClick="handleImgClick"/>
       </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev" @click="prev">
@@ -19,12 +19,12 @@
 <script setup>
 import {ref, onMounted, defineProps, defineEmits } from 'vue';
 import { Carousel as BootstrapCarousel } from 'bootstrap';
-import TravelPage from '../views/Travel.vue';
+import TravelPage from '../views/TravelView.vue';
 import AirTicketPage from '../views/AirTicketTemp.vue';
 import ExchangePage from '../views/CurrencyView.vue';
 
 const props = defineProps(['currentIndex']);
-const emit = defineEmits(['update:currentIndex']);
+const emit = defineEmits(['update:currentIndex','imgClick']);
 let components = [TravelPage, AirTicketPage, ExchangePage];
 
 const carouselRef = ref(null);
@@ -36,6 +36,11 @@ onMounted(() => {
     ride: 'carousel',
   });
 });
+
+const handleImgClick = (value) => {
+  console.log('과연 ??~~',value);
+  emit('imgClick', value);
+}
 
 const next = () => {
   carouselInstance.next();

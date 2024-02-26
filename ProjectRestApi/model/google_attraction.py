@@ -1,50 +1,47 @@
-import requests,json,os
-from dotenv import load_dotenv
+import requests,json
 
-def find_nearby_places(api_key, lat, lng, max_results,radius=4000):
-    keywords_str = '|'.join(['landmark', 'museum', 'park'])
+
+def find_nearby_places(api_key, lat, lng, radius=4000):
+    keywords_str = '|'.join(['landmark', 'museum', 'tourist_attraction', 'amusement_park', 'zoo', 'art_gallery',
+                             'aquarium', 'temple', 'palace','park', 'observatory', 'stadium',
+                             'resort', 'beach', 'mountain', 'waterfall', 'cave', 'historical_site', 'monument',
+                             'tower', 'castle', 'monastery', 'garden', 'shrine', 'festival'])
     api_url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={lat},{lng}&radius={radius}&keyword={keywords_str}&key={api_key}&language=ko'
+
+    info = []  # 결과를 저장할 리스트를 미리 정의합니다.
+
     try:
         response = requests.get(api_url)
         data = response.json()
-        places = sorted(data.get('results', []), key=lambda x: x.get('rating', 0), reverse=True)[:max_results]
+        places = sorted(data.get('results', []), key=lambda x: x.get('rating', 0), reverse=True)
 
-        with open('attraction.json', 'w', encoding='utf8') as f:
-            places_info = []
-            for place in places:
-                place_info = print_place_info(api_key, place)
-                places_info.extend(place_info)
-            f.write(json.dumps(places_info, indent=4, ensure_ascii=False))
+        for place in places:
+            name = place['name']
+            vicinity = place.get('vicinity', 'N/A')
+            rating = place.get('rating', 'N/A')
+            latitude = place['geometry']['location']['lat']
+            longitude = place['geometry']['location']['lng']
+            place_id = place['place_id']
+            open = get_place_details(api_key, place_id)
 
-        for i in places_info:
+            photos = place.get('photos', [])
+            if photos:
+                photo_reference = photos[0].get('photo_reference', '')
+                image = get_photo_url(photo_reference)
+            else:
+                image = '-'
+            info.append(
+                {'attraction': name, 'address': vicinity, 'rating': rating, 'lat': latitude, 'lng': longitude,
+                 'operating_time': open, 'image': image})
+
+        for i in info:
             print(i)
 
-        return places_info
+        return info
 
     except Exception as e:
         print(f'에러: {e}')
-
-def print_place_info(api_key,place):
-    info = []
-    name = place['name']
-    vicinity = place.get('vicinity', 'N/A')
-    rating = place.get('rating', 'N/A')
-    latitude = place['geometry']['location']['lat']
-    longitude = place['geometry']['location']['lng']
-    place_id = place['place_id']
-    open = get_place_details(api_key, place_id)
-
-    photos = place.get('photos', [])
-    if photos:
-        photo_reference = photos[0].get('photo_reference', '')
-        image = get_photo_url(photo_reference)
-    else:
-        image = '-'
-
-    info.append({'attraction': name, 'address': vicinity, 'rating': rating, 'lat': latitude, 'lng': longitude,
-                 'operating_time': open, 'image': image})
-
-    return info
+        return None
 
 def get_place_details(api_key, place_id):
     details_url = f'https://maps.googleapis.com/maps/api/place/details/json?key={api_key}&place_id={place_id}&fields=opening_hours&language=ko'
@@ -68,8 +65,7 @@ def get_place_details(api_key, place_id):
         return '운영 시간을 제공하지 않는 장소입니다'
 
 def get_photo_url(photo_reference, max_size=200):
-    load_dotenv()
-    api_key = os.getenv("api_key")
+    api_key = 'AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k'
     base_url = 'https://maps.googleapis.com/maps/api/place/photo'
 
     params = {

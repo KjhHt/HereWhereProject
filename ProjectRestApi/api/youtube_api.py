@@ -24,7 +24,7 @@ class Youtube(Resource):
 
         # youtube크롤링 코드
         results = []
-        videourl = 'https://www.youtube.com/embed/'
+        videourl = 'https://www.youtube-nocookie.com/embed/'
         youtube = build('youtube', 'v3', credentials=scoped_credentials)  # 인증 객체를 여기에 담기
 
         search_query = f'{query} 여행'  # 여행과 관련된 검색어를 포함하여 검색

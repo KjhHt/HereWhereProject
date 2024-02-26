@@ -1,30 +1,34 @@
 <template>
-    <div class="form-wrap">
-      <form>
-        <div class="guests">
-          <button type="button" id="cnt-down" class="counter-btn" @click="decreaseGuests">-</button>
-          <input type="text" id="guestNo" name="guests" :value="guests">
-          <button type="button" id="cnt-up" class="counter-btn" @click="increaseGuests">+</button>
+  <div class="form-wrap">
+    <form @submit.prevent="searchHotel">
+      <div class="guests">
+        <button type="button" id="cnt-down" class="counter-btn" @click="decreaseGuests">
+          <i class="bi bi-caret-left-fill"></i>
+        </button>
+        <input type="text" id="guestNo" name="guests" :value="guests">
+        <button type="button" id="cnt-up" class="counter-btn" @click="increaseGuests">
+          <i class="bi bi-caret-right-fill"></i>
+        </button>
+      </div>
+      <div class="dates">
+        <div class="arrival">
+          <label for="arrival">Check-In</label>
+          <br>
+          <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
         </div>
-        <div class="dates">
-          <div class="arrival">
-            <label for="arrival">Check-In</label>
-            <br>
-            <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
-          </div>
-          <div class="departure">
-            <label for="departure">Check-Out</label>
-            <br>
-            <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
-          </div>
+        <div class="departure">
+          <label for="departure">Check-Out</label>
+          <br>
+          <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
         </div>
-        <button type="button" class="btn">Search Hotel</button>
-      </form>
-    </div>
+      </div>
+      <button type="submit" class="btn">Search Hotel</button>
+    </form>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, defineProps, getCurrentInstance } from 'vue';
 
 const today = new Date();
 const tomorrow = new Date(today.getTime()); // Create a new Date object for tomorrow
@@ -33,6 +37,11 @@ let guests = ref(2); // Default value
 let checkInDate = ref(today.toISOString().split('T')[0]); // Default check-in date is today
 let checkOutDate = ref(tomorrow.toISOString().split('T')[0]); // Initialize check-out date as empty
 
+const props = defineProps({
+  places: Object
+});
+
+const instance = getCurrentInstance(); // Get current component instance
 
 const increaseGuests = () => {
   guests.value = Math.min(guests.value + 1, 6); // Maximum 6 guests
@@ -58,7 +67,20 @@ const minCheckOutDate = computed(() => {
 
 // Watch check-in date and update minimum check-out date accordingly
 watch(checkInDate, setMinCheckOutDate);
+
+// Function to handle searchHotel button click
+const searchHotel = () => {
+  const searchData = {
+    guests: guests.value,
+    checkInDate: checkInDate.value,
+    checkOutDate: checkOutDate.value,
+    lat: props.places.geometry.location.lat(),
+    lng: props.places.geometry.location.lng()
+  };
+  instance.emit('search-event', searchData);
+};
 </script>
+
     
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
@@ -90,10 +112,10 @@ input {
   padding: 15px 10px;
   border: none;
   margin-bottom: 20px;
-  border-radius: 3px;
+  border-radius: 10px;
   box-shadow: 1px 3px 20px rgba(17, 17, 17, .1);
   width: 100%;
-  height: 45px;
+  height: 40px;
   outline: #8DFEE1;
 }
 
@@ -104,14 +126,9 @@ input[type=date]::-webkit-inner-spin-button {
 
 #guestNo {
   width: 80px;
-  margin: 0 20px;
+  margin-bottom: 10px;
   text-align: center;
-}
-
-input[type="date"] {
-  &::-webkit-inner-spin-button {
-    display: none;
-  } 
+  height: 45px;
 }
 
 label {
@@ -121,30 +138,13 @@ label {
 }
 
 .counter-btn {
-  position: relative;
-  display: inline-block;
-  height: 40px;
-  text-align: top;
-  vertical-align: top;
-  font-size: 1.5em;
-  font-weight: 300;
-  width: 40px;
-  background: #fff;
-  border: none;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  box-shadow: 1px 3px 20px rgba(17, 17, 17, .1);
-  cursor: pointer;
-  outline: none;
+  background-color: white;
 }
 
 .counter-btn:nth-child(2) {
   float: right;
 }
 
-.counter-btn:hover {
-  box-shadow: 1px 3px 20px rgba(17, 17, 17, .3);
-}
 .dates {
   display: flex;
   justify-content: space-between;

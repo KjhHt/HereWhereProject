@@ -12,15 +12,17 @@ import BoardView from './views/BoardView.vue';
 import TestView from './views/TestView.vue';
 import TripMoment from './views/TripMoment.vue';
 import { Chat } from "@chat-ui/vue3";
-import { getStompClient } from '@/services/websocket.js'; 
-import axios from 'axios';
+//import { getStompClient } from '@/services/websocket.js'; 
+//import axios from 'axios';
 
 const stompClient = ref(null);
 const noticeListData = ref([]);
 const noticeCountData = ref(0);
+const locationValue = ref('');
 
 onMounted(() => {
-  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  /*
   const userInfo = vuexStore.loginStore.userInfo;
   if (userInfo != null && userInfo.id != null) {
     stompClient.value = getStompClient();  // 웹소켓 연결을 가져옵니다.
@@ -50,9 +52,10 @@ onMounted(() => {
     });
     console.log("웹소켓 연결 및 구독 성공!");
     noticeList(userInfo.id);
-  }
+  }*/
 });
 
+/*
 function noticeList(){
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;
@@ -65,7 +68,7 @@ function noticeList(){
     })
     .catch(err=>console.log(err))
   }
-}
+}*/
 
 // 챗봇 : @Chat-ui\vue3 -> dist -> components -> (240~250 라인) chat-ui.vue3.es.js 모듈수정해야함 
 function handleSendEvent(input){
@@ -111,6 +114,13 @@ const data = ref([
   { message: 'How can i help you?', type: 'chatbot', timestamp: '3:47 PM' },
 ])
 
+//메인페이지에서 지도 페이지로 값 넘기기
+const handleImgClick = (value) =>{
+  console.log('app.vue에서 : ',locationValue.value);
+  locationValue.value = value;
+  console.log('app.vue에서 : ',locationValue.value);
+  page_.value = 'location';
+}
 
 const page_=ref('main')
 
@@ -123,15 +133,20 @@ console.log(ref)
 function selectPage(page){
   page_.value=page
 }
+
+const disconnectLocation= ()=> {
+  locationValue.value= ''
+}
+
 </script>
 <template>
   <PanolensPage/>    
    <Header @selectPage="selectPage" :noticeListData="noticeListData" :noticeCountData="noticeCountData"/>
-    <MainPage v-if="page_=='main'"/>
+    <MainPage v-if="page_=='main'" @imgClick="handleImgClick"/>
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>
-    <Location v-if="page_=='location'"/>
+    <Location v-if="page_=='location'" :locationValue="locationValue" @disconnect="disconnectLocation"/>
     <MyPageView v-if="page_=='mypage'"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <Chat :onSend="handleSendEvent" :chat="data" />

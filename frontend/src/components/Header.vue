@@ -69,7 +69,7 @@
         </div>
       </a>
       
-          <div class="text-end">
+          <div class="text-end" style="height:41px">
             <!-- 로그인 전 상태: -->
               <div v-if="!isLoggedIn">
                 <button class="btn btn-outline-light me-2" @click="openLoginModal">로그인</button>

@@ -1,222 +1,182 @@
 [
     {
-        "hotel": "수원 행궁동 썬스타 모텔",
-        "address": "7-12, Jeongjo-ro 905beon-gil, Paldal-gu",
-        "location": [
-            37.287575,
-            127.013866
-        ],
-        "review": 8.0,
-        "price": "81,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/271485241.jpg?k=115de530626a59f45c926ace97b580e677a402e44681ad29c67347ff8b2b3449&o="
+        "hotel": "센텀 컨벤션 호텔",
+        "address": "20, Centum 3-ro, Haeundae-gu",
+        "lat": 35.1674678207815,
+        "lng": 129.13283273373,
+        "review": 9.0,
+        "price": "160,600원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/519422773.jpg?k=d179d3a7df5412ddb198896f461496bf633feff0f60c2f3ba30ffb3c55c40c9d&o="
     },
     {
-        "hotel": "노보텔 앰배서더 수원",
-        "address": "902, Deogyeong-daero, Paldal-gu",
-        "location": [
-            37.2655676157327,
-            126.99995610318
-        ],
-        "review": 8.5,
-        "price": "369,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/314582407.jpg?k=05cc92d9d4f6ccdf84bb4c3a60f117f7fb8694c536a5d36ab8698ee345140406&o="
+        "hotel": "아바니 센트럴 부산",
+        "address": "133 Jeonpo-daero Nam-gu",
+        "lat": 35.1486062858386,
+        "lng": 129.065627077038,
+        "review": 8.7,
+        "price": "297,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/389329527.jpg?k=a54616b02f370f2880cc9d418065d5825f054d5598d758cdc1cfbbb3eea5f229&o="
     },
     {
-        "hotel": "라마다 프라자 수원",
-        "address": "150, Jungbu-daero, Paldal-gu Suwon",
-        "location": [
-            37.2777750452842,
-            127.032364010811
-        ],
-        "review": 8.4,
-        "price": "396,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/167159471.jpg?k=c36bf45a79468c6f44608bf9db18e56bf951057b42da45b37a5b010e18fb9ec7&o="
-    },
-    {
-        "hotel": "포포인츠 바이 쉐라톤 수원",
-        "address": "27, Hyowon-ro 307 beon-gil, Paldal-gu",
-        "location": [
-            37.262228,
-            127.035669
-        ],
-        "review": 8.4,
-        "price": "360,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/477804064.jpg?k=5735e65e5dff32cc43831ac5a4042ee6a01c1c7dfda57f6cce30dbaecdc10de2&o="
-    },
-    {
-        "hotel": "코트야드 바이 메리어트 수원 ",
-        "address": "320, Gwanggyohosugongwon-ro, Yeongtong-gu",
-        "location": [
-            37.285056,
-            127.057861
-        ],
-        "review": 8.2,
-        "price": "480,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/515364950.jpg?k=1169be796c397aded14d1affbe2df2d5260d849c381c20bce571b1775655c0b7&o="
-    },
-    {
-        "hotel": "더 휴 라르고",
-        "address": "51-24, Gogi-ro 377beon-gil, Suji-gu",
-        "location": [
-            37.355148750449,
-            127.064776555684
-        ],
-        "review": null,
-        "price": "1,540,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/209469298.jpg?k=bf2d08504a3308f145a657a5b02f6ed0d96b89de930a94f160572538078a6308&o="
-    },
-    {
-        "hotel": "스타즈 호텔 프리미어 동탄",
-        "address": "171, Dongtanbanseok-ro",
-        "location": [
-            37.2040320925455,
-            127.07030349472
-        ],
-        "review": 8.3,
-        "price": "238,800원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/263744740.jpg?k=43a585a2b0fdca69059d895b042dac6d9e70b74d165eb1f74b2d3883a6c63302&o="
-    },
-    {
-        "hotel": "라마다 동탄",
-        "address": "199, Nojak-ro",
-        "location": [
-            37.2057871938861,
-            127.074646353722
-        ],
-        "review": 7.5,
-        "price": "330,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/127246312.jpg?k=369e9d3e3b73beff1b4bd89429917c988bffb4a16fc93de10e56a6c6644478fc&o="
-    },
-    {
-        "hotel": "신라스테이 동탄",
-        "address": "161, Nojak-ro",
-        "location": [
-            37.2022100951776,
-            127.073423266411
-        ],
-        "review": 8.1,
-        "price": "293,040원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/525315530.jpg?k=5e672b0c9466d3e955738f7f1d90efc8815d78c96924c506c3defb78ba8c10a9&o="
-    },
-    {
-        "hotel": "더블트리 바이 힐튼 서울 판교",
-        "address": "26, Baekhyeon-ro, Bundang-gu",
-        "location": [
-            37.38,
-            127.104453
-        ],
-        "review": 7.8,
-        "price": "440,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599489.jpg?k=9b5cf43612ab70cb8e2cb3e4275bb440e747b401167bd93fb3d147b68abbd51a&o="
-    },
-    {
-        "hotel": "더블트리 바이 힐튼 서울 판교 레지던스",
-        "address": "26, Baekhyeon-ro, Bundang-gu",
-        "location": [
-            37.38089,
-            127.10418
-        ],
+        "hotel": "유나호텔 비지니스",
+        "address": "15-9, Seomyeon-ro",
+        "lat": 35.152075,
+        "lng": 129.057383,
         "review": 8.6,
-        "price": "374,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599549.jpg?k=abb1571b76a9ebcb20e574e77e7cb82717e930960b95711a191529fe34eab84a&o="
+        "price": "219,512원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/468140914.jpg?k=7e6b4e7bd585e04e94d4c16207bd80983a954fd61beaee47fe2b6bf5ea6e9f8d&o="
     },
     {
-        "hotel": "그래비티 서울 판교 오토그래프 컬렉션 메리어트 인터내셔널",
-        "address": "2, Pangyoyeok-ro 146beon-gil, Bundang-gu",
-        "location": [
-            37.393626,
-            127.109994
-        ],
+        "hotel": "브라운도트 호텔 서면 1호점 ",
+        "address": "30, Seojeon-ro 9beon-gil, Busanjin-gu",
+        "lat": 35.158971,
+        "lng": 129.061184,
         "review": 8.4,
-        "price": "440,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426601317.jpg?k=a898ab9740bdfc0e7ea19906eb7a1819f489720da92950111e973dcbac938a1b&o="
+        "price": "410,256원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/196040138.jpg?k=9e45f6baab108d3c2d65b28a469a947539b90ff1898ffd5d3d2e22e452d63a85&o="
     },
     {
-        "hotel": "서머셋 센트럴 분당",
-        "address": "36, Hwangsaeul-ro 311beon-gil, Bundang-gu",
-        "location": [
-            37.3864818609775,
-            127.12120950222
-        ],
-        "review": 8.3,
-        "price": "277,200원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/242051763.jpg?k=38e8387fa7e48ac457c721cfae74a34e207cb61a934e93c8b7ddab6292cce095&o="
-    },
-    {
-        "hotel": "코트야드 바이 메리어트 서울 판교",
-        "address": "192-12, Pangyoyeok-ro, Bundang-gu",
-        "location": [
-            37.397547945482,
-            127.110566496849
-        ],
-        "review": 8.1,
-        "price": "480,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461632617.jpg?k=94e13091560280b63d1cbf6d6955a5174ed6f7ac68332602f64433d672e33ba6&o="
-    },
-    {
-        "hotel": "나인트리 프리미어 호텔 서울 판교",
-        "address": "18, Changeop-ro, Sujeong-gu, Seongnam-si,",
-        "location": [
-            37.4139500101003,
-            127.098547529053
-        ],
+        "hotel": "솔라리아 니시테츠 호텔 부산",
+        "address": "20, Seomyeon-ro, Busanjin-gu",
+        "lat": 35.1523150164773,
+        "lng": 129.058028409787,
         "review": 8.4,
-        "price": "325,920원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/344222128.jpg?k=92cff10d39a63c85b2ce706346b9bd204dcf0034f4a8c3cad77d5daea6880fae&o="
+        "price": "340,340원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/97840192.jpg?k=6f16423d82b10bd1ae7d229c81d907a3d9ec1e7e16343964ccf9759ad28d9b9f&o="
     },
     {
-        "hotel": "롤링힐스 호텔 ",
-        "address": "290, Sicheong-ro, Namyang-eup",
-        "location": [
-            37.1899995978623,
-            126.838676333427
-        ],
-        "review": 8.5,
-        "price": "447,700원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/187575665.jpg?k=d52efe1effeacbe21c02c62bb841aa354fd50526c615d32871f35026c05a2d7a&o="
+        "hotel": "켄트호텔 광안리 by 켄싱턴",
+        "address": "229, Gwanganhaebyeon-ro, Suyeong-gu",
+        "lat": 35.1542404512348,
+        "lng": 129.11922454834,
+        "review": 8.2,
+        "price": "196,945원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/273573948.jpg?k=a686bdb58098dbb44825324f3d0f1b1f204b677b771fcad215077c60f47dabf8&o="
     },
     {
-        "hotel": "베니키아 호텔 더 에이치 호텔",
-        "address": "3-12, Yeokgol-ro, Namyang-eup",
-        "location": [
-            37.2003683267449,
-            126.828289640107
-        ],
+        "hotel": "와이티티 호텔",
+        "address": "27, Jungang-daero 691beonga-gil, Busanjin-gu",
+        "lat": 35.1555619896078,
+        "lng": 129.055390655994,
         "review": 8.1,
-        "price": "424,440원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/60561279.jpg?k=90a562aecfe06caa9ecafda8b531c1095a1ff08a506728b92664044034d23881&o="
+        "price": "104,400원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/405906594.jpg?k=f5499180c0df3e8b43a8d18c9c3dbf4b23dd071029dacdafbab3b2335af3bc13&o="
     },
     {
-        "hotel": "호텔스퀘어 안산",
-        "address": "81, Dongsan-ro, Danwon-gu",
-        "location": [
-            37.3142982470547,
-            126.799116432667
-        ],
-        "review": 7.9,
-        "price": "169,200원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/75093331.jpg?k=f7a6e1f65014241f34687f66050fa4f9ef21c725abe33a1162e83c553d4dbb26&o="
-    },
-    {
-        "hotel": "테이크호텔 서울 광명",
-        "address": "22, Singi-ro",
-        "location": [
-            37.4191290519319,
-            126.883244784275
-        ],
-        "review": 7.9,
-        "price": "310,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/375079727.jpg?k=211dd9c863f85a8f3cf9ff3584db1922f0b184521526c19dc87ed8bc1b2169f6&o="
-    },
-    {
-        "hotel": "라까사호텔 광명",
-        "address": "22, Iljik-ro 12beon-gil",
-        "location": [
-            37.421210189139,
-            126.882136862366
-        ],
+        "hotel": "김치 부산 서면 게스트하우스",
+        "address": "20-8, Hwangnyeong-daero 7beon-gil, Busanjin-gu",
+        "lat": 35.1481944341326,
+        "lng": 129.060800671577,
         "review": 8.1,
-        "price": "250,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/174759249.jpg?k=b16b982b33c3c3590ed7c99c41f607e51675061fbc745bb1c5f183a5121985ed&o="
+        "price": "71,280원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/415877745.jpg?k=891b3b6177e27eee5d7d35a268ddf1509fa80e2011325a1f7b2e3c2fa7142568&o="
+    },
+    {
+        "hotel": "호텔 더 스위트",
+        "address": "14-9, Jungang-daero 691beonga-gil, Busanjin-gu, Busan, Republic of Korea",
+        "lat": 35.155045,
+        "lng": 129.056251,
+        "review": 8.0,
+        "price": "126,720원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/418454542.jpg?k=d06a1d562f0bcbac28c43a0efb26634ac8567d7b57609ad9985776654484475d&o="
+    },
+    {
+        "hotel": "센텀 프리미어 호텔",
+        "address": "17, Centum 1-ro, Haeundae-gu",
+        "lat": 35.166953,
+        "lng": 129.131608,
+        "review": 8.0,
+        "price": "484,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/126156813.jpg?k=9f8b82c2f971bde94ea589c4113aece6ef16dedd2a2fc8955cc173dbebff0bcf&o="
+    },
+    {
+        "hotel": "해운대 센텀 호텔",
+        "address": "20, Centum 3-ro, Haeundae-gu",
+        "lat": 35.167423623923,
+        "lng": 129.132850170135,
+        "review": 8.0,
+        "price": "217,800원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/222769294.jpg?k=e91b7ea67cc39797890265b8d19d7ea1e42f33c4e8a3ad12856ab82d2e30d581&o="
+    },
+    {
+        "hotel": "부산 서면 비즈니스 호텔 J7",
+        "address": "12, Bujeon-ro 20beon-gil, Busanjin-gu",
+        "lat": 35.1524956180008,
+        "lng": 129.057042138554,
+        "review": 7.7,
+        "price": "103,700원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/288588976.jpg?k=133cc19b9873ad74aa1cd59c16612ed4ba74f4162bbb0dad7fdcd2a102260400&o="
+    },
+    {
+        "hotel": "호텔 초원",
+        "address": "51, Bujeon-ro, Busanjin-gu",
+        "lat": 35.15477,
+        "lng": 129.0549317,
+        "review": 7.5,
+        "price": "135,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/162936876.jpg?k=33f7fa8543204ab70fe74c5f28f037c2980c11cf6b15cc979de940e47843a9ed&o="
+    },
+    {
+        "hotel": "호텔 아쿠아펠리스",
+        "address": "225, Gwanganhaebyeon-ro, Suyeong-gu",
+        "lat": 35.1540737840123,
+        "lng": 129.118838310242,
+        "review": 7.3,
+        "price": "207,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/317067198.jpg?k=423b8ba4a076231868a67573a722fe5a578c1baaec35560db6051553e046e243&o="
+    },
+    {
+        "hotel": "브라운 도트 호텔 범일점",
+        "address": "528, Jungang-daero, Dong-gu",
+        "lat": 35.1403000496322,
+        "lng": 129.056790123154,
+        "review": 7.3,
+        "price": "138,600원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/239957469.jpg?k=f7b5a7bb0589b9340be146b7f1f9ae669d8b01a889a2eaba792c0b44db3e3d9a&o="
+    },
+    {
+        "hotel": "비앤비 호텔",
+        "address": "78, Geumgok-daero 285beon-gil, Buk-gu",
+        "lat": 35.234535,
+        "lng": 129.009213,
+        "review": 6.3,
+        "price": "113,400원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/406731818.jpg?k=cdc2330c3bd3cf8fb70876bf6d419384ac5ac44bfa1dc7bfbae8a8c7419fea87&o="
+    },
+    {
+        "hotel": "해운대 컨벤션 호텔",
+        "address": "2F-22F, 17, Centum 1-ro, Haeundae-gu",
+        "lat": 35.1669365,
+        "lng": 129.131595,
+        "review": 6.2,
+        "price": "152,400원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/505111933.jpg?k=6934659ed0e67674d319aa3b41fbbc506ce8d85aaeb9990c126be5a1e9006006&o="
+    },
+    {
+        "hotel": "아몬드 호텔 구포역",
+        "address": "53, Gupomanse-gil, Buk-gu",
+        "lat": 35.204803,
+        "lng": 128.995997,
+        "review": 5.0,
+        "price": "208,600원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/467225055.jpg?k=3edf903c550eabcf055b835d0bd96a55abb4e6721d95afcf700e02ed91768921&o="
+    },
+    {
+        "hotel": "W 레지던스 호텔 센텀시티",
+        "address": "#306, 20, Centum 3-ro, Haeundae-gu, Busan",
+        "lat": 35.1678011,
+        "lng": 129.1329132,
+        "review": 5.0,
+        "price": "138,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/528341496.jpg?k=d6498e1db102c57c5c667a1d171397bac0e7d351f2c69c55514c6d2e1380b50d&o="
+    },
+    {
+        "hotel": "펜트하우스 광안리 해변 인근  주차무료 ",
+        "address": "5, Gwangan-ro 48beon-gil",
+        "lat": 35.1547736514167,
+        "lng": 129.117821617861,
+        "review": 5.0,
+        "price": "720,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/488673862.jpg?k=1333a7885eeec6fd3b533d708654b57444c2fca61a8a1c519b7b53ecce09c4b3&o="
     }
 ]

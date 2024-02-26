@@ -6,13 +6,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException
-from dotenv import load_dotenv
 
 
 #환율 함수
 def get_exchange_rate(currency):
     try:
-        driver_path = f'{os.path.join(os.path.dirname(__file__), "chromedriver")}'
+        driver_path = f'{os.path.join(os.path.dirname(__file__), "chromedriver.exe")}'
         service = Service(executable_path=driver_path)
         options = webdriver.ChromeOptions()
         options.add_experimental_option("detach", True)
@@ -43,9 +42,8 @@ def get_exchange_rate(currency):
         print(f"오류가 발생했습니다: {e}")
 
 
-def hotel_search(lat,lng,number,check_in,check_out):
+def hotel_search(lat, lng, number, check_in, check_out):
     try:
-        load_dotenv()
         url = "https://booking-com.p.rapidapi.com/v1/hotels/search-by-coordinates"
 
         querystring = {
@@ -65,13 +63,14 @@ def hotel_search(lat,lng,number,check_in,check_out):
         }
 
         headers = {
-            "X-RapidAPI-Key": os.getenv("X-RapidAPI-Key"),
+            "X-RapidAPI-Key": "65f6c8f946msh703bd8a4fa8c1e3p141540jsn260a5d1f5db4",
             "X-RapidAPI-Host": "booking-com.p.rapidapi.com"
         }
 
         response = requests.get(url, headers=headers, params=querystring)
+        print('결과',response.json())
         data = response.json()['result']
-        hotels=[]
+        hotels = []
 
         currency = None
         exchange_rate = None
@@ -86,8 +85,9 @@ def hotel_search(lat,lng,number,check_in,check_out):
                     exchange_rate = get_exchange_rate(currency)
 
             name = result['hotel_name_trans']
-            review_score = result['review_score']
-            local = [result['latitude'], result['longitude']]
+            review_score = result['review_score'] if result['review_score'] is not None else 5.0
+            lat = result['latitude']
+            lng = result['longitude']
             address = result['address_trans']
             price = result['min_total_price']
             image = result['max_photo_url']
@@ -96,18 +96,20 @@ def hotel_search(lat,lng,number,check_in,check_out):
                 hotels.append({
                     'hotel': name,
                     'address': address,
-                    'location': local,
-                    'review': review_score,
+                    'lat': lat,
+                    'lng': lng,
+                    'review': review_score,  # 리뷰를 따로 튜플로 저장하지 않음
                     'price': "{:,.0f}원".format(price * exchange_rate),
                     'img_urls': image
                 })
-
+        hotels.sort(key=lambda x: x['review'], reverse=True)
+        # 정렬된 호텔 데이터 출력
         for hotel in hotels:
-            print(hotel)
+            pass
 
+        # JSON 파일로 저장
         with open('booking.json', 'w', encoding='utf8') as f:
             f.write(json.dumps(hotels, indent=4, ensure_ascii=False))
-
         return hotels
 
     except TimeoutException as e:
