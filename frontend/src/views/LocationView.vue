@@ -123,7 +123,7 @@
             <div style="width: same-as-button;"></div>
           </div>
         <div class="offcanvas-body">
-          <HotelDate :places="places" @search-event="handleSearchEvent"/>
+          <HotelDate :places="places" :latNumber="latNumber" :lngNumber="lngNumber" @search-event="handleSearchEvent"/>
           <LoadingOverlay :loading="loadinghotel" />
           <LoadingOverlay :loading="loadingdetail" />
           <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>      
@@ -361,30 +361,30 @@
     infoRef.value.close()
     showInter.value= !showInter.value
   }
-  /*
-  async function getYoutubeData(address){
-    console.log(address);
-    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
-    console.log(response);
-    youtubeData.value=response.data
-  }*/
-  async function getNearbyHotels(lat, lng, number, check_in, check_out) {
-    try {
-      loadinghotel.value = true;
-      hotelsInfo.value = []
-      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-      hotelsInfo.value = response.data;
-    } catch (error) {
-      console.error("An error occurred while fetching hotel data:", error);
-    } finally {
-      loadinghotel.value = false;
-    }
-  }
+  
+  // async function getYoutubeData(address){
+  //   console.log(address);
+  //   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
+  //   console.log(response);
+  //   youtubeData.value=response.data
+  // }
+  // async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+  //   try {
+  //     loadinghotel.value = true;
+  //     hotelsInfo.value = []
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching hotel data:", error);
+  //   } finally {
+  //     loadinghotel.value = false;
+  //   }
+  // }
 
-  async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
-      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-      hotelsInfo.value = response.data;
-  }
+  // async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  // }
 
 // async function getNearbyRestaurants(lat, lng) {
 //   try {
@@ -424,10 +424,10 @@ async function getNews(lat,lng){
   
   function searchLocation(places){
     let location= places.geometry.location;
-    // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-    // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
-    // getYoutubeData(places.name)
+    //getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
+    //getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
+    //getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    //getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
     moveToPosition(location)
@@ -458,6 +458,7 @@ async function getNews(lat,lng){
           lng: parseFloat(props.locationLatLng[1]),
         };
   });
+
   const apiKey= process.env.VUE_APP_GOOGLE_API_KEY; /* 여기에 해당 apikey설정할 것!!!! */
   
   const mapOptions=ref({
@@ -470,12 +471,10 @@ async function getNews(lat,lng){
       gestureHandling: 'auto',
       keyboardShortcuts: false,
     });
-  const locations = ref([]);
 
+  const locations = ref([]);
   //검색한 목적지 좌표
   const targetLocation=ref(null)
-  
-  
   const infoRef=ref(null);
   const mapRef=ref(null);
   const infoWindow=ref(false);
@@ -564,7 +563,6 @@ async function getNews(lat,lng){
       lng: parseFloat(getPositionValue(targetPosition.lng))
     };
     targetLocation.value=savedPosition
-  
     animateMap()
 
   }
@@ -619,6 +617,8 @@ async function getNews(lat,lng){
   const directionRenderer=ref(null);
   const placesService=ref(null);
   let places={}
+  let latNumber= ref()
+  let lngNumber= ref()
 
   function initMap(googleMap) {
     const autoCompleteOptions={
@@ -640,7 +640,6 @@ async function getNews(lat,lng){
     autoComplete.bindTo("bounds", map);
     autoComplete.addListener('place_changed',()=>{
       places=autoComplete.getPlace();
-      console.log('플레이스',places)
       if(Object.keys(places).length > 1) {
         leftOffButton.value.click();
         searchLocation(places)
@@ -650,7 +649,6 @@ async function getNews(lat,lng){
         placesService.value.textSearch(request,(result,status)=>{
           if(status === 'OK') {
             searchList.value= result;
-            console.log('리절트',result)
           }
           return;
         });
@@ -683,8 +681,6 @@ async function getNews(lat,lng){
       THREE,
       camera,
     });
-  
-  
   
     overlay.onAdd=()=>{
       console.log('add')
@@ -721,41 +717,50 @@ async function getNews(lat,lng){
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
       placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
-      // getNearbyRestaurants(lat, lng);
-      // getNearbyAttractions(lat, lng);
-      // getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
+      //getNearbyRestaurants(lat, lng);
+      //getNearbyAttractions(lat, lng);
+      //getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
       map.setCenter({ lat, lng });
       updateInfoWindow(place);
       getWeather(lat, lng);
       getNews(lat, lng);
     }
-    //22일 매인 페이지에서 로케이션으로 값 및 검색 자동으로 추가 
+    
     if (props.locationValue && searchRef.value) {
-      placesService.value.textSearch({query:props.locationValue}, (result, status) => {
-        if (status === 'OK') {
-          getPlaceData(result[0]);
-        } 
-        else {
-          placesService.value.textSearch({query:props.locationValue + '역'}, (result, status) => {
+      placesService.value.textSearch({query:props.locationValue + '시청'}, (result, status) => {
             if (status === 'OK') {
-              getPlaceData(result[0]);
-            }
-          });
-        }
+              places = result[0]
+              getPlaceData(places);
+        } 
       });
     }
     else if (props.locationLatLng && props.locationLatLng.length >=1 ) {
-      const latNumber = parseFloat(props.locationLatLng[0]);
-      const lngNumber = parseFloat(props.locationLatLng[1]);
+      latNumber.value = parseFloat(props.locationLatLng[0]);
+      lngNumber.value = parseFloat(props.locationLatLng[1]);
       const dataLatLng = {
-        lat: latNumber,
-        lng: lngNumber,
+        lat: latNumber.value,
+        lng: lngNumber.value,
       };
       map.setCenter(dataLatLng);
-      // getNearbyRestaurants(latNumber, lngNumber);
-      // getNearbyAttractions(latNumber, lngNumber);
-      getWeather(latNumber, lngNumber);
-      getNews(latNumber, lngNumber);
+      //getNearbyRestaurants(latNumber.value, lngNumber.value);
+      //getNearbyAttractions(latNumber.value, lngNumber.value);
+      //getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      getWeather(latNumber.value, lngNumber.value);
+      getNews(latNumber.value, lngNumber.value);
+    }
+    else {
+      latNumber.value = parseFloat(37.4923615);
+      lngNumber.value = parseFloat(127.0292881);
+      const dataLatLng = {
+        lat: latNumber.value,
+        lng: lngNumber.value,
+      };
+      map.setCenter(dataLatLng);
+      //getNearbyRestaurants(latNumber.value, lngNumber.value);
+      //getNearbyAttractions(latNumber.value, lngNumber.value);
+      //getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      getWeather(latNumber.value, lngNumber.value);
+      getNews(latNumber.value, lngNumber.value);
     }
   }
   /*경로 설정 */
@@ -831,14 +836,14 @@ async function getNews(lat,lng){
   }
 
   //21일 추가 호텔 검색 로딩
-  const handleSearchEvent = (searchData) => {
-    loadingdetail.value = true;
-    hotelsInfo.value = []; 
-    getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
-    .then(() => {
-      loadingdetail.value = false;
-    });
-  };
+  // const handleSearchEvent = (searchData) => {
+  //   loadingdetail.value = true;
+  //   hotelsInfo.value = []; 
+  //   //getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
+  //   .then(() => {
+  //     loadingdetail.value = false;
+  //   });
+  // };
 
   function clickCustomMarker(info){
     if("attraction" in info || "restaurant" in info || "hotel" in info){
@@ -856,186 +861,93 @@ async function getNews(lat,lng){
 
   </script>
 
-  <style scoped>
-  /********************************************************************경로 지정 */
-  #modal_form {
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-    padding: 0 100px 10px;
-    position: relative;
-    top: -30px;
+<style scoped>
+/********************************************************************경로 지정 */
+#modal_form {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  padding: 0 100px 10px;
+  position: relative;
+  top: -30px;
 
-  }
-  #btn_close {
-    /* display: inline; */
-    margin-left: 350px;
-    margin-top: 80px;
-    z-index: 1100;
-    padding: 8px 16px;
-  }
-  /********************************************************************경로 지정 */
-  .map-container {
-    position: relative;
-  }
-  .search-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1001;
-    background-color: white;
-    padding: 10px;
-    border-radius: 30px;
-    border: 2px solid black;
-  }
-  .search-container input {
-    width: 290px;
-    height: 30px;
-    padding: 5px;
-    margin-right: 5px;
-    border: 1px solid white; /* Change the border color to white */
-    border-radius: 5px;
-  }
+}
+#btn_close {
+  /* display: inline; */
+  margin-left: 350px;
+  margin-top: 80px;
+  z-index: 1100;
+  padding: 8px 16px;
+}
+/********************************************************************경로 지정 */
+.map-container {
+  position: relative;
+}
+.search-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  background-color: white;
+  padding: 10px;
+  border-radius: 30px;
+  border: 2px solid black;
+}
+.search-container input {
+  width: 290px;
+  height: 30px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid white; /* Change the border color to white */
+  border-radius: 5px;
+}
+
+.search-button {
+  padding: 5px;
+  background-color: white;
+  color: #000; /* Set the color to black */
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#startDate,
+#endDate,
+#time,
+#memo {
+  border: 2px solid black; /* 검은색 선 추가 */
+  border-radius: 10px; /* 끝을 뭉특하게 만듦 */
+  padding: 8px; /* 내부 여백 추가 */
+  font-size: 16px; /* 글자 크기 설정 */
+}
+
+#memo {
+  max-height: 50px;
+  resize: none; /* 사용자가 수동으로 크기를 조절하지 못하도록 함 */
+  overflow-y: auto; /* 초과된 내용을 숨기도록 함 */
+  width: calc(100% - 20px); /* 왼쪽 모달창의 패딩을 고려하여 폭을 조절 */
+}
+
+.place-details,
+.reservation-form,
+.scrollable-list {
+  height: calc(850px * 2 / 6); /* 전체 높이의 2/6 */
+  flex-grow: 1; /* 이 섹션들 사이에서 남은 공간을 균등하게 분배 */
   
-  .search-button {
-    padding: 5px;
-    background-color: white;
-    color: #000; /* Set the color to black */
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
+}
+.custom-hamburger-menu{
+  position: absolute;
+  top: 10px;
+  left: 0px; /* 원하는 위치로 조절하세요 */
+  z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
   
- 
-  .place-info {
-    display: flex;
-    flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
-    height: 100%;
-    border-radius: 30px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .place-image {
-    
-    flex: 2; /* 이미지 영역이 더 많은 공간을 차지하도록 설정 */
-    display: flex; /* 내부 컨테이너를 flex로 변경 */
-    justify-content: center; /* 내부 컨테이너를 수평 중앙 정렬 */
-    align-items: center; /* 내부 컨테이너를 수직 중앙 정렬 */ 
-  }
-  .place-image img {
-    width: 100%; /* 이미지가 부모 요소에 꽉 차도록 변경 */
-    max-height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .place-details {
-    padding : 16px 24px 0; 
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
-    align-items: flex-start; /* 왼쪽 정렬 설정 */
-   
-  }
-  
-  /* 구분선 스타일 */
-  .place-details::after {
-    content: '';
-    display: block;
-    width: 100%; /* 가로로 꽉 차게 설정합니다. */
-    height: 1px; /* 높이는 구분선의 두께입니다. 필요에 따라 조절하세요. */
-    background-color: #ddd; /* 구분선의 색상을 설정하세요. */
-    margin: 10px 0; /* 위아래 여백을 추가해 간격을 조절하세요. */
-  }
-  
-  .rating {
-    color: #f39c12;
-  }
-  
-  .rating span {
-    font-size: 20px;
-    margin-right: 2px;
-  }
-  
-  
-  .reservation-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin : 16px;
-    margin-bottom: 20px;
-  }
-  
-  .form-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  
-  .scrollable-list {
-    height: 150px; /* 원하는 높이로 조절하세요 */
-    overflow-y: auto;
-    border: 1px solid #ddd; /* 스크롤 가능한 영역에 경계를 줄 수 있습니다. */
-  }
-  
-  .list-item {
-    border-bottom: 1px solid #ddd; /* 목록 항목 사이에 구분선을 추가합니다. */
-    padding: 8px;
-  }
-  
-  #startDate,
-  #endDate,
-  #time,
-  #memo {
-    border: 2px solid black; /* 검은색 선 추가 */
-    border-radius: 10px; /* 끝을 뭉특하게 만듦 */
-    padding: 8px; /* 내부 여백 추가 */
-    font-size: 16px; /* 글자 크기 설정 */
-  }
-  
-  #memo {
-    max-height: 50px;
-    resize: none; /* 사용자가 수동으로 크기를 조절하지 못하도록 함 */
-    overflow-y: auto; /* 초과된 내용을 숨기도록 함 */
-    width: calc(100% - 20px); /* 왼쪽 모달창의 패딩을 고려하여 폭을 조절 */
-  }
-  
-  .label-memo {
-    white-space: nowrap; /* 줄바꿈 방지 */
-  }
-  
-  .place-image {
-    height: calc(850px * 1 / 6 ); /* 전체 높이의 1/6 */
-  }
-  
-  .place-details,
-  .reservation-form,
-  .scrollable-list {
-    height: calc(850px * 2 / 6); /* 전체 높이의 2/6 */
-    flex-grow: 1; /* 이 섹션들 사이에서 남은 공간을 균등하게 분배 */
-    
-  }
-  .custom-hamburger-menu{
-    position: absolute;
-    top: 10px;
-    left: 0px; /* 원하는 위치로 조절하세요 */
-    z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
-    
-    width: 65px;
-    height: 50px;
-  }
-  .btn-close {
-    background: none;
-  }
-  .pac-container {
-    z-index: 9999px;
-    top: 50px;
-    left: 100px;
-  }
-  .carousel-control-prev,
+  width: 65px;
+  height: 50px;
+}
+.btn-close {
+  background: none;
+}
+.carousel-control-prev,
 .carousel-control-next {
   background-color: #000; /* 배경색 */
   border-radius: 50%; /* 모서리 둥글게 */

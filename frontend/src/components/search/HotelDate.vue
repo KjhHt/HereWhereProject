@@ -38,50 +38,62 @@ let checkInDate = ref(today.toISOString().split('T')[0]); // Default check-in da
 let checkOutDate = ref(tomorrow.toISOString().split('T')[0]); // Initialize check-out date as empty
 
 const props = defineProps({
-  places: Object
+  places: Object,
+  latNumber: Number,
+  lngNumber: Number
 });
 
-const instance = getCurrentInstance(); // Get current component instance
+const instance = getCurrentInstance();
 
 const increaseGuests = () => {
-  guests.value = Math.min(guests.value + 1, 6); // Maximum 6 guests
+  guests.value = Math.min(guests.value + 1, 6); 
 };
 
 const decreaseGuests = () => {
-  guests.value = Math.max(guests.value - 1, 1); // Minimum 1 guest
+  guests.value = Math.max(guests.value - 1, 1); 
 };
 
-// Set minimum check-out date as the day after check-in
 const setMinCheckOutDate = () => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  checkOutDate.value = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  checkOutDate.value = date.toISOString().split('T')[0];
 };
 
 // Compute minimum check-out date
 const minCheckOutDate = computed(() => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  return date.toISOString().split('T')[0]; 
 });
-
-// Watch check-in date and update minimum check-out date accordingly
 watch(checkInDate, setMinCheckOutDate);
 
-// Function to handle searchHotel button click
 const searchHotel = () => {
+  let lat, lng;
+
+  if (props.latNumber && props.lngNumber) {
+    lat = props.latNumber;
+    lng = props.lngNumber;
+  } 
+  else if (props.places) {
+    lat = props.places.geometry.location.lat();
+    lng = props.places.geometry.location.lng();
+  } 
+  else {
+    lat = 0;
+    lng = 0;
+  }
+
   const searchData = {
     guests: guests.value,
     checkInDate: checkInDate.value,
     checkOutDate: checkOutDate.value,
-    lat: props.places.geometry.location.lat(),
-    lng: props.places.geometry.location.lng()
+    lat: lat,
+    lng: lng
   };
   instance.emit('search-event', searchData);
 };
 </script>
 
-    
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
 
