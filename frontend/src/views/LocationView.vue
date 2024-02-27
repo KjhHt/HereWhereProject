@@ -154,13 +154,13 @@
       <!--경로 오프-->
       <div :class="{ 'offcanvas offcanvas-start': true, 'show': showRoute }" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height:100vh; width:410px;">
         <div class="offcanvas-header">
-          <button type="button" id="btn_close" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"></button>
+          <button type="button" id="btn_close" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"><i class="bi bi-chevron-double-left"></i></button>
         </div>
         <div class="offcanvas-form" id="modal_form">
           <div class="offcanvas-start">
             <RouteRecommendation @setDraw="drivePath=>setDraw(drivePath)" 
                   @passRouteLocation="e=>routeCoords=e" :routeInfo="clickInfo" 
-                  :arrivals="arrivalsValue" :map="mapRef"
+                  :arrivals="arrivalsValue" :map="mapRef" :showRoute="showRoute"
             />
           </div>
         </div>
@@ -178,7 +178,7 @@
       style="width:100vw; height:calc(100vh - 81px);"
       @click="e=>clickHandler(e)"
       >
-      <DrawDirection :coords="routeCoords" @cameraSend="data=>cameraCenter(data)" />
+      <DrawDirection :coords="routeCoords" :showRoute="showRoute" @cameraSend="data=>cameraCenter(data)" />
       
         <CustomMarker :options="{ position: mapOptions.center, anchorPoint: 'BOTTOM_CENTER' }">
             <div style="text-align: center">
@@ -438,16 +438,17 @@ async function getNews(lat,lng){
   }
   const {coords} = geoLocation()
   const currPos = computed(() => {
-  return !props.locationLatLng
-    ? {
-        lat: parseFloat(coords.value.latitude),
-        lng: parseFloat(coords.value.longitude),
-      }
-    : {
-        lat: props.locationLatLng.lat,
-        lng: props.locationLatLng.lng,
-      };
-});
+    return !props.locationLatLng
+      ? {
+          lat: parseFloat(coords.value.latitude),
+          lng: parseFloat(coords.value.longitude),
+        }
+      : {
+          lat: props.locationLatLng.lat,
+          lng: props.locationLatLng.lng,
+        };
+  });
+  
   const apiKey= process.env.VUE_APP_GOOGLE_API_KEY; /* 여기에 해당 apikey설정할 것!!!! */
   
   const mapOptions=ref({
@@ -667,7 +668,6 @@ async function getNews(lat,lng){
     camera.rotation.y = Math.PI / 4; // Y축 회전 (Yaw)
     camera.rotation.z = 0; // Z축 회전 (Roll)
   
-    
     // ThreeJSOverlayView 설정
     overlay=new ThreeJSOverlayView({
       googleMap,
@@ -676,9 +676,7 @@ async function getNews(lat,lng){
       THREE,
       camera,
     });
-  
-  
-  
+    
     overlay.onAdd=()=>{
       console.log('add')
     }
@@ -999,11 +997,6 @@ async function getNews(lat,lng){
   }
   .btn-close {
     background: none;
-  }
-  .pac-container {
-    z-index: 9999px;
-    top: 50px;
-    left: 100px;
   }
   .carousel-control-prev,
 .carousel-control-next {

@@ -49,24 +49,66 @@
     <div class="View_route">
         <ul>
             <li v-if="activeMode === 'bus_btn'">
-                <div class="drive-card" v-for="(driveInfo,index) in driveList" :key="driveInfo.summary">
-                    <div class="card-body">
-                        <div class="card-info">
-                            <div id="index-circle">{{ index+1 }}</div>
-                            <div class="card-info-head">
-                            <span><strong>{{ driveInfo.summary.duration }}</strong></span>
-                            <span><small>{{ driveInfo.summary.distance }}</small></span>
-                            <ul class="drive-ul">
-                                <li>{{ driveInfo.summary.fare.taxi+'원' }}</li>
-                                <li>{{ driveInfo.summary.fare.toll+'원' }}</li>
-                            </ul>
+                <div class="card w-100 mb-3">
+                    <div class="card-body" id="transit-card-body" v-for="(transitInfo,index) in transitList" :key="index" @click="clickTransit(transitInfo)">
+                        <div class="transit-card-info" data-bs-toggle="collapse" :data-bs-target="'#transitInfo'+index" aria-expanded="false" :aria-controls="'transitInfo'+index">
+                            <div id="index-circle"> {{ index+1 }} </div>
+                            <span v-for="(step,index) in transitInfo.legs[0].steps" :key="index">
+                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('버스') !== -1">
+                                    <img :src="require('@/assets/icon-bus.png')"/>
+                                    <span>{{ step.transit.line.short_name.replace(/\D/g, '') }}</span>                              
+                                </span>
+                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('지하철') !== -1">
+                                    <img :src="require('@/assets/icon-subway.png')"/>
+                                    <span>{{ step.transit.line.short_name }}</span>
+                                </span>
+                            </span>
+                            <div class="card-info-head" id="transit-card-info-head">
+                                <span><strong>{{ transitInfo.legs[0].duration.text }}</strong></span>
+                                <span><small>{{ transitInfo.legs[0].distance.text }}</small></span>
+                                <ul class="drive-ul">
+                                    <li>{{ transitInfo.legs[0].departure_time.text }} ~ {{ transitInfo.legs[0].arrival_time.text }}</li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <div class="col">
+                                <div v-for="step in transitInfo.legs[0].steps" :key="step" class="collapse multi-collapse" :id="'transitInfo'+index">
+                                    <div class="transit-info">
+                                        <div class="card-info">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <img v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('버스') !== -1" :src="require('@/assets/icon-bus.png')" />
+                                                    <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.name.indexOf('지하철') !== -1 || step.transit.line.name.indexOf('전철') !== -1)" :src="require('@/assets/icon-subway.png')" />
+                                                    <img v-if="step.travel_mode === 'WALKING'" :src="require('@/assets/icon-walking.png')" />  
+                                                    <span v-if="step.travel_mode==='TRANSIT'">{{ step.transit.line.short_name }}</span>
+                                                    <span></span>
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="transit-card-info-body">
+                                                        <span><strong>{{ step.duration.text }}</strong> <small>{{ step.distance.text }}</small></span>
+                                                        <ul class="transit-ul">
+                                                            <li v-if="step.travel_mode==='TRANSIT' && 
+                                                                    (step.transit.line.name.indexOf('지하철') !== -1 || step.transit.line.name.indexOf('전철') !== -1 || step.transit.line.name.indexOf('버스') !== -1)">
+                                                                {{ step.transit.arrival_stop.name }}역 ~ {{ step.transit.departure_stop.name }}역
+                                                            </li>
+                                                            <li v-else>
+                                                                {{ step.instructions }}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>     
+                    </div>      
                 </div>
             </li>
             <li v-else-if="activeMode === 'car_btn'">
-                <div class="drive-card" v-for="(driveInfo,index) in driveList" :key="driveInfo.summary">
+                <div class="routes-card" v-for="(driveInfo,index) in driveList" :key="index">
                     <div class="card-body" @click="clickDrive(driveInfo)">
                         <div class="card-info">
                             <div id="index-circle">{{ index+1 }}</div>
@@ -83,7 +125,7 @@
                 </div>                
             </li>
             <li v-else-if="activeMode === 'walk_btn'">
-                <div class="drive-card" v-if="walkInfo" @click="clickWalk(walkInfo)">
+                <div class="routes-card" v-if="walkInfo.length!==0" @click="clickWalk(walkInfo)">
                     <div class="card-body">
                         <div class="card-info">
                             <div id="index-circle">1</div>
@@ -96,7 +138,7 @@
                 </div>               
             </li>
             <li v-else-if="activeMode === 'searchArea'">
-                <div class="search-card" v-for="searchInfo in searchList" :key="searchInfo.place_id">
+                <div class="search-card" v-for="searchInfo in searchList" :key="searchInfo.place_id" @click="searchClick(searchInfo)">
                     <div class="card-body">
                         <div class="card-info">
                             <img :src="require('@/assets/location2.png')" id="search-icon" />
@@ -111,6 +153,21 @@
                 </div>
             </li>
         </ul>
+        <div v-if="showRoading" id="planeLoading">
+            <span class="plane fa fa-plane"></span>
+            <div id="wave0" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave1" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave2" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave3" class="animate">
+            <span class="dot"></span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -121,6 +178,7 @@ import { getDistanceInKm } from '@/composable/custom';
 
 const departuresRef=ref(null)
 const arrivalsRef=ref(null)
+//const transitDetailRef= ref(null)
 let activeMode = ref(null)
 let searchList= ref([])
 let driveList= ref([])
@@ -128,13 +186,18 @@ let transitList= ref([])
 let walkInfo= ref([])
 const placesService= ref()
 const directionsService= ref()
+const directionsRenderer= ref()
 const geocoder= ref()
 let routeLocation= ref({})
+let showRoading= ref(false)
+let searchTarget
+let transitResponse
 
 const props = defineProps({
     map:Object,
     routeInfo: Object,
     arrivals: Object,
+    showRoute: Boolean,
 });
 
 const autoCompleteOptions={
@@ -171,6 +234,7 @@ watch(() => props.map?.ready, ready => {
     if (props.map.api && props.map.api.places) {
         placesService.value= new props.map.api.places.PlacesService(props.map.map)
         directionsService.value= new props.map.api.DirectionsService()
+        directionsRenderer.value= new props.map.api.DirectionsRenderer();
         geocoder.value= new props.map.api.Geocoder()
         // departures 입력 필드에 대한 Autocomplete 인스턴스 생성
         const departuresAutocomplete = new props.map.api.places.Autocomplete(departuresRef.value, autoCompleteOptions);
@@ -197,6 +261,17 @@ watch(()=>props.arrivals, arrivals=>{ //부모 컴포넌트에서 경로 목적�
     arrivalsRef.value.value= arrivals.formatted_address
 })
 
+watch(()=>props.showRoute, showRoute=>{
+    console.log('경로감지')
+    if(!showRoute) {
+        if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+        activeMode.value= null
+        document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
+            if(button.classList.contains('active')) button.classList.remove('active')
+        });
+    }
+})
+
 const searchPlace=(e)=>{        //출발지, 도착지 엔터로 검색
     console.log('이벤트',e)
     placesService.value.textSearch({query:e.target.value},(result,status)=>{
@@ -207,8 +282,13 @@ const searchPlace=(e)=>{        //출발지, 도착지 엔터로 검색
                 if(button.classList.contains('active')) button.classList.remove('active')
             })
             activeMode.value='searchArea'   
+            searchTarget= e.target
         }
     })
+}
+
+const searchClick=(searchInfo)=>{
+    if(searchTarget) searchTarget.value= `${searchInfo.formatted_address}(${searchInfo.name})`
 }
 
 const searchObserve=()=>{
@@ -252,8 +332,9 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
     driveList.value= []
     transitList.value= []
     walkInfo.value= []
+    showRoading.value= true;
     let driveResponse= await getDriveRoute(route)
-    let transitResponse= await getTransitRoute(route)
+    transitResponse= await getTransitRoute(route)
     let walkResponse
     if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
             route.arrivals.lat, route.arrivals.lng) < 30){
@@ -276,9 +357,8 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
         properties.totalTime= displayDuration(properties.totalTime)
         console.log('워크인포',walkInfo.value)
     }
-    console.log('카카오',driveList.value)
-    console.log('대중',transitList.value)
-    console.log('도보',walkResponse)
+    showRoading.value= false;
+    document.querySelector('.bus_btn').click()
   }
 
   async function getDriveRoute(route){ //카카오 운전 경로 API
@@ -357,6 +437,7 @@ const clickDrive=(driveInfo)=>{
             })
         }
     }
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
     setDraw(drivePath)
 }
 
@@ -380,9 +461,16 @@ const clickWalk=(walkInfo)=>{
             }
         }
     }
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
     setDraw(walkPath)
 }
 
+const clickTransit=(transitInfo)=>{
+    transitResponse.routes= [transitInfo]
+    setDraw(null)
+    directionsRenderer.value.setMap(props.map.map)
+    directionsRenderer.value.setDirections(transitResponse)
+}
 </script>
 
 <style scoped>
@@ -440,7 +528,7 @@ const clickWalk=(walkInfo)=>{
     height: 40px;
     /* margin-left: 0px; */
     position: absolute;
-    margin-left: 80px;
+    margin-left: 40px;
     margin-top: 5px;
     border-radius: 5px;
 }
@@ -461,16 +549,15 @@ const clickWalk=(walkInfo)=>{
     height: 45px;
     text-align: center;
     line-height: 30px;
-    margin-left: 390px;
-    margin-top: 105px;
+    margin-left: 50px;
+    margin-top: 90px;
 }
 .Route_form{
-    width: 970px;
+    width: 500px;
     height: 100px;
     /* border: 1px solid red; */
-    margin-left: -460px;
+    margin-left: -223px;
     margin-top: -60px;
-    position: absolute;
 }
 .li{
     display: inline-block;
@@ -488,6 +575,7 @@ const clickWalk=(walkInfo)=>{
     width: 120px;
     background-color: white;
     border: 1px solid #ccc;
+    color: #979696;
 }
 .bus_btn{
     position: absolute;
@@ -519,11 +607,11 @@ const clickWalk=(walkInfo)=>{
 }
 .View_route{
     width: 380px;
+    height: 400px;
     border: 1px solid #ffffff;
     padding: 10px 10px 10px;
     margin-left: -87px;
-    position: absolute;
-    margin-top: 100px;
+    margin-top: 80px;
     max-height: 400px; /* 스크롤 가능한 영역의 최대 높이 설정 */
     overflow-y: auto;
     background-color: rgb(255, 255, 255);
@@ -536,7 +624,7 @@ const clickWalk=(walkInfo)=>{
 .View_route> ul> li{
     margin-top: 0;
 }
-.drive-card,
+.routes-card,
 .search-card {
     border: 1px solid #ddd;
     width: 340px;
@@ -568,11 +656,13 @@ const clickWalk=(walkInfo)=>{
 }
 .card-body {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   height: 100%;
   width: 100%;
 }
 #index-circle{
+    display: inline-block;
     border-radius: 50%;
     width: 25px;
     height: 25px;
@@ -580,8 +670,9 @@ const clickWalk=(walkInfo)=>{
     background-color: rgb(69, 155, 236);
     color: white;
     margin-left: -5px;
+    margin-right: 5px;
 }
-.drive-card .card-info{
+.routes-card .card-info{
     padding-left: 20px;
 }
 .drive-ul> li{
@@ -595,11 +686,187 @@ const clickWalk=(walkInfo)=>{
 .drive-ul> li:first-child{
     margin-right: 0px;
 }
-.drive-card span> strong{
+.routes-card span> strong{
     font-size: 24px;
 }
-.drive-card span> small{
+.routes-card span> small{
     margin-left: 10px;
     font-size: 20px;
+}
+.transit-space:not(:first-child){
+    margin-left: 10px;
+}
+
+.transit-space> img{
+    display: inline-block;
+    margin-top:-5px;
+    width: 35px;
+    height: 35px;
+}
+.transit-space> span{
+    display: inline-block;
+    position: absolute;
+    font-weight:bold;
+    font-size:12px;
+    margin-top:30px;
+    margin-left:-35px;
+    width: 35px;
+    text-align: center;
+    color: red;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#transit-card{
+    height:110px;
+}
+#transit-card .card-info-head{
+    margin-top: 10px;
+}
+#transit-card-body{
+    display: block;
+    text-align:left;
+    padding-left:20px;
+    padding-top:10px;
+    padding-bottom: 5px;
+    border-radius:10px;
+    border: 1px solid #ccc;
+}
+#transit-card-body strong{
+    font-size: 24px;
+}
+#transit-card-body small{
+    margin-left:10px;
+    font-size: 20px;
+}
+.card-info> img{
+    width:35px;
+    height:35px;
+}
+.transit-info{
+    border-top: 1px; 
+    width: 100%;
+    height: 100px;
+}
+.transit-info> .card-info{
+    padding-left: 0;
+    width:100%;
+    height:100%;
+    border-top: 1px solid #eee;
+}
+.transit-info img{
+    display: inline-block;
+}
+.transit-info>.card-info>span{
+    color: red;
+    font-weight: bold;
+}
+.card{
+    border:none;
+}
+#transit-card-info-head{
+    margin-top:10px;
+}
+.transit-ul{
+    list-style:none;    
+    font-size: 14px;
+    padding:0;
+}
+.transit-ul> li{
+    margin: 0;
+}
+.transit-card-info-body{
+    display: inline-block;
+    text-align:right;
+}
+.transit-card-info-body> span{
+    display: inline;
+}
+.transit-info img{
+    width:35px;
+    height:35px;
+}
+.col-4{
+    padding-left:10px;
+    padding-right:0;
+}
+.col-8{
+    text-align:right;
+    padding: 0;
+}
+#planeLoading {
+margin-left: auto;
+margin-right: auto;
+width: 200px;
+height: 100px;
+}
+.plane {
+font-size: 40px;
+-ms-transform: rotate(0deg);
+-webkit-transform: rotate(0deg);
+transform: rotate(0deg);
+position: relative;
+margin-top: 10px;
+-webkit-animation: plane 2s infinite;
+-webkit-animation-timing-function: linear;
+animation: plane 2s infinite;
+animation-timing-function: linear;
+color: #9893EA
+}
+@keyframes plane {
+0% {
+    left: -50%;
+}
+100% {
+    left: 100%;
+}
+}
+.animate {
+display: inline-block;
+}
+.animate .dot {
+display: block;
+width:8px;
+height:8px;
+margin-top: 8px;
+border-radius:50%;
+margin-right:10px;
+background: black;
+}
+#wave0 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 5s;
+animation-fill-mode: forwards;
+}
+#wave1 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 4.65s;
+animation-fill-mode: forwards;
+}
+#wave2 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 4.45s;
+animation-fill-mode: forwards;
+}
+#wave3 .dot {
+    animation: wave0 1s infinite ease-in-out;
+    animation-duration: 4.3s;
+    animation-fill-mode: forwards;
+}
+@keyframes wave0 {
+100%{
+    transform: initial;
+}
+0%, 30%, 60% {
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1.2);
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1.2);
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1.2);
+    transition: all 200ms ease-in;
+    transform: scale(1.2);
+    background: #DEDEDE;
+}
 }
 </style>
