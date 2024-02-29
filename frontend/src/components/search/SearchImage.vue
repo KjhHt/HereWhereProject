@@ -1,19 +1,28 @@
 <template>
   <input type="file" accept="image/*" @change="uploadImage" ref="inputFile" class="d-none"/>
   <button class="search-button">
-    <i @click="clickInput" class="fa fa-image" style="margin-right: 10px;"></i>
+    <!-- 고침 -->
+    <i @click="handleClick" class="fa fa-image" style="margin-right: 10px;"></i>
   </button>
 </template>
 <script setup>
 import { ref,defineEmits } from 'vue';    
 import axios from 'axios'
 
-const emit = defineEmits(['searchLocation']);
+const emit = defineEmits(['searchImgLocation','clearPlaces']);
 const inputFile=ref(null);
-
+// 고침
+const handleClick = () => {
+  clickInput(); // clickInput 함수 호출
+  clearPlaces(); // clearPlaces 함수 호출
+};
 function clickInput(){
   inputFile.value.click()
 }
+
+const clearPlaces = () => {
+  emit('clearPlaces');
+};
 
 function uploadImage(event) {
   const files = event.target.files;
@@ -28,14 +37,12 @@ function uploadImage(event) {
     })
     .then(response =>{ 
       console.log(response)
-      const places=response.data.results[0]
-      emit('searchLocation',places)
+      const imgplaces=response.data.results[0]
+      emit('searchImgLocation',imgplaces)
     })
     .catch(error => console.error('Error:', error));
   }
 }
-
-
 
 </script>
 <style scoped>

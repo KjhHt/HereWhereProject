@@ -22,13 +22,13 @@
           <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
         </div>
       </div>
-      <button type="submit" class="btn">Search Hotel</button>
+      <button type="submit" class="btn" @click="clearPlaces">Search Hotel</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, getCurrentInstance } from 'vue';
+import { ref, computed, watch, defineProps, getCurrentInstance ,defineEmits } from 'vue';
 
 const today = new Date();
 const tomorrow = new Date(today.getTime()); // Create a new Date object for tomorrow
@@ -39,10 +39,10 @@ let checkOutDate = ref(tomorrow.toISOString().split('T')[0]); // Initialize chec
 
 const props = defineProps({
   places: Object,
+  imgplaces : Object,
   latNumber: Number,
   lngNumber: Number
 });
-
 const instance = getCurrentInstance();
 
 const increaseGuests = () => {
@@ -69,16 +69,28 @@ watch(checkInDate, setMinCheckOutDate);
 
 const searchHotel = () => {
   let lat, lng;
-
-  if (props.latNumber && props.lngNumber) {
-    lat = props.latNumber;
-    lng = props.lngNumber;
-  } 
-  else if (props.places) {
+  //메인 사진 눌렀을때,검색했을때
+  if (Object.keys(props.places).length > 0) {
+    console.log('1111')
+    console.log(props.places)
     lat = props.places.geometry.location.lat();
     lng = props.places.geometry.location.lng();
   } 
+  //이미지 지도에서 검색
+  else if (props.imgplaces) {
+    console.log('2222')
+    lat = props.imgplaces.geometry.location.lat;
+    lng = props.imgplaces.geometry.location.lng;
+  } 
+  //이미지 예측, 헤드위치검색 눌렀을때
+  else if (props.latNumber && props.lngNumber) {
+    console.log('3333')
+    lat = props.latNumber;
+    lng = props.lngNumber;
+  } 
+
   else {
+    console.log('4444')
     lat = 0;
     lng = 0;
   }
@@ -91,6 +103,11 @@ const searchHotel = () => {
     lng: lng
   };
   instance.emit('search-event', searchData);
+};
+const emit = defineEmits(['clearPlaces'])
+
+const clearPlaces = () => {
+  emit('clearPlaces');
 };
 </script>
 

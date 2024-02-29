@@ -20,7 +20,7 @@ const noticeListData = ref([]);
 const noticeCountData = ref(0);
 const locationValue = ref('');
 const locationLatLng = ref([]);
-
+// const locationLatLng2 = ref([]);
 onMounted(() => {
   //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   /*
@@ -122,10 +122,13 @@ const handleImgClick = (value) =>{
 }
 const handleItemClick = (value) =>{
   locationLatLng.value = value;
-  console.log('아래',locationLatLng.value)
   page_.value = 'location';
 }
-
+const handleSearchImgLocation = (value) =>{
+  const latLngArray = [value.geometry.location.lat, value.geometry.location.lng];
+  locationLatLng.value = latLngArray;
+  page_.value = 'location';
+}
 const disconnectLocation= ()=> {
   locationValue.value= '',
   locationLatLng.value = [];
@@ -146,7 +149,7 @@ function selectPage(page){
 <template>
   <PanolensPage/>    
    <Header @selectPage="selectPage" :noticeListData="noticeListData" :noticeCountData="noticeCountData"/>
-    <MainPage v-if="page_=='main'" @imgClick="handleImgClick"/>
+    <MainPage v-if="page_=='main'" @imgClick="handleImgClick" @searchImgLocation="handleSearchImgLocation"/>
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>

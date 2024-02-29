@@ -26,7 +26,7 @@
             <button type="button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
-            <SearchImage @searchLocation="searchLocation"/>
+            <SearchImage @searchImgLocation="searchImgLocation" @clearPlaces="clearPlaces"/>
           </div>
           <div>
             <Weather :weather="weatherData"/>
@@ -123,7 +123,7 @@
             <div style="width: same-as-button;"></div>
           </div>
         <div class="offcanvas-body">
-          <HotelDate :places="places" :latNumber="latNumber" :lngNumber="lngNumber" @search-event="handleSearchEvent"/>
+          <HotelDate :places="places" :imgplaces="imgsearchplaces" :latNumber="latNumber" :lngNumber="lngNumber" @search-event="handleSearchEvent" />
           <LoadingOverlay :loading="loadinghotel" />
           <LoadingOverlay :loading="loadingdetail" />
           <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>      
@@ -288,6 +288,7 @@
     disconnect()
   })
 
+
   function updateInfoWindow(places){
     let photoUrl;
     if("restaurant" in places){
@@ -368,23 +369,23 @@
   //   console.log(response);
   //   youtubeData.value=response.data
   // }
-  // async function getNearbyHotels(lat, lng, number, check_in, check_out) {
-  //   try {
-  //     loadinghotel.value = true;
-  //     hotelsInfo.value = []
-  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-  //     hotelsInfo.value = response.data;
-  //   } catch (error) {
-  //     console.error("An error occurred while fetching hotel data:", error);
-  //   } finally {
-  //     loadinghotel.value = false;
-  //   }
-  // }
+  async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+    try {
+      loadinghotel.value = true;
+      hotelsInfo.value = []
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+      hotelsInfo.value = response.data;
+    } catch (error) {
+      console.error("An error occurred while fetching hotel data:", error);
+    } finally {
+      loadinghotel.value = false;
+    }
+  }
 
-  // async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
-  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-  //     hotelsInfo.value = response.data;
-  // }
+  async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+      hotelsInfo.value = response.data;
+  }
 
 // async function getNearbyRestaurants(lat, lng) {
 //   try {
@@ -421,13 +422,28 @@ async function getNews(lat,lng){
   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
   newsData.value=response.data
 }
-  
+
+let imgsearchplaces = ref(null)
+function searchImgLocation(imgplaces){
+    imgsearchplaces.value = imgplaces
+    let location= imgplaces.geometry.location;
+    console.log('location',imgplaces)
+    // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,"2024-04-01","2024-04-02") 
+    // getYoutubeData(imgplaces.name)
+    getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    moveToPosition(location)
+    updateInfoWindow(imgplaces)
+  }
   function searchLocation(places){
     let location= places.geometry.location;
-    //getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-    //getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    //getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
-    //getYoutubeData(places.name)
+    console.log('location',location.lat)
+    // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
+    // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    // getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
     moveToPosition(location)
@@ -617,8 +633,14 @@ async function getNews(lat,lng){
   const directionRenderer=ref(null);
   const placesService=ref(null);
   let places={}
-  let latNumber= ref()
-  let lngNumber= ref()
+  let latNumber= ref(null)
+  let lngNumber= ref(null)
+  //수저ㅓㅇ
+  const clearPlaces = () => {
+    console.log('비우고 있니?')
+    places = {}; // Clear places
+    console.log(places)
+  };
 
   function initMap(googleMap) {
     const autoCompleteOptions={
@@ -717,9 +739,9 @@ async function getNews(lat,lng){
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
       placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
-      //getNearbyRestaurants(lat, lng);
-      //getNearbyAttractions(lat, lng);
-      //getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
+      // getNearbyRestaurants(lat, lng);
+      // getNearbyAttractions(lat, lng);
+      getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
       map.setCenter({ lat, lng });
       updateInfoWindow(place);
       getWeather(lat, lng);
@@ -742,11 +764,12 @@ async function getNews(lat,lng){
         lng: lngNumber.value,
       };
       map.setCenter(dataLatLng);
-      //getNearbyRestaurants(latNumber.value, lngNumber.value);
-      //getNearbyAttractions(latNumber.value, lngNumber.value);
-      //getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      // getNearbyRestaurants(latNumber.value, lngNumber.value);
+      // getNearbyAttractions(latNumber.value, lngNumber.value);
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
+      
     }
     else {
       latNumber.value = parseFloat(37.4923615);
@@ -756,9 +779,9 @@ async function getNews(lat,lng){
         lng: lngNumber.value,
       };
       map.setCenter(dataLatLng);
-      //getNearbyRestaurants(latNumber.value, lngNumber.value);
-      //getNearbyAttractions(latNumber.value, lngNumber.value);
-      //getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      // getNearbyRestaurants(latNumber.value, lngNumber.value);
+      // getNearbyAttractions(latNumber.value, lngNumber.value);
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -836,14 +859,14 @@ async function getNews(lat,lng){
   }
 
   //21일 추가 호텔 검색 로딩
-  // const handleSearchEvent = (searchData) => {
-  //   loadingdetail.value = true;
-  //   hotelsInfo.value = []; 
-  //   //getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
-  //   .then(() => {
-  //     loadingdetail.value = false;
-  //   });
-  // };
+  const handleSearchEvent = (searchData) => {
+    loadingdetail.value = true;
+    hotelsInfo.value = []; 
+    getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
+    .then(() => {
+      loadingdetail.value = false;
+    });
+  };
 
   function clickCustomMarker(info){
     if("attraction" in info || "restaurant" in info || "hotel" in info){
