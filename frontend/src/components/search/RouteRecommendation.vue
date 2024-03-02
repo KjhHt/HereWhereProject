@@ -49,24 +49,83 @@
     <div class="View_route">
         <ul>
             <li v-if="activeMode === 'bus_btn'">
-                <div class="drive-card" v-for="(driveInfo,index) in driveList" :key="driveInfo.summary">
-                    <div class="card-body">
-                        <div class="card-info">
-                            <div id="index-circle">{{ index+1 }}</div>
-                            <div class="card-info-head">
-                            <span><strong>{{ driveInfo.summary.duration }}</strong></span>
-                            <span><small>{{ driveInfo.summary.distance }}</small></span>
-                            <ul class="drive-ul">
-                                <li>{{ driveInfo.summary.fare.taxi+'원' }}</li>
-                                <li>{{ driveInfo.summary.fare.toll+'원' }}</li>
-                            </ul>
+                <div class="card w-100 mb-3">
+                    <div class="card-body" id="transit-card-body" v-for="(transitInfo,index) in transitList" :key="index" @click="clickTransit(transitInfo)">
+                        <div class="transit-card-info" data-bs-toggle="collapse" :data-bs-target="'#transitInfo'+index" aria-expanded="false" :aria-controls="'transitInfo'+index">
+                            <div id="index-circle"> {{ index+1 }} </div>
+                            <span v-for="(step,index) in transitInfo.legs[0].steps" :key="index">
+                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('버스') !== -1">
+                                    <img :src="require('@/assets/icon-bus.png')"/>
+                                    <span>{{ step.transit.line.short_name.replace(/\D/g, '') }}</span>                              
+                                </span>
+                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('지하철') !== -1">
+                                    <img :src="require('@/assets/icon-subway.png')"/>
+                                    <span>{{ step.transit.line.short_name }}</span>
+                                </span>
+                            </span>
+                            <div class="card-info-head" id="transit-card-info-head">
+                                <span><strong>{{ transitInfo.legs[0].duration.text }}</strong></span>
+                                <span><small>{{ transitInfo.legs[0].distance.text }}</small></span>
+                                <ul class="drive-ul">
+                                    <li>{{ transitInfo.legs[0].departure_time.text }} ~ {{ transitInfo.legs[0].arrival_time.text }}</li>
+                                </ul>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col">
+                                <div v-for="step in transitInfo.legs[0].steps" :key="step" class="collapse multi-collapse" :id="'transitInfo'+index">
+                                    <div class="transit-info">
+                                        <div class="card-info">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <img v-if="step.travel_mode==='TRANSIT' && step.transit.line.name.indexOf('버스') !== -1" :src="require('@/assets/icon-bus.png')" />
+                                                    <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.name.indexOf('지하철') !== -1 || step.transit.line.name.indexOf('전철') !== -1)" :src="require('@/assets/icon-subway.png')" />
+                                                    <img v-if="step.travel_mode === 'WALKING'" :src="require('@/assets/icon-walking.png')" />  
+                                                    <span v-if="step.travel_mode==='TRANSIT'">{{ step.transit.line.short_name }}</span>
+                                                    <span></span>
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="transit-card-info-body">
+                                                        <span><strong>{{ step.duration.text }}</strong> <small>{{ step.distance.text }}</small></span>
+                                                        <ul class="transit-ul">
+                                                            <li v-if="step.travel_mode==='TRANSIT' && 
+                                                                    (step.transit.line.name.indexOf('지하철') !== -1 || step.transit.line.name.indexOf('전철') !== -1 || step.transit.line.name.indexOf('버스') !== -1)">
+                                                                {{ step.transit.arrival_stop.name }}역 ~ {{ step.transit.departure_stop.name }}역
+                                                            </li>
+                                                            <li v-else>
+                                                                {{ step.instructions }}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>     
                     </div>
+                    <div class="routes-card" v-for="(flightInfo,index) in flightList" :key="index" @click="clickFlight(flightInfo)">
+                        <div class="card-body">
+                            <div class="card-info" id="flight-card-info">
+                                <div id="index-circle">{{ index+1 }}</div>
+                                <div class="card-info-head">
+                                    <span class="transit-space" id="airplan-img">
+                                        <img :src="require('@/assets/airplane.png')"/>                              
+                                    </span>
+                                    <span><strong>{{ parseInt(flightInfo.legs[0].durationInMinutes/60) }}시간 {{ parseInt(flightInfo.legs[0].durationInMinutes%60) }}분</strong></span>
+                                    <span><small>경유 {{ flightInfo.legs[0].stopCount }}회</small></span>
+                                    <ul class="drive-ul">
+                                        <li>비용 {{ parseInt(flightInfo.price.raw*1335.21) }}원</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>          
                 </div>
             </li>
             <li v-else-if="activeMode === 'car_btn'">
-                <div class="drive-card" v-for="(driveInfo,index) in driveList" :key="driveInfo.summary">
+                <div class="routes-card" v-for="(driveInfo,index) in driveList" :key="index">
                     <div class="card-body" @click="clickDrive(driveInfo)">
                         <div class="card-info">
                             <div id="index-circle">{{ index+1 }}</div>
@@ -83,7 +142,7 @@
                 </div>                
             </li>
             <li v-else-if="activeMode === 'walk_btn'">
-                <div class="drive-card" v-if="walkInfo" @click="clickWalk(walkInfo)">
+                <div class="routes-card" v-if="walkInfo.length!==0" @click="clickWalk(walkInfo)">
                     <div class="card-body">
                         <div class="card-info">
                             <div id="index-circle">1</div>
@@ -96,7 +155,7 @@
                 </div>               
             </li>
             <li v-else-if="activeMode === 'searchArea'">
-                <div class="search-card" v-for="searchInfo in searchList" :key="searchInfo.place_id">
+                <div class="search-card" v-for="searchInfo in searchList" :key="searchInfo.place_id" @click="searchClick(searchInfo)">
                     <div class="card-body">
                         <div class="card-info">
                             <img :src="require('@/assets/location2.png')" id="search-icon" />
@@ -111,16 +170,33 @@
                 </div>
             </li>
         </ul>
+        <div v-if="showRoading" id="planeLoading">
+            <span class="plane fa fa-plane"></span>
+            <div id="wave0" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave1" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave2" class="animate">
+            <span class="dot"></span>
+            </div>
+            <div id="wave3" class="animate">
+            <span class="dot"></span>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { defineProps, ref, watch, defineEmits } from 'vue'
+import { defineProps, ref, watch, defineEmits, toRaw } from 'vue'
 import axios from 'axios'
+//import Papa from 'papaparse';
 import { getDistanceInKm } from '@/composable/custom';
 
 const departuresRef=ref(null)
 const arrivalsRef=ref(null)
+//const transitDetailRef= ref(null)
 let activeMode = ref(null)
 let searchList= ref([])
 let driveList= ref([])
@@ -128,13 +204,19 @@ let transitList= ref([])
 let walkInfo= ref([])
 const placesService= ref()
 const directionsService= ref()
+const directionsRenderer= ref()
+const directionsRenderer_= ref()
 const geocoder= ref()
 let routeLocation= ref({})
+let showRoading= ref(false)
+let searchTarget
+let transitResponse
 
 const props = defineProps({
     map:Object,
     routeInfo: Object,
     arrivals: Object,
+    showRoute: Boolean,
 });
 
 const autoCompleteOptions={
@@ -171,6 +253,8 @@ watch(() => props.map?.ready, ready => {
     if (props.map.api && props.map.api.places) {
         placesService.value= new props.map.api.places.PlacesService(props.map.map)
         directionsService.value= new props.map.api.DirectionsService()
+        directionsRenderer.value= new props.map.api.DirectionsRenderer()
+        directionsRenderer_.value= new props.map.api.DirectionsRenderer()
         geocoder.value= new props.map.api.Geocoder()
         // departures 입력 필드에 대한 Autocomplete 인스턴스 생성
         const departuresAutocomplete = new props.map.api.places.Autocomplete(departuresRef.value, autoCompleteOptions);
@@ -197,6 +281,18 @@ watch(()=>props.arrivals, arrivals=>{ //부모 컴포넌트에서 경로 목적�
     arrivalsRef.value.value= arrivals.formatted_address
 })
 
+watch(()=>props.showRoute, showRoute=>{
+    console.log('경로감지')
+    if(!showRoute) {
+        if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+        if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
+        activeMode.value= null
+        document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
+            if(button.classList.contains('active')) button.classList.remove('active')
+        });
+    }
+})
+
 const searchPlace=(e)=>{        //출발지, 도착지 엔터로 검색
     console.log('이벤트',e)
     placesService.value.textSearch({query:e.target.value},(result,status)=>{
@@ -207,8 +303,13 @@ const searchPlace=(e)=>{        //출발지, 도착지 엔터로 검색
                 if(button.classList.contains('active')) button.classList.remove('active')
             })
             activeMode.value='searchArea'   
+            searchTarget= e.target
         }
     })
+}
+
+const searchClick=(searchInfo)=>{
+    if(searchTarget) searchTarget.value= `${searchInfo.formatted_address}(${searchInfo.name})`
 }
 
 const searchObserve=()=>{
@@ -220,6 +321,9 @@ const searchObserve=()=>{
 const searchRoute=()=>{ //출발지 목적지 좌표 얻기
     if(departuresRef.value.value.trim() === '' || departuresRef.value.value.trim()==='') return
     routeLocation.value={}
+    flightList.value= []
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     placesService.value.textSearch({query:departuresRef.value.value}, (result,status)=>{
         if(status === 'OK'){
             routeLocation.value.departures={lat:result[0].geometry.location.lat(), lng:result[0].geometry.location.lng()}
@@ -247,39 +351,187 @@ function displayDuration(duration) {
     return parseInt(duration / 3600) + '시간 ' + parseInt((duration % 3600) / 60) + '분';
 }
 
+let departuresQuery
+let arrivalsQuery
+let departuresInfo
+let arrivalsInfo
+let flightRouteInfo
+let flightList= ref([])
+let latLng
 
 const findRoute= async(route)=> { //경로 찾기 이벤트
-    driveList.value= []
-    transitList.value= []
-    walkInfo.value= []
-    let driveResponse= await getDriveRoute(route)
-    let transitResponse= await getTransitRoute(route)
-    let walkResponse
-    if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
-            route.arrivals.lat, route.arrivals.lng) < 30){
-        walkResponse= await getWalkRoute(route)
+    try{
+        driveList.value= []
+        transitList.value= []
+        walkInfo.value= []
+        showRoading.value= true;
+        let driveResponse= await getDriveRoute(route)
+        transitResponse= await getTransitRoute(route)
+        let walkResponse
+        if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
+                route.arrivals.lat, route.arrivals.lng) < 30){
+            walkResponse= await getWalkRoute(route)
+        }
+        if(driveResponse){
+            driveResponse.data.routes.forEach(routes=>{
+                routes.summary.distance = displayDistance(routes.summary.distance);
+                routes.summary.duration = displayDuration(routes.summary.duration);
+                if(routes.summary.fare.toll===0) delete routes.summary.fare.toll
+                else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'
+            })
+            driveList.value= driveResponse.data.routes
+        }
+        transitList.value= transitResponse.routes
+        if(walkResponse) {
+            walkInfo.value= walkResponse.data
+            let properties= walkInfo.value.features[0].properties
+            properties.totalDistance= displayDistance(properties.totalDistance)
+            properties.totalTime= displayDuration(properties.totalTime)
+            console.log('워크인포',walkInfo.value)
+        }
+        showRoading.value= false;
+        document.querySelector('.bus_btn').click()
+    }catch(error){
+        if(error==='ZERO_RESULTS'){
+            //searchAirports(route.departures.lat, route.departures.lng)
+            getFlightPath(route)
+        }
     }
-    if(driveResponse){
-        driveResponse.data.routes.forEach(routes=>{
-            routes.summary.distance = displayDistance(routes.summary.distance);
-            routes.summary.duration = displayDuration(routes.summary.duration);
-            if(routes.summary.fare.toll===0) delete routes.summary.fare.toll
-            else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'
-        })
-        driveList.value= driveResponse.data.routes
-    }
-    transitList.value= transitResponse.routes
-    if(walkResponse) {
-        walkInfo.value= walkResponse.data
-        let properties= walkInfo.value.features[0].properties
-        properties.totalDistance= displayDistance(properties.totalDistance)
-        properties.totalTime= displayDuration(properties.totalTime)
-        console.log('워크인포',walkInfo.value)
-    }
-    console.log('카카오',driveList.value)
-    console.log('대중',transitList.value)
-    console.log('도보',walkResponse)
   }
+
+  const nextDate=()=>{
+    // 현재 날짜를 가져옵니다.
+    let date = new Date();
+
+    // 현재 날짜에 하루를 더합니다.
+    date.setDate(date.getDate() + 1);
+
+    // 년, 월, 일을 가져옵니다.
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1; // JavaScript의 월은 0부터 시작하므로 1을 더해줍니다.
+    let day = date.getDate();
+
+    // 월과 일이 한 자리 수일 경우 앞에 0을 붙여 두 자리로 만듭니다.
+    if (month < 10) month = '0' + month;
+    if (day < 10) day = '0' + day;
+
+    // 년, 월, 일을 '-'로 연결하여 날짜 문자열을 만듭니다.
+    let nextDay = year + '-' + month + '-' + day;
+    return nextDay
+  }
+
+  function getFlightPath(route){
+    flightList.value= []
+    latLng= {}
+    geocoder.value.geocode({location:route.departures, language: 'en'}, async (result1,status)=>{
+        if(status==='OK') {
+            result1[0].address_components.forEach(address=>{
+                address.types.forEach(type=>{
+                    if(type.toLowerCase().includes('administrative_area_level_1'))
+                        departuresQuery= address.short_name
+                })
+            })
+            try{
+                getFlightCode.params.query= departuresQuery
+                departuresInfo= await axios.request(getFlightCode)
+            }catch(error){
+                console.log('error',error)
+                showRoading.value= false;
+            }
+            geocoder.value.geocode({location:route.arrivals, language: 'en'},async (result2,status)=>{
+                if(status==='OK') {
+                    result2[0].address_components.forEach(address=>{
+                        address.types.forEach(type=>{
+                            if(type.toLowerCase().includes('administrative_area_level_1'))
+                                arrivalsQuery= address.short_name
+                        })
+                    })
+                    try{
+                        let date= new Date()
+                        date.setDate(date.getDate() + 1)
+                        getFlightCode.params.query= arrivalsQuery
+                        arrivalsInfo= await axios.request(getFlightCode)
+                        getFlightRoute.params= {fromEntityId: departuresInfo.data.data[0].presentation.id,
+                                                toEntityId: arrivalsInfo.data.data[0].presentation.id,
+                                                departDate: nextDate()}
+                        flightRouteInfo= await axios.request(getFlightRoute)
+                        console.log('비행경로',flightRouteInfo)
+                        latLng= route
+                        flightList= flightRouteInfo.data.data.itineraries
+                        showRoading.value= false;
+                        document.querySelector('.bus_btn').click()
+                    }catch(error){
+                        console.log('비행경로를 찾을 수 없습니다.',error)
+                        showRoading.value= false;
+                    }
+                }
+            })
+        }
+    })
+  }
+
+  /*
+  const searchAirports=(lat,lng)=>{
+    const distance= 500
+    let airports=[]
+    Papa.parse('/airports.csv', {
+        download: true,
+        header: true,
+        complete: (results) => {
+            results.data.forEach(row => {
+                try{
+                    if(row.name.toLowerCase().includes("international airport")){
+                        const radLat = lat * Math.PI / 180;  
+                        const radLng = lng * Math.PI / 180;  
+                        const radLatAirport = parseFloat(row.latitude_deg) * Math.PI / 180;
+                        const radLngAirport = parseFloat(row.longitude_deg) * Math.PI / 180;
+
+                        const a = Math.pow(Math.sin((radLat - radLatAirport) / 2), 2)
+                        + Math.cos(radLat) * Math.cos(radLatAirport) * Math.pow(Math.sin((radLng - radLngAirport) / 2), 2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        const d = 6371 * c;  // 지구의 반지름 (킬로미터 단위)
+                        if (d <= distance) {
+                            airports.push({...row, distance: d});
+                        }
+                    }
+                }catch(error){
+                    console.log('에러',error)
+                }
+            });
+            // 거리에 따라 배열을 정렬
+            airports.sort((a, b) => a.distance - b.distance);
+            console.log(airports);
+        }
+    });
+  }
+  */
+
+  const getFlightCode = {
+    method: 'GET',
+    url: 'https://sky-scanner3.p.rapidapi.com/flights/auto-complete',
+    params: {
+        query: '',
+        placeTypes: 'AIRPORT'
+    },
+    headers: {
+        'X-RapidAPI-Key': process.env.VUE_APP_RAPID_API_KEY,
+        'X-RapidAPI-Host': 'sky-scanner3.p.rapidapi.com'
+    }
+  };
+
+  const getFlightRoute = {
+    method: 'GET',
+    url: 'https://sky-scanner3.p.rapidapi.com/flights/search-one-way',
+    params: {
+        fromEntityId: '',
+        toEntityId: '',
+        departDate: '<REQUIRED>'
+    },
+    headers: {
+        'X-RapidAPI-Key': process.env.VUE_APP_RAPID_API_KEY,
+        'X-RapidAPI-Host': 'sky-scanner3.p.rapidapi.com'
+    }
+  };
 
   async function getDriveRoute(route){ //카카오 운전 경로 API
     let response = await axios.get('https://apis-navi.kakaomobility.com/v1/directions', {
@@ -357,6 +609,8 @@ const clickDrive=(driveInfo)=>{
             })
         }
     }
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     setDraw(drivePath)
 }
 
@@ -380,9 +634,107 @@ const clickWalk=(walkInfo)=>{
             }
         }
     }
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     setDraw(walkPath)
 }
 
+const clickTransit=(transitInfo)=>{
+    transitResponse.routes= [transitInfo]
+    setDraw(null)
+    directionsRenderer.value.setMap(props.map.map)
+    directionsRenderer.value.setDirections(transitResponse)
+    console.log('트랜짓',transitInfo)
+    geocoder.value.geocode({location:{lat:35.95223,lng:-112.1469}},(result,status)=>{
+        console.log('상태',status)
+        if(status==='OK') console.log('리절트',result)
+    })
+}
+
+// 출발지 검색 함수
+async function searchOrigin(originName) {
+    return new Promise((resolve, reject) => {
+        placesService.value.textSearch({query: originName}, (result, status) => {
+            if(status === 'OK'){
+                const location = {
+                    lng: result[0].geometry.location.lng(),
+                    lat: result[0].geometry.location.lat()
+                };
+                resolve(location)
+            } else {
+                reject('에러')
+                showRoading.value= false
+            }
+        });
+    });
+}
+
+// 목적지 검색 함수
+async function searchDestinations(segments) {
+    return Promise.all(segments.map(segment => {
+        return new Promise((resolve, reject) => {
+            placesService.value.textSearch({query: segment.destination.name}, (result, status) => {
+                if(status === 'OK'){
+                    const location = {
+                        lng: result[0].geometry.location.lng(),
+                        lat: result[0].geometry.location.lat()
+                    };
+                    resolve(location)
+                } else {
+                    reject('에러')
+                    showRoading.value= false
+                }
+            })
+        })
+    }))
+}
+
+const clickFlight = async (flightInfo) => {
+    setDraw(null);
+    let coords= {}; // 출발지에서 근처공항까지의 좌표를 담을 dictionary
+    let transitResponse= {}; // 구글 대중교통 경로 api의 결과를 담을 dictionary
+    let drivePath = []; // polyline으로 그려줄 좌표 리스트 []
+
+    try{
+        console.log('flightInfo', flightInfo);
+
+        let originLocation = await searchOrigin(flightInfo.legs[0].origin.name);
+        coords.departures = toRaw(latLng.departures);
+        coords.arrivals = originLocation;
+
+        transitResponse = await getTransitRoute(coords);
+        console.log('공항까지 경로', transitResponse);
+        directionsRenderer.value.setMap(props.map.map);
+        directionsRenderer.value.setDirections(transitResponse);
+
+        drivePath.push({lng: transitResponse.request.destination.location.lng(), lat: transitResponse.request.destination.location.lat()});
+
+        let locations = await searchDestinations(flightInfo.legs[0].segments);
+        drivePath.push(...locations);
+
+        setDraw(drivePath);
+        const request = {
+            origin: drivePath[drivePath.length-1],
+            destination: latLng.arrivals,
+            travelMode: 'DRIVING'
+        };
+
+        directionsService.value.route(request, (result, status) => {
+            if(status === 'OK'){
+                console.log('리쩔트', result);
+                directionsRenderer_.value.setMap(props.map.map);
+                directionsRenderer_.value.setDirections(result);
+            } else {
+                console.log('status', status);
+                return;
+            }
+        });
+
+    } catch(error) {
+        console.log('경로를 찾을 수 없습니다.', error);
+        showRoading.value = false;
+    }
+}
 </script>
 
 <style scoped>
@@ -440,7 +792,7 @@ const clickWalk=(walkInfo)=>{
     height: 40px;
     /* margin-left: 0px; */
     position: absolute;
-    margin-left: 80px;
+    margin-left: 40px;
     margin-top: 5px;
     border-radius: 5px;
 }
@@ -461,16 +813,15 @@ const clickWalk=(walkInfo)=>{
     height: 45px;
     text-align: center;
     line-height: 30px;
-    margin-left: 390px;
-    margin-top: 105px;
+    margin-left: 50px;
+    margin-top: 90px;
 }
 .Route_form{
-    width: 970px;
+    width: 500px;
     height: 100px;
     /* border: 1px solid red; */
-    margin-left: -460px;
+    margin-left: -223px;
     margin-top: -60px;
-    position: absolute;
 }
 .li{
     display: inline-block;
@@ -488,6 +839,7 @@ const clickWalk=(walkInfo)=>{
     width: 120px;
     background-color: white;
     border: 1px solid #ccc;
+    color: #979696;
 }
 .bus_btn{
     position: absolute;
@@ -519,11 +871,11 @@ const clickWalk=(walkInfo)=>{
 }
 .View_route{
     width: 380px;
+    height: 400px;
     border: 1px solid #ffffff;
     padding: 10px 10px 10px;
     margin-left: -87px;
-    position: absolute;
-    margin-top: 100px;
+    margin-top: 80px;
     max-height: 400px; /* 스크롤 가능한 영역의 최대 높이 설정 */
     overflow-y: auto;
     background-color: rgb(255, 255, 255);
@@ -536,7 +888,7 @@ const clickWalk=(walkInfo)=>{
 .View_route> ul> li{
     margin-top: 0;
 }
-.drive-card,
+.routes-card,
 .search-card {
     border: 1px solid #ddd;
     width: 340px;
@@ -568,11 +920,13 @@ const clickWalk=(walkInfo)=>{
 }
 .card-body {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   height: 100%;
   width: 100%;
 }
 #index-circle{
+    display: inline-block;
     border-radius: 50%;
     width: 25px;
     height: 25px;
@@ -580,8 +934,9 @@ const clickWalk=(walkInfo)=>{
     background-color: rgb(69, 155, 236);
     color: white;
     margin-left: -5px;
+    margin-right: 5px;
 }
-.drive-card .card-info{
+.routes-card .card-info{
     padding-left: 20px;
 }
 .drive-ul> li{
@@ -595,11 +950,195 @@ const clickWalk=(walkInfo)=>{
 .drive-ul> li:first-child{
     margin-right: 0px;
 }
-.drive-card span> strong{
+.routes-card span> strong{
     font-size: 24px;
 }
-.drive-card span> small{
+.routes-card span> small{
     margin-left: 10px;
     font-size: 20px;
+}
+.transit-space:not(:first-child){
+    margin-left: 10px;
+}
+
+.transit-space> img{
+    display: inline-block;
+    margin-top:-5px;
+    width: 35px;
+    height: 35px;
+}
+.transit-space> span{
+    display: inline-block;
+    position: absolute;
+    font-weight:bold;
+    font-size:12px;
+    margin-top:30px;
+    margin-left:-35px;
+    width: 35px;
+    text-align: center;
+    color: red;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#transit-card{
+    height:110px;
+}
+#transit-card .card-info-head{
+    margin-top: 10px;
+}
+#transit-card-body{
+    display: block;
+    text-align:left;
+    padding-left:20px;
+    padding-top:10px;
+    padding-bottom: 5px;
+    border-radius:10px;
+    border: 1px solid #ccc;
+}
+#transit-card-body strong{
+    font-size: 24px;
+}
+#transit-card-body small{
+    margin-left:10px;
+    font-size: 20px;
+}
+.card-info> img{
+    width:35px;
+    height:35px;
+}
+.transit-info{
+    border-top: 1px; 
+    width: 100%;
+    height: 100px;
+}
+.transit-info> .card-info{
+    padding-left: 0;
+    width:100%;
+    height:100%;
+    border-top: 1px solid #eee;
+}
+.transit-info img{
+    display: inline-block;
+}
+.transit-info>.card-info>span{
+    color: red;
+    font-weight: bold;
+}
+.card{
+    border:none;
+}
+#transit-card-info-head{
+    margin-top:10px;
+}
+.transit-ul{
+    list-style:none;    
+    font-size: 14px;
+    padding:0;
+}
+.transit-ul> li{
+    margin: 0;
+}
+.transit-card-info-body{
+    display: inline-block;
+    text-align:right;
+}
+.transit-card-info-body> span{
+    display: inline;
+}
+.transit-info img{
+    width:35px;
+    height:35px;
+}
+.col-4{
+    padding-left:10px;
+    padding-right:0;
+}
+.col-8{
+    text-align:right;
+    padding: 0;
+}
+#flight-card-info{
+    padding-left:10px;
+    padding-top:0;
+}
+#airplan-img{
+    margin-right:20px;
+}
+
+#planeLoading {
+margin-left: auto;
+margin-right: auto;
+width: 200px;
+height: 100px;
+}
+.plane {
+font-size: 40px;
+-ms-transform: rotate(0deg);
+-webkit-transform: rotate(0deg);
+transform: rotate(0deg);
+position: relative;
+margin-top: 10px;
+-webkit-animation: plane 2s infinite;
+-webkit-animation-timing-function: linear;
+animation: plane 2s infinite;
+animation-timing-function: linear;
+color: #9893EA
+}
+@keyframes plane {
+0% {
+    left: -50%;
+}
+100% {
+    left: 100%;
+}
+}
+.animate {
+display: inline-block;
+}
+.animate .dot {
+display: block;
+width:8px;
+height:8px;
+margin-top: 8px;
+border-radius:50%;
+margin-right:10px;
+background: black;
+}
+#wave0 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 5s;
+animation-fill-mode: forwards;
+}
+#wave1 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 4.65s;
+animation-fill-mode: forwards;
+}
+#wave2 .dot {
+animation: wave0 1s infinite ease-in-out;
+animation-duration: 4.45s;
+animation-fill-mode: forwards;
+}
+#wave3 .dot {
+    animation: wave0 1s infinite ease-in-out;
+    animation-duration: 4.3s;
+    animation-fill-mode: forwards;
+}
+@keyframes wave0 {
+    100%{
+        transform: initial;
+    }
+    0%, 30%, 60% {
+        -webkit-transition: all 200ms ease-in;
+        -webkit-transform: scale(1.2);
+        -ms-transition: all 200ms ease-in;
+        -ms-transform: scale(1.2);
+        -moz-transition: all 200ms ease-in;
+        -moz-transform: scale(1.2);
+        transition: all 200ms ease-in;
+        transform: scale(1.2);
+        background: #DEDEDE;
+    }
 }
 </style>

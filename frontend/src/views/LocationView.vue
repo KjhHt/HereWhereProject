@@ -19,7 +19,7 @@
         </div>
         <div class="offcanvas-body">
           <div class="mt-3">
-              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick" />
+            <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick" />
           </div>
           <div class="search-container">
             <input placeholder="Here Where검색, 이미지검색" ref="searchRef"/>
@@ -154,13 +154,13 @@
       <!--경로 오프-->
       <div :class="{ 'offcanvas offcanvas-start': true, 'show': showRoute }" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height:100vh; width:410px;">
         <div class="offcanvas-header">
-          <button type="button" id="btn_close" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"></button>
+          <button type="button" id="btn_close" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="routeToggle"><i class="bi bi-chevron-double-left"></i></button>
         </div>
         <div class="offcanvas-form" id="modal_form">
           <div class="offcanvas-start">
             <RouteRecommendation @setDraw="drivePath=>setDraw(drivePath)" 
                   @passRouteLocation="e=>routeCoords=e" :routeInfo="clickInfo" 
-                  :arrivals="arrivalsValue" :map="mapRef"
+                  :arrivals="arrivalsValue" :map="mapRef" :showRoute="showRoute"
             />
           </div>
         </div>
@@ -178,7 +178,7 @@
       style="width:100vw; height:calc(100vh - 81px);"
       @click="e=>clickHandler(e)"
       >
-      <DrawDirection :coords="routeCoords" @cameraSend="data=>cameraCenter(data)" />
+      <DrawDirection :coords="routeCoords" :showRoute="showRoute" @cameraSend="data=>cameraCenter(data)" />
       
         <CustomMarker :options="{ position: mapOptions.center, anchorPoint: 'BOTTOM_CENTER' }">
             <div style="text-align: center">
@@ -207,8 +207,10 @@
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng"
-            @clickMarker="(info)=>clickCustomMarker(info)"/>
+        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" 
+                          :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
+                            :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng"
+                              @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
   </div>
@@ -288,7 +290,6 @@
     disconnect()
   })
 
-
   function updateInfoWindow(places){
     let photoUrl;
     if("restaurant" in places){
@@ -362,7 +363,7 @@
     infoRef.value.close()
     showInter.value= !showInter.value
   }
-  
+ 
   // async function getYoutubeData(address){
   //   console.log(address);
   //   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
@@ -387,56 +388,58 @@
       hotelsInfo.value = response.data;
   }
 
-// async function getNearbyRestaurants(lat, lng) {
-//   try {
-//     loadingrestaurant.value = true;
-//     restaurantsInfo.value = []
-//     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
-//     restaurantsInfo.value = response.data;
-//   } catch (error) {
-//     console.error("An error occurred while fetching restaurant data:", error);
-//   } finally {
-//     loadingrestaurant.value = false;
-//   }
-// }
+  // async function getNearbyRestaurants(lat, lng) {
+  //   try {
+  //     loadingrestaurant.value = true;
+  //     restaurantsInfo.value = []
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
+  //     restaurantsInfo.value = response.data;
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching restaurant data:", error);
+  //   } finally {
+  //     loadingrestaurant.value = false;
+  //   }
+  // }
 
-// async function getNearbyAttractions(lat, lng) {
-//   try {
-//     loadingattraction.value = true;
-//     attractionsInfo.value = []
-//     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
-//     attractionsInfo.value = response.data;
-//   } catch (error) {
-//     console.error("An error occurred while fetching attraction data:", error);
-//   } finally {
-//     loadingattraction.value = false;
-//   }
-// }
+  // async function getNearbyAttractions(lat, lng) {
+  //   try {
+  //     loadingattraction.value = true;
+  //     attractionsInfo.value = []
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
+  //     attractionsInfo.value = response.data;
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching attraction data:", error);
+  //   } finally {
+  //     loadingattraction.value = false;
+  //   }
+  // }
 
-async function getWeather(lat,lng){
-  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
-  weatherData.value=response.data
-}
+  async function getWeather(lat,lng){
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
+    weatherData.value=response.data
+  }
 
-async function getNews(lat,lng){
-  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
-  newsData.value=response.data
-}
+  async function getNews(lat,lng){
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
+    newsData.value=response.data
+  }
 
-let imgsearchplaces = ref(null)
-function searchImgLocation(imgplaces){
+  let imgsearchplaces = ref(null)
+
+  function searchImgLocation(imgplaces){
     imgsearchplaces.value = imgplaces
     let location= imgplaces.geometry.location;
     console.log('location',imgplaces)
     // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,"2024-04-01","2024-04-02") 
+    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,"2024-04-01","2024-04-02")
     // getYoutubeData(imgplaces.name)
     getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     moveToPosition(location)
     updateInfoWindow(imgplaces)
   }
+  
   function searchLocation(places){
     let location= places.geometry.location;
     console.log('location',location.lat)
@@ -451,6 +454,7 @@ function searchImgLocation(imgplaces){
   }
     
   const customMarkerRef=ref(null);
+
   function customMarkerLoaded(){
      if(customMarkerRef.value){
       gsap.to(customMarkerRef.value, {
@@ -462,6 +466,7 @@ function searchImgLocation(imgplaces){
       });
      }
   }
+
   const {coords} = geoLocation()
   const currPos = computed(() => {
     return props.locationLatLng.length === 0
@@ -474,7 +479,7 @@ function searchImgLocation(imgplaces){
           lng: parseFloat(props.locationLatLng[1]),
         };
   });
-
+  
   const apiKey= process.env.VUE_APP_GOOGLE_API_KEY; /* 여기에 해당 apikey설정할 것!!!! */
   
   const mapOptions=ref({
@@ -499,6 +504,7 @@ function searchImgLocation(imgplaces){
   let map;
   let overlay=null;
   let scene,renderer,camera;
+
   watch(()=>mapRef.value?.ready,(ready)=>{
       if(!ready) return;
       map=mapRef.value.map;
@@ -543,7 +549,9 @@ function searchImgLocation(imgplaces){
     // 위치 업데이트
     const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed;
     const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed;
+    
     map.setCenter({ lat: newLat, lng: newLng });
+  
     // 카메라 이동
     map.moveCamera({
       zoom: currentZoom,
@@ -580,7 +588,6 @@ function searchImgLocation(imgplaces){
     };
     targetLocation.value=savedPosition
     animateMap()
-
   }
   
   const geocoder=ref(null)
@@ -599,7 +606,6 @@ function searchImgLocation(imgplaces){
       const newLng = originalLatLng.lng() + dir[1] * delta;
       points.push(`${newLat},${newLng}`);
     });
-  
     return points
   }
   
@@ -635,7 +641,7 @@ function searchImgLocation(imgplaces){
   let places={}
   let latNumber= ref(null)
   let lngNumber= ref(null)
-  //수저ㅓㅇ
+
   const clearPlaces = () => {
     console.log('비우고 있니?')
     places = {}; // Clear places
@@ -694,7 +700,6 @@ function searchImgLocation(imgplaces){
     camera.rotation.y = Math.PI / 4; // Y축 회전 (Yaw)
     camera.rotation.z = 0; // Z축 회전 (Roll)
   
-    
     // ThreeJSOverlayView 설정
     overlay=new ThreeJSOverlayView({
       googleMap,
@@ -769,7 +774,6 @@ function searchImgLocation(imgplaces){
       getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
-      
     }
     else {
       latNumber.value = parseFloat(37.4923615);
@@ -786,6 +790,7 @@ function searchImgLocation(imgplaces){
       getNews(latNumber.value, lngNumber.value);
     }
   }
+
   /*경로 설정 */
   const arrivalsValue= ref({})
 
@@ -801,12 +806,12 @@ function searchImgLocation(imgplaces){
         showRoute.value= true
       })
   }
+  
   const setDraw=(drivePath)=>{
     routeCoords.value= drivePath
   }
 
   const cameraCenter=(data)=>{
-    console.log('데이타',data)
     let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
     console.log('디스탄스',distance)
     if(distance<1) map.moveCamera({zoom:17})
@@ -834,11 +839,10 @@ function searchImgLocation(imgplaces){
       })
     }
     if(e.placeId!==undefined && showRoute.value!==true){
-      let service= new mapRef.value.api.places.PlacesService(mapRef.value.map)
       let request= {
         placeId:e.placeId
       }
-      service.getDetails(request, (place, status)=>{
+      placesService.value.getDetails(request, (place, status)=>{
         if(status !== 'OK') {console.log('스테이터스',status);return}
         showInter.value = false
         let closeInfo= document.querySelector('.gm-ui-hover-effect')
@@ -884,26 +888,26 @@ function searchImgLocation(imgplaces){
 
   </script>
 
-<style scoped>
-/********************************************************************경로 지정 */
-#modal_form {
-  width: 100%;
-  height: 100%;
-  display: inline-block;
-  padding: 0 100px 10px;
-  position: relative;
-  top: -30px;
+  <style scoped>
+  /********************************************************************경로 지정 */
+  #modal_form {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    padding: 0 100px 10px;
+    position: relative;
+    top: -30px;
 
-}
-#btn_close {
-  /* display: inline; */
-  margin-left: 350px;
-  margin-top: 80px;
-  z-index: 1100;
-  padding: 8px 16px;
-}
-/********************************************************************경로 지정 */
-.map-container {
+  }
+  #btn_close {
+    /* display: inline; */
+    margin-left: 350px;
+    margin-top: 80px;
+    z-index: 1100;
+    padding: 8px 16px;
+  }
+  /********************************************************************경로 지정 */
+  .map-container {
   position: relative;
 }
 .search-container {
@@ -963,7 +967,6 @@ function searchImgLocation(imgplaces){
   top: 10px;
   left: 0px; /* 원하는 위치로 조절하세요 */
   z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
-  
   width: 65px;
   height: 50px;
 }
@@ -1002,5 +1005,4 @@ function searchImgLocation(imgplaces){
   margin-top: 20px;
   font-weight: bold;
 }
-
   </style> 

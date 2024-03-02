@@ -6,9 +6,8 @@
   </button>
 </template>
 <script setup>
-import { ref,defineEmits } from 'vue';    
+import { ref,defineEmits } from 'vue';
 import axios from 'axios'
-
 const emit = defineEmits(['searchImgLocation','clearPlaces']);
 const inputFile=ref(null);
 // 고침
@@ -19,23 +18,20 @@ const handleClick = () => {
 function clickInput(){
   inputFile.value.click()
 }
-
 const clearPlaces = () => {
   emit('clearPlaces');
 };
-
 function uploadImage(event) {
   const files = event.target.files;
   if (files.length > 0) {
     const formData = new FormData();
     formData.append('image', files[0]);
-
     axios.post(process.env.VUE_APP_PYTHON_API_URL+'/searchImage', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-    .then(response =>{ 
+    .then(response =>{
       console.log(response)
       const imgplaces=response.data.results[0]
       emit('searchImgLocation',imgplaces)
@@ -43,7 +39,6 @@ function uploadImage(event) {
     .catch(error => console.error('Error:', error));
   }
 }
-
 </script>
 <style scoped>
 .search-button{
@@ -54,5 +49,4 @@ function uploadImage(event) {
   border-radius: 3px;
   cursor: pointer;
 }
-
 </style>

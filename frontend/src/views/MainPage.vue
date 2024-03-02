@@ -48,11 +48,11 @@ import ImageCompare from "@/components/main/ImageCompare.vue";
 const emit = defineEmits(['imgClick','searchImgLocation']);
 
 const handleSearchImgLocation = (location) => {
-
   emit('searchImgLocation', location);
 };
 
 const handleImgClick = (value) => {
+  console.log('밸류',value)
   emit('imgClick', value);
 }
 
