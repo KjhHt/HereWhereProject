@@ -90,6 +90,10 @@ const props = defineProps({
   hotel: Object
 });
 
+function generateRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // 상태 변수 선언
 const isDetailVisible = ref(false);
 const selectedHotel = ref({});
@@ -108,6 +112,13 @@ const hideDetail = () => {
 
 // 결제 처리 함수
 const payHandler = async () => {
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const userInfo = vuexStore.loginStore.userInfo;
+  const id = userInfo.id;
+  const name = userInfo.name;
+  const phoneNumber = userInfo.phonenumber;
+  const order_id = '0000'+generateRandomNumber(1111,9999);
+  const items_name = '호텔 예약';
   // 쉼표(,) 제거 후 숫자로 변환
   const price = parseInt(selectedHotel.value.price.replace(/,/g, ''));
   try {
@@ -116,18 +127,17 @@ const payHandler = async () => {
       "price": price,
        
       "order_name": selectedHotel.value.hotel,
-      "order_id": "JYK",
+      "order_id": order_id,
       "tax_free": 0,
       "user": {
-        "id": "JYK",
-        "username": "진영규",
-        "phone": "010-1234-5678",
-        "email": "test@test.com"
+        "id": id,
+        "username": name,
+        "phone": phoneNumber
       },
       "items": [
         {
-          "id": "item_id",
-          "name": "호텔 예약",
+          "id": order_id,
+          "name": items_name,
           "qty": 1,
           "price": price
         }

@@ -52,7 +52,6 @@ const handleSearchImgLocation = (location) => {
 };
 
 const handleImgClick = (value) => {
-  console.log('밸류',value)
   emit('imgClick', value);
 }
 

@@ -32,7 +32,7 @@ function uploadImage(event) {
       }
     })
     .then(response =>{
-      console.log(response)
+      console.log('확인이용',response)
       const imgplaces=response.data.results[0]
       emit('searchImgLocation',imgplaces)
     })

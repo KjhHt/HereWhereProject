@@ -249,6 +249,18 @@
   import MarkerCluster from "@/components/search/MarkerCluster.vue";
   import TravelPlan from "@/components/search/TravelPlan.vue";
   import LoadingOverlay from '@/components/search/LoadingModal.vue';
+
+  function getNextDay(date = new Date()) {
+    if (!(date instanceof Date)) {
+        date = new Date(date); // 문자열을 Date 객체로 변환
+    }
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1);
+    return nextDay.toISOString().split('T')[0];
+  }
+
+  const nextDay = getNextDay();
+  const followingDay = getNextDay(nextDay);
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
@@ -432,7 +444,7 @@
     console.log('location',imgplaces)
     // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,"2024-04-01","2024-04-02")
+    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
     // getYoutubeData(imgplaces.name)
     getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
@@ -445,7 +457,7 @@
     console.log('location',location.lat)
     // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
     // getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
@@ -746,7 +758,7 @@
       placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
       // getNearbyRestaurants(lat, lng);
       // getNearbyAttractions(lat, lng);
-      getNearbyHotels(lat, lng, 2, "2024-04-01", "2024-04-03");
+      getNearbyHotels(lat, lng, 2, nextDay,followingDay);
       map.setCenter({ lat, lng });
       updateInfoWindow(place);
       getWeather(lat, lng);
@@ -771,7 +783,7 @@
       map.setCenter(dataLatLng);
       // getNearbyRestaurants(latNumber.value, lngNumber.value);
       // getNearbyAttractions(latNumber.value, lngNumber.value);
-      getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay, followingDay);
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -785,7 +797,7 @@
       map.setCenter(dataLatLng);
       // getNearbyRestaurants(latNumber.value, lngNumber.value);
       // getNearbyAttractions(latNumber.value, lngNumber.value);
-      getNearbyHotels(latNumber.value, lngNumber.value, 2, "2024-04-01", "2024-04-03");
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay, followingDay);
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -813,7 +825,6 @@
 
   const cameraCenter=(data)=>{
     let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
-    console.log('디스탄스',distance)
     if(distance<1) map.moveCamera({zoom:17})
     else if(distance<5) map.moveCamera({zoom:15})
     else if(distance<20) map.moveCamera({zoom:12})
