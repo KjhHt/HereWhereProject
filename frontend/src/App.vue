@@ -154,9 +154,13 @@ function selectPage(page){
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>
     <Location v-if="page_=='location'" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
+    <ChatBot v-else/>
     <MyPageView v-if="page_=='mypage'" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
+<<<<<<< Updated upstream
     <Chat :onSend="handleSendEvent" :chat="data" />
+=======
+>>>>>>> Stashed changes
     <TestView v-if="page_=='test'"/>
     <TripMoment v-if="page_=='trip-moment'"/>
 </template>

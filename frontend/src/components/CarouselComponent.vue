@@ -38,7 +38,6 @@ onMounted(() => {
 });
 
 const handleImgClick = (value) => {
-  console.log('과연 ??~~',value);
   emit('imgClick', value);
 }
 

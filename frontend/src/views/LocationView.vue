@@ -212,6 +212,7 @@
                             :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng"
                               @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
+    <Recommend :places="places" :imgplaces="imgplaces" :style="{right:streetViewRight}" @imgClick = "recommendsearch"/>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
   </div>
 </div>
@@ -249,6 +250,7 @@
   import MarkerCluster from "@/components/search/MarkerCluster.vue";
   import TravelPlan from "@/components/search/TravelPlan.vue";
   import LoadingOverlay from '@/components/search/LoadingModal.vue';
+<<<<<<< Updated upstream
 
   function getNextDay(date = new Date()) {
     if (!(date instanceof Date)) {
@@ -261,6 +263,10 @@
 
   const nextDay = getNextDay();
   const followingDay = getNextDay(nextDay);
+=======
+  import ScheduleDate from '@/components/search/ScheduleDate.vue'
+  import Recommend from '@/components/search/RecommendTravel.vue'
+>>>>>>> Stashed changes
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
@@ -302,6 +308,20 @@
     disconnect()
   })
 
+<<<<<<< Updated upstream
+=======
+  // function getNextDay(date = new Date()) {
+  //   if (!(date instanceof Date)) {
+  //       date = new Date(date); // 문자열을 Date 객체로 변환
+  //   }
+  //   const nextDay = new Date(date);
+  //   nextDay.setDate(date.getDate() + 1);
+  //   return nextDay.toISOString().split('T')[0];
+  // }
+  // const nextDay = getNextDay();
+  // const followingDay = getNextDay(nextDay);
+
+>>>>>>> Stashed changes
   function updateInfoWindow(places){
     let photoUrl;
     if("restaurant" in places){
@@ -377,6 +397,7 @@
   }
  
   // async function getYoutubeData(address){
+<<<<<<< Updated upstream
   //   console.log(address);
   //   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
   //   console.log(response);
@@ -394,11 +415,28 @@
       loadinghotel.value = false;
     }
   }
+=======
+  //   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
+  //   youtubeData.value=response.data
+  // }
+  // async function getNearbyHotels(lat, lng, number, check_in, check_out) {
+  //   try {
+  //     loadinghotel.value = true;
+  //     hotelsInfo.value = []
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching hotel data:", error);
+  //   } finally {
+  //     loadinghotel.value = false;
+  //   }
+  // }
+>>>>>>> Stashed changes
 
-  async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
-      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-      hotelsInfo.value = response.data;
-  }
+  // async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  // }
 
   // async function getNearbyRestaurants(lat, lng) {
   //   try {
@@ -439,12 +477,19 @@
   let imgsearchplaces = ref(null)
 
   function searchImgLocation(imgplaces){
+    imgplaces = imgplaces
     imgsearchplaces.value = imgplaces
     let location= imgplaces.geometry.location;
+<<<<<<< Updated upstream
     console.log('location',imgplaces)
     // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
+=======
+    // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    // getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
+>>>>>>> Stashed changes
     // getYoutubeData(imgplaces.name)
     getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
@@ -453,11 +498,18 @@
   }
   
   function searchLocation(places){
+    console.log('places',places)
     let location= places.geometry.location;
+<<<<<<< Updated upstream
     console.log('location',location.lat)
     // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
+=======
+    // getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
+    // getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
+    // getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
+>>>>>>> Stashed changes
     // getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
@@ -654,6 +706,16 @@
   let latNumber= ref(null)
   let lngNumber= ref(null)
 
+  const recommendsearch = (recommendsearch) => {
+    // Google Maps Geocoding API를 이용하여 지역 이름을 좌표로 변환
+    placesService.value.textSearch({query:recommendsearch}, (result, status) => {
+            if (status === 'OK') {
+              places = result[0]
+              searchLocation(places);
+          } 
+      });
+  }
+
   const clearPlaces = () => {
     console.log('비우고 있니?')
     places = {}; // Clear places
@@ -758,7 +820,11 @@
       placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
       // getNearbyRestaurants(lat, lng);
       // getNearbyAttractions(lat, lng);
+<<<<<<< Updated upstream
       getNearbyHotels(lat, lng, 2, nextDay,followingDay);
+=======
+      // getNearbyHotels(lat, lng, 2, nextDay,followingDay);
+>>>>>>> Stashed changes
       map.setCenter({ lat, lng });
       updateInfoWindow(place);
       getWeather(lat, lng);
@@ -766,11 +832,12 @@
     }
     
     if (props.locationValue && searchRef.value) {
-      placesService.value.textSearch({query:props.locationValue + '시청'}, (result, status) => {
+
+      placesService.value.textSearch({query:props.locationValue+' 지역'}, (result, status) => {
             if (status === 'OK') {
               places = result[0]
               getPlaceData(places);
-        } 
+          } 
       });
     }
     else if (props.locationLatLng && props.locationLatLng.length >=1 ) {
@@ -783,7 +850,11 @@
       map.setCenter(dataLatLng);
       // getNearbyRestaurants(latNumber.value, lngNumber.value);
       // getNearbyAttractions(latNumber.value, lngNumber.value);
+<<<<<<< Updated upstream
       getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay, followingDay);
+=======
+      // getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+>>>>>>> Stashed changes
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -797,7 +868,11 @@
       map.setCenter(dataLatLng);
       // getNearbyRestaurants(latNumber.value, lngNumber.value);
       // getNearbyAttractions(latNumber.value, lngNumber.value);
+<<<<<<< Updated upstream
       getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay, followingDay);
+=======
+      // getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+>>>>>>> Stashed changes
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -874,14 +949,14 @@
   }
 
   //21일 추가 호텔 검색 로딩
-  const handleSearchEvent = (searchData) => {
-    loadingdetail.value = true;
-    hotelsInfo.value = []; 
-    getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
-    .then(() => {
-      loadingdetail.value = false;
-    });
-  };
+  // const handleSearchEvent = (searchData) => {
+  //   loadingdetail.value = true;
+  //   hotelsInfo.value = []; 
+  //   getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
+  //   .then(() => {
+  //     loadingdetail.value = false;
+  //   });
+  // };
 
   function clickCustomMarker(info){
     if("attraction" in info || "restaurant" in info || "hotel" in info){
