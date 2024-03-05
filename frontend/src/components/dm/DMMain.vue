@@ -13,7 +13,7 @@
 				<div class="entete">
 					<span class="status green"></span>
 					<h2>{{ value.dm_sender_id }}</h2>
-					<h3>{{ value.dm_sendtime }}</h3>
+					<h3>{{ formatTime(value.dm_sendtime) }}</h3>
 				</div>
 				<div class="triangle"></div>
 				<div class="message">
@@ -84,20 +84,39 @@ function onError() {
   console.log('onError부분 웹 소켓 서버에 문제가 있다')
 }
 
-function currentTimeData(){
-	let date = new Date();
-	let hours = date.getHours();
-	let minutes = date.getMinutes();
-	let ampm = hours >= 12 ? '오후' : '오전';
+function formatTime(dateString) {
+    let date = new Date(dateString);  // dateString을 Date 객체로 변환
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? '오후' : '오전';
 
-	hours = hours % 12;
-	hours = hours ? hours : 12; 
-	minutes = minutes < 10 ? '0'+minutes : minutes;
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    minutes = minutes < 10 ? '0' + minutes : minutes;
 
-	let strTime = ampm + ' ' + hours + ':' + minutes;
-	console.log('strTime : ',strTime);
-	return strTime;
+    return ampm + ' ' + hours + ':' + minutes;
 }
+
+// function formatTimeAgo(time){
+// 	const currentTime = new Date();
+// 	const postedTime = new Date(time);
+// 	const timeDifference = currentTime - postedTime;
+
+// 	const seconds = Math.floor(timeDifference) / (1000);
+// 	const minutes = Math.floor(timeDifference / (1000 * 60));
+// 	const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+// 	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+	
+// 	if (seconds < 60) {
+// 		return `${seconds.toFixed(0)}초 전`;
+// 	} else if (minutes < 60) {
+// 		return `${minutes}분 전`;
+// 	} else if (hours <= 23) {
+// 		return `${hours}시간 전`;
+// 	} else {
+// 		return `${days}일 전`;
+// 	}
+// }
 
 function onMessageReceived(payload) {
 	const vuexStore = JSON.parse(localStorage.getItem('vuex'));
@@ -106,7 +125,7 @@ function onMessageReceived(payload) {
 
 	const message = {
 		dm_sender_id: receivedMessage.dm_sender_id,
-		dm_sendtime: currentTimeData(), 
+		dm_sendtime: new Date(), 
 		dm_content: receivedMessage.dm_content,
 		dm_type: receivedMessage.dm_sender_id === id ? 'me' : 'you',
 	};

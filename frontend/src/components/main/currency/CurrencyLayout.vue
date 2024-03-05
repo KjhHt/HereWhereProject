@@ -1,49 +1,50 @@
 <template>
-    <CurrencyInput :currency-codes="currencyCodes" @select-code="selectCode"/>
-    <CurrencyTitle :currency-title="currencyData[countryNumber]"/>
-    <CurrencyChart :currencyData="currencyData" :country-number="countryNumber"/>
+    <CurrencyTitle :currency-title="currencyData" @select-code="selectCode"/>
+    <CurrencySelectTab @select-tab="selectTab"/>
+    <CurrencyChart :currencyData="currencyData" :data-type="dataType"/>
+    
 </template>
 <script setup>
 import CurrencyChart from './CurrencyChart.vue';
 import CurrencyTitle from './CurrencyTitle.vue';
-import CurrencyInput from './CurrencyInput.vue';
-import { ref, onMounted } from 'vue'
+import CurrencySelectTab from './CurrencySelectTab.vue';
+import { formattedCurrencyCodes } from '@/config/currencyConfig';
+import { ref } from 'vue'
 import axios from 'axios'
 
 const currencyData=ref([]);
 const countryNumber=ref(1);
-const currencyCodes = ref([]);
+const dataType=ref('all');
 
+const currentCurrency=ref('USD');
 
-onMounted(()=>{
-    getCurrencyList();
-})
+let isFetching = false;
 
 async function getCurrencyList() {
+    if (isFetching) return;
+    isFetching = true;
     try {
-        console.log('*',process.env.VUE_APP_PYTHON_API_URL,'*');
-        const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/currency_list');
+        const response = await axios.get(`${process.env.VUE_APP_PYTHON_API_URL}/currency_list?currencyCode=${currentCurrency.value}`);
         currencyData.value = response.data;
-        if (Array.isArray(response.data) && response.data.length > 0) {
-            
-            // response.data가 배열이고, 요소를 포함하는 경우에만 처리
-            const newSuggestions = response.data.slice(1).map(arr => {
-                // 데이터 유효성 검사 및 안전한 접근을 보장
-                return arr.length > 3 ? `${arr[0]}/${arr[1]}` : '';
-            }).filter(suggestion => suggestion); // 빈 문자열 제거
-            currencyCodes.value = newSuggestions;
-        }
+        dataType.value='day'
     } catch (error) {
         console.error('Currency list fetch error:', error);
-        // 에러 처리 로직 추가 (예: 사용자에게 알림)
+    } finally {
+        isFetching = false;
     }
 }
 
-function selectCode(code){
-    countryNumber.value = currencyData.value
-        .map((arr, idx) => (arr[1] == code ? idx : -1)) // 조건에 맞는 경우 인덱스를, 아닌 경우 -1을 반환
-        .filter(idx => idx !== -1); // -1이 아닌 인덱스만 필터링
 
+function selectCode(code){
+    countryNumber.value = formattedCurrencyCodes
+                            .map((ccode,idx)=>ccode==code?idx:-1)
+                            .filter(idx=>idx!=-1)[0]
+    currentCurrency.value=code
+    getCurrencyList()
+}
+
+function selectTab(tabId){
+    dataType.value=tabId
 }
 
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div id="main-page">
     <div class="cInnerContent">
-      <h1 class="header-section gs_reveal ipsType_center">
-        <strong>이미지 검색 여행 서비스, <br>HERE WHERE에 오신 것을 환영합니다!!!</strong>
+      <h1 class="header-section gs_reveal text-center">
+        <ImageCompare @searchImgLocation = 'handleSearchImgLocation'/>
       </h1>
       <div class="menu">
         <div  @click="changeComponent(0)" class="menu-item" :class="{active: currentIndex === 0}" style="text-decoration: none;">
@@ -13,13 +13,13 @@
         </div>
 
         <div  @click="changeComponent(1)" class="menu-item" :class="{active: currentIndex === 1}" style="text-decoration: none;">
-            <div class="menu-icon">
-              <img src="@/assets/airplane.png" alt="airplane-icon">
-            </div>
-            <div class="menu-text">항공권</div>
+          <div class="menu-icon">
+            <img src="@/assets/airplane.png" alt="airplane-icon">
           </div>
+          <div class="menu-text">항공권</div>
+        </div>
 
-          <div  @click="changeComponent(2)" class="menu-item" :class="{active: currentIndex === 2}" style="text-decoration: none;">
+        <div @click="changeComponent(2)" class="menu-item" :class="{active: currentIndex === 2}" style="text-decoration: none;">
           <div class="menu-icon">
             <img src="@/assets/exchange.png" alt="exchange-icon">
           </div>
@@ -28,7 +28,11 @@
       </div>
     </div>
       <div class="features">
-        <CarouselComponent :current-index="currentIndex" @update:currentIndex="currentIndex = $event"/>
+        <CarouselComponent 
+          :current-index="currentIndex"
+          @update:currentIndex="currentIndex = $event"
+          @imgClick="handleImgClick"
+          />
       </div>
     
   </div>
@@ -37,8 +41,19 @@
 <script setup>
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,defineEmits } from 'vue';
 import CarouselComponent from '@/components/CarouselComponent.vue';
+import ImageCompare from "@/components/main/ImageCompare.vue";
+
+const emit = defineEmits(['imgClick','searchImgLocation']);
+
+const handleSearchImgLocation = (location) => {
+  emit('searchImgLocation', location);
+};
+
+const handleImgClick = (value) => {
+  emit('imgClick', value);
+}
 
 let currentIndex = ref(0);
 
@@ -101,13 +116,15 @@ img {
 
 .header-section {
   margin: 0px auto;
-  padding: 200px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
+  padding: 50px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
   background-image: url('@/assets/female_travel.WEBP'); /* 이미지 경로 설정 (상대 경로 또는 모듈 경로 사용) */
   background-size: cover; /* 배경 이미지 크기를 커버로 설정 */
   background-position: center; /* 배경 이미지 위치를 가운데로 설정 */
   position: relative; /* 배경 이미지를 포함한 상대적인 위치 설정 */
   color: #ffffff;
   margin-bottom: 40px;
+  max-height: 567px; /* Maximum height for the header section */
+  overflow: hidden; /* Hide overflowing content */
 }
 
 .gs_reveal {

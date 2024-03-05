@@ -31,9 +31,7 @@
   })
 
   watchEffect(()=>{
-    console.log('플랜',props.plan);
     setPhotoUrl(props.plan.photos, photoUrl)
-    console.log('사진url:',photoUrl);
   });
 
   const emit= defineEmits(['passArrival'])

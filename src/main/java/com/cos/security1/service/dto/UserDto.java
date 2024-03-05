@@ -35,5 +35,7 @@ public class UserDto {
 	private String filesize;
 	private String fileroute;
 	
+	private String phonenumber;
+	
 	
 }

@@ -1,61 +1,43 @@
 <template>
-    <Polyline :options="drivePath"></Polyline>
+  <Polyline v-if="showPolyLine" :options="driveOptions"></Polyline>
 </template>
 
 <script setup>
-  import { Polyline } from "vue3-google-map";
-  import axios from 'axios';
-  import { ref,defineProps,watchEffect } from 'vue';
 
-  const drivePath= ref({});
+import { Polyline } from "vue3-google-map";
+import { ref,defineProps,watch,defineEmits } from 'vue';
 
-  const props= defineProps({
-    coords: Array
-  })
-  watchEffect(()=> {
-    if(props.coords && props.coords.length === 2){
-      let start= props.coords[0]
-      let end= props.coords[1]
-      console.log('프롭',props.coords)
-      axios.get('https://apis-navi.kakaomobility.com/v1/directions', {
-        params: {
-          origin: start[1]+','+start[0],
-          destination: end[1]+','+end[0],
-          waypoints: '',
-          priority: 'RECOMMEND',
-          car_fuel: 'GASOLINE',
-          car_hipass: false,
-          alternatives: false,
-          road_details: false
-        },
-        headers: {
-          Authorization: `KakaoAK 56184ce4bda79d91a88a15bc795ae6cf`
-        }
-      })
-      .then((response) => {
-        let roads= response.data.routes[0].sections[0].roads;
-        let direction= [];
-        for (let i=0; i<roads.length; i++){
-          let vertexes= roads[i].vertexes;
-          for (let k = 0; k < vertexes.length; k += 2) {
-            direction.push({
-              lng: vertexes[k],
-              lat: vertexes[k + 1]
-            });
-          }
-        }
-        drivePath.value= {
-          path: direction,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 2,
-        };
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    }
-  })
+const driveOptions= ref({})
+let showPolyLine= ref(false)
+const props= defineProps({
+  coords: Object,
+  showRoute: Boolean,
+})
 
+watch(()=>props.coords, coords=>{
+  if(coords === null) {
+    showPolyLine.value= false
+    return
+  }
+  if(coords) {
+    showPolyLine.value= true
+    driveOptions.value= {
+        path: coords,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+      }
+    sendCamera(coords)
+  }
+},{deep:true})
+
+watch(()=>props.showRoute, showRoute=>{
+  if(!showRoute) showPolyLine.value= false
+})
+
+const emit= defineEmits(['cameraSend'])
+const sendCamera= coords=>{
+  emit('cameraSend',coords)
+}
 </script>

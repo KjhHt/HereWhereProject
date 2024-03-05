@@ -62,13 +62,15 @@ public class ChatController {
 			// 팔로우테이블 추가
 			service.insertFollow(followRequest);
 			
-			
 			Date now = new Date();
 	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        String formattedDate = formatter.format(now);
 			followRequest.setFollow_requesttime(formattedDate);
 			System.out.println(formattedDate);
 			followRequest.setFollow_isRequest("ok");
+			System.out.println("오는거야 ?");
+			System.out.println(followRequest.getProfileImage());
+			
 		}
 			
 		template.convertAndSendToUser(followRequest.getFollow_recipientid(), "/queue/notification", followRequest);

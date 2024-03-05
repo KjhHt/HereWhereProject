@@ -57,6 +57,10 @@ const loginStore = {
                 id : res.data.id,
                 name : res.data.name,
                 profileimage : res.data.profileimage,
+                mbti : res.data.mbti,
+                phonenumber : res.data.phonenumber,
+                lat : res.data.lat,
+                lng : res.data.lng,
             }
             commit('loginSuccess', userInfo)
         })
@@ -65,7 +69,7 @@ const loginStore = {
       try {
         await axios.post(process.env.VUE_APP_API_URL+'/deletePushToken', null);
         //const res = await axios.post(process.env.VUE_APP_API_URL+'/logout');
-        const res = await axios.get('https://f056c7edebcffb66.ngrok.app/logout');
+        const res = await axios.get(process.env.VUE_APP_API_URL+'/logout');
           console.log(res);
           commit('logoutTest');
       } catch (err) {
@@ -86,16 +90,15 @@ const loginStore = {
       });
     },
     setupPushNotification() {
-      
       if (!localStorage.getItem('access_token')) return;
-
       return new Promise((resolve) => {
         messaging.getToken({vapidKey: 'BMjNjB-i2kPTsQgWstgTg_D47V0HzGg1V5vMY9pc7WPp2Asj3kZBN3GM5wKZoX2DjUUBYvweZEk-vPiqW5j8moI'})
           .then((token) => {
-            console.log('token : ',token);
             axios.post(process.env.VUE_APP_API_URL+'/register', { token: token })
               .then((response) => {
-                console.log(response.data);
+                //console.log() 안찍으려고 if문으로 뺐음 (response)
+                if(response.data)
+                console.log('푸쉬로고..');
                 messaging.onMessage((payload) => {
                   console.log('Message received. ', payload);
                   if (Notification.permission === 'granted') {

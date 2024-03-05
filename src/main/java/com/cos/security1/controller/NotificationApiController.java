@@ -55,10 +55,10 @@ public class NotificationApiController {
     	
     	
     	String token = request.get("token");
-    	System.out.println("token : " +token );
-        System.out.println("id : "+id);
+    	//System.out.println("token : " +token );
+        //System.out.println("id : "+id);
     	notificationService.register(id, token);
-    	System.out.println("register 완료");
+    	//System.out.println("register 완료");
         return ResponseEntity.ok().build();
     }
     
