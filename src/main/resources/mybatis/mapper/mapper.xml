@@ -21,7 +21,10 @@
 	</select>
 	
 	<select id="findByMemberInfo" resultType="UserDto" parameterType="String">
-		SELECT id,name,profileimage FROM member WHERE id = #{id}
+		SELECT m.id,m.name,m.profileimage,mi.mbti,mi.phonenumber,mi.lat,mi.lng
+		FROM member m JOIN  member_info mi
+		ON m.id = mi.id
+		WHERE m.id = #{id}
 	</select>
 	
 	<insert id="joinSocialMember" parameterType="UserDto">
@@ -45,17 +48,6 @@
 		UPDATE member SET recentlogintime=sysdate WHERE id=#{id}
 	</update>
 	
-	<!-- 
-	<resultMap id="BoardDtoResultMap" type="BoardDto">
-	  <id property="boardNo" column="board_no" />
-	  <result property="boardContent" column="board_content" />
-	  <result property="boardCreatetime" column="board_createtime" />
-	  <result property="boardUpdatetime" column="board_updatetime" />
-	  <result property="boardImageFileName" column="board_imagefilename" />
-	  <result property="boardWriter" column="board_writer" />
-	  <result property="id" column="id" />
-	</resultMap>
-	 -->
 	<select id="boardList" parameterType="String" resultType="BoardDto">
 		SELECT bt.*, 
 		       (SELECT COUNT(*) 
@@ -68,14 +60,28 @@
 		        SELECT b.*, m.profileimage 
 		        FROM board_table b JOIN member m ON b.id = m.id
 		        WHERE b.id = m.id
+                <!-- 태그 검색 쿼리 -->
+              	AND (#{keyword} IS NULL OR b.board_tags LIKE '%' || #{keyword} || '%')
 		        ORDER BY b.board_createtime DESC
 		        OFFSET ${num} ROWS 
-		        FETCH NEXT 3 ROWS ONLY
+		        FETCH NEXT 8 ROWS ONLY
 	     	) bt
 	</select>
 	
+	<select id="getLocationData" parameterType="String" resultType="LocationDto">
+		SELECT * FROM board_location WHERE board_no = #{board_no}
+	</select>
+	
+	<select id="getLikeList" parameterType="String" resultType="LikeDto">
+	    SELECT l.*,m.profileimage,m.name
+	    FROM like_table l 
+	    JOIN member m 
+	    ON l.like_id = m.id
+	    WHERE board_no = #{board_no}
+	</select>
+	
 	<insert id="boardInsert" parameterType="BoardDto">
-		INSERT INTO board_table VALUES(SEQ_BOARD_TABLE.NEXTVAL,#{board_content},sysdate,null,#{board_imageFileName},#{board_writer},#{id})
+		INSERT INTO board_table VALUES(SEQ_BOARD_TABLE.NEXTVAL,#{board_content},sysdate,null,#{board_imageFileName},#{board_writer},#{id},#{board_tags},#{board_title})
 	</insert>
 	<select id="findBoardNo" parameterType="String" resultType="BoardDto">
 		SELECT board_no,board_createtime FROM board_table WHERE board_imagefilename = #{fileName}
@@ -85,12 +91,40 @@
 	</insert>
 	
 	<select id="commentList" parameterType="String" resultType="CommentDto">
-		SELECT bc.*,mb.profileimage
-		FROM board_comment bc 
-		JOIN member mb ON bc.id = mb.id
-		WHERE bc.board_no=#{board_no}
-		ORDER BY bc.comment_createtime
+		SELECT 
+		    bc.*, 
+		    mb.profileimage, 
+		    NVL(cl.like_count, 0) AS like_count,
+		    CASE WHEN cu.commentLike_id IS NULL THEN 'F' ELSE 'T' END AS user_liked
+		FROM 
+		    board_comment bc 
+		JOIN 
+		    member mb ON bc.id = mb.id
+		LEFT JOIN 
+		    (
+		        SELECT 
+		            comment_no, 
+		            COUNT(*) as like_count 
+		        FROM 
+		            commentLike_table 
+		        GROUP BY 
+		            comment_no
+		    ) cl ON bc.comment_no = cl.comment_no
+		LEFT JOIN 
+		    commentLike_table cu ON bc.comment_no = cu.comment_no AND cu.commentLike_id = #{id}
+		WHERE 
+		    bc.board_no = #{board_no}
+		ORDER BY 
+		    bc.comment_createtime
 	</select>
+	<insert id="addCommentLike" parameterType="String">
+		INSERT INTO commentLike_table VALUES(SEQ_COMMENTLIKE_TABLE.nextval,#{id},sysdate,#{comment_no})
+	</insert>
+	<delete id="deleteCommentLike" parameterType="String">
+		DELETE commentLike_table WHERE commentlike_id=#{id} AND comment_no=#{comment_no}
+	</delete>
+	
+	
 	<insert id="commentInsert" parameterType="CommentDto">
 		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no},#{id})
 	</insert>
@@ -98,10 +132,10 @@
 	<select id="islike" parameterType="String" resultType="int">
 		SELECT count(*) FROM like_table WHERE like_id = #{id} AND board_no = #{board_no}
 	</select>
-	<insert id="insertLike">
+	<insert id="insertLike" parameterType="String">
 		INSERT INTO like_table VALUES(SEQ_LIKE.NEXTVAL,#{id},sysdate,#{board_no})
 	</insert>
-	<delete id="deleteLike">
+	<delete id="deleteLike" parameterType="String">
 		DELETE like_table WHERE like_id = #{id} AND board_no = #{board_no}
 	</delete>
 	
@@ -154,6 +188,19 @@
 		AND f.follow_is = 'Y'
 	</select>
 	
+	<select id="getIsFollowList" parameterType="String" resultType="FollowDto">
+		SELECT m.id,f.follow_is
+		FROM follow_table f
+		JOIN member m ON m.id = 
+		    CASE
+		        WHEN f.follow_senderid = #{id} THEN f.follow_recipientid
+		        WHEN f.follow_recipientid = #{id} THEN f.follow_senderid
+		    END
+		WHERE (f.follow_senderid = #{id} OR f.follow_recipientid = #{id})
+	</select>
+	
+	
+	
 	<select id="findById" resultType="int" parameterType="String">
 		SELECT count(*) FROM member WHERE id = #{id}
 	</select>
@@ -187,7 +234,13 @@
 	</insert>
 	
 	<select id="noticeList" parameterType="String" resultType="NoticeDto">
-		SELECT * FROM notice_table WHERE id = #{id}
+		SELECT notice_table.*, follow_table.follow_senderid,m.profileimage
+		FROM notice_table 
+		INNER JOIN follow_table 
+		ON notice_table.notice_no = follow_table.notice_no
+        JOIN member m
+        ON follow_table.follow_senderid = m.id
+		WHERE notice_table.id = #{id}
 	</select>
 
 	<update id="successFollow" parameterType="String">
@@ -200,6 +253,18 @@
 		DELETE notice_table WHERE notice_no = #{notice_no}
 	</delete>
 
-
+	<insert id="insertBoardLocation" parameterType="LocationDto">
+		INSERT INTO board_location VALUES(SEQ_BOARD_LOCATION.nextval,#{location_name},#{location_address},#{location_imageurl},#{location_rating},#{location_placeid},#{board_no})
+	</insert>
+	
+	<!-- 예약 -->
+	<insert id="insertReservation" parameterType="ReservationDto">
+		INSERT INTO reservation_table VALUES(SEQ_RESERVATION_TABLE.nextval,#{reservation_lat},#{reservation_lng},#{reservation_pricename},#{reservation_price},sysdate,#{reservation_receipturl},#{id})
+	</insert>
+	
+	<select id="findReservationsByUserId" resultType="ReservationDto" parameterType="String">
+    	SELECT * FROM reservation_table WHERE id = #{id}
+	</select>
+	
 
 </mapper>

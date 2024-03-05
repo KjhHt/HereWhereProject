@@ -81,8 +81,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 			//여기다가 해줘야할거같고,
 		}
 		
-		System.out.println("여기가 로그인맞을껄?");
-		
 		return new PrincipalDetails(userEntity,oauth2User.getAttributes());
 	}
 	

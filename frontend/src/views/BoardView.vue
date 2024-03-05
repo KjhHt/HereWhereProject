@@ -1,6 +1,21 @@
 <template>
   <button @click="writeForm" >글작성</button>
+  <br/>
+  <input type="file" id="file-input" @change="onFileChange" />
+  <button @click="submit">submit</button>
+  <!--<img :src="testImage" />-->
 
+  <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+    <div class="flipper">
+      <div class="front">
+        <img :src="alflqhrl"/>
+      </div>
+      <div class="back">
+        <img :src="testImage"/>
+      </div>
+    </div>
+  </div>
+  
 
   <WriteForm v-if="open" @close="writeForm" @update="handleUpdate"/>
   
@@ -83,6 +98,10 @@
     stompClient: Object,
   });
 
+  const alflqhrl = ref('');
+  const testImage = ref('');
+
+
   const boardList = ref([]);
   const imageSrc = ref({});
   const image = ref({});
@@ -93,6 +112,34 @@
   const detailOpen=ref(false);
   const boardDetail=ref([]);
   const dropdownStates = ref([]);
+  const selectedFile = ref(null);
+
+  const onFileChange = (e) => {
+    selectedFile.value = e.target.files[0];
+    let reader2 = new FileReader();
+    reader2.readAsDataURL(selectedFile.value);
+    reader2.onloadend = function() {
+      console.log('오나 ?')
+      alflqhrl.value = reader2.result
+    }
+  };
+
+  const submit = () => {
+    let reader = new FileReader();
+    reader.readAsDataURL(selectedFile.value);
+    reader.onloadend = function() {
+      let base64Image = reader.result.split(",")[1];
+      axios.post(process.env.VUE_APP_PYTHON_API_URL+'/imageOcr', {
+        base64Encoded : base64Image
+      })
+      .then(response => {
+        testImage.value = reader.result.split(",")[0]+','+response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    };
+  };
 
   const followRequest = (rid,index) => {
     // 내 자신한테 팔로우 거는건 말이안됨, 애초에 게시판 생성될때
@@ -133,7 +180,7 @@
       root: document.querySelector("#scrollArea"),
       rootMargin: "0px",
       threshold: 0.5,
-    };
+  };
   onMounted(async () => {
     await list(num.value);
     firstList.value=true;
@@ -320,7 +367,7 @@
 
 
 </script>
-  <style scoped>
+  <style scoped >
   .header-container {
     display: flex;
     justify-content: space-between;
@@ -435,5 +482,128 @@
   color: #000;
   cursor: pointer;
 }
+
+
+
+
+
+
+.flip-container {
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -o-perspective: 1000;
+  perspective: 1000;
+
+	border: 1px solid #ccc;
+}
+
+	.flip-container:hover .flipper,  
+  .flip-container.hover .flipper {
+		-webkit-transform: rotateY(180deg);
+		-moz-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+		transform: rotateY(180deg);
+	}
+
+.flip-container, .front, .back {
+	width: 320px;
+	height: 427px;
+}
+
+.flipper {
+	-webkit-transition: 0.6s;
+	-webkit-transform-style: preserve-3d;
+
+	-moz-transition: 0.6s;
+	-moz-transform-style: preserve-3d;
+  
+  -o-transition: 0.6s;
+	-o-transform-style: preserve-3d;
+
+	transition: 0.6s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+.front, .back {
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+	backface-visibility: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.front {
+	z-index: 2;
+}
+
+.back {
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+	transform: rotateY(180deg);
+
+	background: #f8f8f8;
+}
+
+.front .name {
+	font-size: 2em;
+	display: inline-block;
+	background: rgba(33, 33, 33, 0.9);
+	color: #f8f8f8;
+	font-family: Courier;
+	padding: 5px 10px;
+	border-radius: 5px;
+	bottom: 60px;
+	left: 25%;
+	position: absolute;
+	text-shadow: 0.1em 0.1em 0.05em #333;
+
+	-webkit-transform: rotate(-20deg);
+	-moz-transform: rotate(-20deg);
+  -o-transform: rotate(-20deg);
+	transform: rotate(-20deg);
+}
+
+.back-logo {
+	position: absolute;
+	top: 40px;
+	left: 90px;
+	width: 160px;
+	height: 117px;
+	background: url(http://davidwalsh.name/demo/logo.png) 0 0 no-repeat;
+}
+
+.back-title {
+	font-weight: bold;
+	color: #00304a;
+	position: absolute;
+	top: 180px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	text-shadow: 0.1em 0.1em 0.05em #acd7e5;
+	font-family: Courier;
+	font-size: 2em;
+}
+
+.back p {
+	position: absolute;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	padding: 0 20px;
+  font-family: arial;
+  line-height: 2em;
+}
+
+
+
+
 
   </style>

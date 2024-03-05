@@ -1,70 +1,77 @@
 <!-- ContinentCard.vue -->
 <template>
-    <div v-for="(flight,idx) in flights" :key="idx" class="image-item">
-      <img class="rounded-img" :src="flight.img"/>
-      <div class="image-info">
-          <div class="info-top px-1">
-              <span class="place-name">{{ flight.departure }}</span>
-              <span class="place-code">{{ flight.departureCode }}</span>
-              <i class="bi bi-airplane-fill rotate-90"></i>
-              <span class="place-name">{{ flight.destination}}</span> 
-              <span class="place-code">{{flight.destinationCode }}</span>
-          </div>
-          <div class="address px-1">
-            <span>{{ flight.oneway + ' / ' + flight.duration }}</span>
-          </div>
-          <div class="price px-1">
-            <span class="rating">{{ flight.price }}원~</span>
-          </div>
-      </div>
+  <div v-for="(flight,idx) in flights" :key="idx" class="image-item" @click="onFlightSearch(flight)">
+    <img class="rounded-img" :src="flight.img"/>
+    <div class="image-info">
+        <div class="info-top px-1">
+            <span class="place-name">{{ flight.departure }}</span>
+            <span class="place-code">{{ flight.departureCode }}</span>
+            <i class="bi bi-airplane-fill rotate-90"></i>
+            <span class="place-name">{{ flight.destination}}</span>
+            <span class="place-code">{{flight.destinationCode }}</span>
+        </div>
+        <div class="address px-1">
+          <span>{{ flight.oneway + ' / ' + flight.duration }}</span>
+        </div>
+        <div class="price px-1">
+          <span class="rating">{{ flight.price }}원~</span>
+        </div>
     </div>
+  </div>
 </template>
-
 <script setup>
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 // eslint-disable-next-line
 const props=defineProps({
   flights:Array
 })
+const router = useRouter()
+function onFlightSearch(flight){
+router.push({
+  name: 'main',
+  query: {
+    page_: 'flightreserve',
+    origin: flight.departureCode,
+    destination: flight.destinationCode,
+    adults: 1
+  }
+})
+}
 </script>
 <style scoped>
 .rotate-90 {
-    transform: rotate(90deg);
+  transform: rotate(90deg);
 }
-
 .info-top {
-  display: flex; /* 장소 이름과 별점을 한 줄에 표시 */
-  justify-content: space-between; /* 장소 이름과 별점 사이에 공간 삽입 */
+display: flex; /* 장소 이름과 별점을 한 줄에 표시 */
+justify-content: space-between; /* 장소 이름과 별점 사이에 공간 삽입 */
 }
 .rounded-img {
-  width: 100%;  /* 이미지 폭을 부모 요소의 90%로 설정 */
-  height: auto;  /* 이미지 높이를 자동으로 설정 */
-  max-height: 15em;
-  border-radius: 10px;  /* 이미지 모서리를 둥글게 설정 */
-  margin-bottom: 10px;
+width: 100%;  /* 이미지 폭을 부모 요소의 90%로 설정 */
+height: auto;  /* 이미지 높이를 자동으로 설정 */
+max-height: 15em;
+border-radius: 10px;  /* 이미지 모서리를 둥글게 설정 */
+margin-bottom: 10px;
 }
 .place-name {
-  font-weight: bold;    
+font-weight: bold;
 }
-
 .place-code {
-  font-weight: bold;
-  color: rgb(113, 168, 255);
+font-weight: bold;
+color: rgb(113, 168, 255);
 }
-
 .address {
-  text-align: left; /* 주소 왼쪽 정렬 */
-  color:gray;
+text-align: left; /* 주소 왼쪽 정렬 */
+color:gray;
 }
-
 .price {
-  text-align: left; /* 주소 왼쪽 정렬 */
-  color:rgb(240, 62, 62);
+text-align: left; /* 주소 왼쪽 정렬 */
+color:rgb(240, 62, 62);
 }
-
 .image-item {
-  display: flex; /* 이미지와 이미지 정보를 세로로 배치 */
-  flex-direction: column; /* 요소들을 세로로 배치 */
-  max-width: 19em;
+display: flex; /* 이미지와 이미지 정보를 세로로 배치 */
+flex-direction: column; /* 요소들을 세로로 배치 */
+max-width: 19em;
 }
 </style>

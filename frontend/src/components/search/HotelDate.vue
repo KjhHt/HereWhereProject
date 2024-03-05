@@ -1,30 +1,34 @@
 <template>
-    <div class="form-wrap">
-      <form>
-        <div class="guests">
-          <button type="button" id="cnt-down" class="counter-btn" @click="decreaseGuests">-</button>
-          <input type="text" id="guestNo" name="guests" :value="guests">
-          <button type="button" id="cnt-up" class="counter-btn" @click="increaseGuests">+</button>
+  <div class="form-wrap">
+    <form @submit.prevent="searchHotel">
+      <div class="guests">
+        <button type="button" id="cnt-down" class="counter-btn" @click="decreaseGuests">
+          <i class="bi bi-caret-left-fill"></i>
+        </button>
+        <input type="text" id="guestNo" name="guests" :value="guests">
+        <button type="button" id="cnt-up" class="counter-btn" @click="increaseGuests">
+          <i class="bi bi-caret-right-fill"></i>
+        </button>
+      </div>
+      <div class="dates">
+        <div class="arrival">
+          <label for="arrival">Check-In</label>
+          <br>
+          <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate" :min="today.toISOString().split('T')[0]">
         </div>
-        <div class="dates">
-          <div class="arrival">
-            <label for="arrival">Check-In</label>
-            <br>
-            <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
-          </div>
-          <div class="departure">
-            <label for="departure">Check-Out</label>
-            <br>
-            <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
-          </div>
+        <div class="departure">
+          <label for="departure">Check-Out</label>
+          <br>
+          <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
         </div>
-        <button type="button" class="btn">Search Hotel</button>
-      </form>
-    </div>
+      </div>
+      <button type="submit" class="btn" @click="clearPlaces">Search Hotel</button>
+    </form>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, defineProps, getCurrentInstance ,defineEmits } from 'vue';
 
 const today = new Date();
 const tomorrow = new Date(today.getTime()); // Create a new Date object for tomorrow
@@ -33,33 +37,82 @@ let guests = ref(2); // Default value
 let checkInDate = ref(today.toISOString().split('T')[0]); // Default check-in date is today
 let checkOutDate = ref(tomorrow.toISOString().split('T')[0]); // Initialize check-out date as empty
 
+const props = defineProps({
+  places: Object,
+  imgplaces : Object,
+  latNumber: Number,
+  lngNumber: Number
+});
+const instance = getCurrentInstance();
 
 const increaseGuests = () => {
-  guests.value = Math.min(guests.value + 1, 6); // Maximum 6 guests
+  guests.value = Math.min(guests.value + 1, 6); 
 };
 
 const decreaseGuests = () => {
-  guests.value = Math.max(guests.value - 1, 1); // Minimum 1 guest
+  guests.value = Math.max(guests.value - 1, 1); 
 };
 
-// Set minimum check-out date as the day after check-in
 const setMinCheckOutDate = () => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  checkOutDate.value = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  checkOutDate.value = date.toISOString().split('T')[0];
 };
 
 // Compute minimum check-out date
 const minCheckOutDate = computed(() => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  return date.toISOString().split('T')[0]; 
 });
-
-// Watch check-in date and update minimum check-out date accordingly
 watch(checkInDate, setMinCheckOutDate);
+
+const searchHotel = () => {
+  let lat, lng;
+  //메인 사진 눌렀을때,검색했을때
+  if (Object.keys(props.places).length > 0) {
+    console.log('1111111')
+    console.log('props.places',props.places)
+    lat = props.places.geometry.location.lat();
+    lng = props.places.geometry.location.lng();
+  } 
+  //이미지 지도에서 검색
+  else if (props.imgplaces) {
+    console.log('222222')
+    console.log('props.imgplaces',props.imgplaces)
+    lat = props.imgplaces.geometry.location.lat;
+    lng = props.imgplaces.geometry.location.lng;
+  } 
+  //이미지 예측, 헤드위치검색 눌렀을때
+  else if (props.latNumber && props.lngNumber) {
+    console.log('3333333')
+    console.log('props.latNumber',props.latNumber)
+    lat = props.latNumber;
+    lng = props.lngNumber;
+  } 
+
+  else {
+    console.log('444444')
+    lat = 0;
+    lng = 0;
+  }
+
+  const searchData = {
+    guests: guests.value,
+    checkInDate: checkInDate.value,
+    checkOutDate: checkOutDate.value,
+    lat: lat,
+    lng: lng
+  };
+  instance.emit('search-event', searchData);
+};
+const emit = defineEmits(['clearPlaces'])
+
+const clearPlaces = () => {
+  emit('clearPlaces');
+};
 </script>
-    
+
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
 
@@ -90,10 +143,10 @@ input {
   padding: 15px 10px;
   border: none;
   margin-bottom: 20px;
-  border-radius: 3px;
+  border-radius: 10px;
   box-shadow: 1px 3px 20px rgba(17, 17, 17, .1);
   width: 100%;
-  height: 45px;
+  height: 40px;
   outline: #8DFEE1;
 }
 
@@ -104,14 +157,9 @@ input[type=date]::-webkit-inner-spin-button {
 
 #guestNo {
   width: 80px;
-  margin: 0 20px;
+  margin-bottom: 10px;
   text-align: center;
-}
-
-input[type="date"] {
-  &::-webkit-inner-spin-button {
-    display: none;
-  } 
+  height: 45px;
 }
 
 label {
@@ -121,30 +169,13 @@ label {
 }
 
 .counter-btn {
-  position: relative;
-  display: inline-block;
-  height: 40px;
-  text-align: top;
-  vertical-align: top;
-  font-size: 1.5em;
-  font-weight: 300;
-  width: 40px;
-  background: #fff;
-  border: none;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  box-shadow: 1px 3px 20px rgba(17, 17, 17, .1);
-  cursor: pointer;
-  outline: none;
+  background-color: white;
 }
 
 .counter-btn:nth-child(2) {
   float: right;
 }
 
-.counter-btn:hover {
-  box-shadow: 1px 3px 20px rgba(17, 17, 17, .3);
-}
 .dates {
   display: flex;
   justify-content: space-between;

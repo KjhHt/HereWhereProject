@@ -17,4 +17,7 @@ public class NoticeDto {
 	private String notice_content;
 	private String notice_createtime;
     private String id;
+    
+    private String follow_senderid;
+    private String profileimage;
 }
