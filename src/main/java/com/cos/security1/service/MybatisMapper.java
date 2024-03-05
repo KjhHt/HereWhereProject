@@ -59,6 +59,7 @@ public interface MybatisMapper {
 	int checkFollowRequest(FollowDto followRequest);
 	void insertFollow(FollowDto followRequest);
 	void successFollow(String notice_no);
+	
 	void FailFollow(String notice_no);
 	//채팅
 	ChatDto getDmNo(String id, String rid);
