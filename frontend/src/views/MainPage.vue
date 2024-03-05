@@ -13,13 +13,13 @@
         </div>
 
         <div  @click="changeComponent(1)" class="menu-item" :class="{active: currentIndex === 1}" style="text-decoration: none;">
-            <div class="menu-icon">
-              <img src="@/assets/airplane.png" alt="airplane-icon">
-            </div>
-            <div class="menu-text">항공권</div>
+          <div class="menu-icon">
+            <img src="@/assets/airplane.png" alt="airplane-icon">
           </div>
+          <div class="menu-text">항공권</div>
+        </div>
 
-          <div  @click="changeComponent(2)" class="menu-item" :class="{active: currentIndex === 2}" style="text-decoration: none;">
+        <div @click="changeComponent(2)" class="menu-item" :class="{active: currentIndex === 2}" style="text-decoration: none;">
           <div class="menu-icon">
             <img src="@/assets/exchange.png" alt="exchange-icon">
           </div>
@@ -29,7 +29,7 @@
     </div>
       <div class="features">
         <CarouselComponent 
-          :current-index="currentIndex" 
+          :current-index="currentIndex"
           @update:currentIndex="currentIndex = $event"
           @imgClick="handleImgClick"
           />
@@ -52,7 +52,6 @@ const handleSearchImgLocation = (location) => {
 };
 
 const handleImgClick = (value) => {
-  console.log('밸류',value)
   emit('imgClick', value);
 }
 

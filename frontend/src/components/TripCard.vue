@@ -1,86 +1,120 @@
 <template>
-    <div class="card-container">
-            <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="item in items" :key="item.image">
-                <!-- 카드의 내용을 표현하는 코드를 여기에 추가 -->
-                <div class="sub_con">
-                    <div class="layer_con"></div>
-                    <div class="tag_con">
-                        <div class="tag" v-for="tag in item.tags" :key="tag" style="margin-left: 16px">{{ tag }}</div>
-                    </div>
-                    <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
-                    <div class="img">
-                        <img :src="item.image" />
-                    </div>
-                </div>
-                <div class="bottom_con">
-                    <div class="bottom_desc" style="-webkit-box-orient: vertical">{{ item.description }}</div>
-                        <div class="bottom_user_con">
-                            <div class="bottom_user_left">
-                                <img class="user_avatar" :src="item.user.avatar" />
-                                <span>{{ item.user.name }}</span>
-                            </div>
-                            <div class="bottom_user_right">
-                                <i class="fas fa-thumbs-up"></i>
-                                <span>{{ item.user.likes }}</span>
-                            </div>
-                        </div>      
-                </div>
-                </div>   
+    <div class="card-container"
+        :style="loadingModal ? { 
+            display: 'flex', 
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+        }:{}" >
+
+        <!-- 모달 -->
+        <!-- <div v-if="loadingModal">
+            <img src="@/assets/vacations.gif" alt="Trip-moment" style="margin-top: 200px;" />
+        </div> -->
+        <div class="loader" v-if="loadingModal">
+            <div class="loader__trampoline"></div>
+            <div class="loader__jumper">
+            <div class="loader__jumper-face">
+                <div class="loader__jumper-eyes"></div>
+                <div class="loader__jumper-mouth"></div>
             </div>
+            </div>
+            <div class="loader__text">Loading...</div>
         </div>
+        <!-- 모달 끝 -->
+        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" 
+            v-for="(item,index) in boardList" 
+            :key="item.board_no"
+            :ref="index === boardList.length - 1 ? setLastItem : undefined"
+        >
+            <!-- 카드의 내용을 표현하는 코드를 여기에 추가 -->
+            <div class="sub_con" @click="$emit('moveDetailView',item)">
+                <div class="layer_con"></div>
+                <div class="tag_con">
+                    <div v-for="(tag,index) in item.boardTags" :key="index" class="tag" style="margin-left: 16px">{{tag}}</div>
+                </div>
+                <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
+                <div class="img">
+                    <img :src="item.base64BoardImages[0]" />
+                </div>
+            </div>
+            <div class="bottom_con">
+                <div class="bottom_desc" style="-webkit-box-orient: vertical; text-align: left;">{{ item.board_content }}</div>
+                    <div class="bottom_user_con">
+                        <div class="bottom_user_left">
+                            <img class="user_avatar" :src="item.profileimage" />
+                            <span>{{ item.board_writer }}</span>
+                        </div>
+                        <div class="bottom_user_right">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span style="margin-left: 2px;">{{ item.like_count }}</span>
+                        </div>
+                    </div>      
+            </div>
+            </div>   
+        </div>
+            
+    </div>
+
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps , watch, defineEmits } from 'vue'
 
-// 예시용 데이터
-const items = ref([
-    {
-        tags: ['유럽여행', '데빈성', '슬로바키아'],
-        image: 'https://ak-d.tripcdn.com/images/1mi63224x8tzxrulx8D9D_C_405_455_R5.jpg_.webp?proc=source/trip',
-        description: '브라티슬라바에서 버스를타고 30분 정도 데빈 이란 지역에 위치한 성... 데빈성은 브라티',
-        user: {
-            avatar: 'https://ak-d.tripcdn.com/images/0a213224x8tv0z80d2170.jpg',
-            name: '으호호',
-            likes: 3
-        }
-    },
-    {
-        tags: ['2024소원이벤트', '푸꾸옥관광지'],
-        image: 'https://ak-d.tripcdn.com/images/1mi0n224x8tzpqnuuEDCB_C_405_455_R5.jpg_.webp?proc=source/trip',
-        description: '#2024소원이벤트 그랜드 월드 시계탑의 다른 이름은 데이트 타워고, 여기가 그랜드 월드 랜드마크라고 해도 과언이 아니예요. 데이트 타워란 이름은..',
-        user: {
-            avatar: 'https://ak-d.tripcdn.com/images/0a25i22348eafjd402469.jpg',
-            name: '만득이의 세계여행',
-            likes: 5
-        }
-    },
-    {
-        tags: ['2024소원이벤트', '푸꾸옥숙소추천'],
-        image: 'https://ak-d.tripcdn.com/images/1mi1a224x8tzpo3r322CF_C_405_455_R5.jpg_.webp?proc=source/trip',
-        description: 'La Mer Resort Phu Quoc은 🏡정원이 너무 예쁜 리조트였어요. 게다가 🏊♂️수영장과 정원은 넓은 편이었어요. 정원에 그네도 있고, 흔들의자도 있고',
-        user: {
-            avatar: 'https://ak-d.tripcdn.com/images/0a25i22348eafjd402469.jpg',
-            name: '만득이의 세계여행',
-            likes: 5
-        }
-    },
-    {
-        tags: ['방콕여행'],
-        image: 'https://ak-d.tripcdn.com/images/1mi0a224x8tze6do05CFB_C_405_455_R5.jpg_.webp?proc=source/trip',
-        description: '사람없이 즐길 수 있는 인피니티풀🩵 방콕 신상 5성급 호텔 이스틴 그랜드 호텔 파야타이 Eastin Grand Hotel Phayathai',
-        user: {
-            avatar: 'https://ak-d.tripcdn.com/images/0a2022224x34rf5e8FE09.jpg',
-            name: '뽀라b',
-            likes: 3
-        }
-    },
-    
-    
-    // 추가 데이터...
-])
+const props = defineProps({
+  boardList: Array,
+  no_BoardList:Object,
+  loadingModal:Object,
+});
+
+const lastItem = ref(null);
+
+const emit = defineEmits(['requestMoreData']);
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      emit('requestMoreData');
+    }
+  });
+}, { threshold: 0.9 });
+
+const setLastItem = el => {
+  if (lastItem.value) {
+    observer.unobserve(lastItem.value);
+  }
+  lastItem.value = el;
+  if (el && !props.no_BoardList) {
+    observer.observe(el);
+  }
+};
+
+const stopObserving = () => {
+    if (lastItem.value) {
+        observer.unobserve(lastItem.value);
+        lastItem.value = null;
+    }
+    observer.disconnect();
+};
+
+watch(() => props.boardList, () => {
+    if (lastItem.value && !props.no_BoardList) {
+        observer.observe(lastItem.value);
+    }
+}, { deep: true });
+
+watch(() => props.no_BoardList, () => {
+    if(props.no_BoardList){
+        stopObserving();
+    }
+}, { deep: true });
+
+
 </script>
 
-<style scope>
+<style scope lang="scss">
 .card-container {
   display: flex;
   flex-wrap: wrap;
@@ -261,5 +295,316 @@ img {
     font-size: 13px;
     color: #455873;
     line-height: 18px;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap");
+$black: #000038;
+$white: #fff;
+$pink: #eb80b1;
+$green: #80c0a1;
+$light-grey: #bdc3c6;
+$grey: #919ea3;
+$dark-grey: #576078;
+
+$animation-duration: 10s;
+$jumper-animation-timing: cubic-bezier(0.52, -0.01, 0.14, 1);
+
+.loader {
+  margin-top: 10rem;
+  $component-class: &;
+  position: relative;
+  &__trampoline {
+    position: relative;
+    width: 12rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 50%, $black, $dark-grey 35%);
+    background-size: 200% 200%;
+    background-position: 50% 50%;
+    border: 0.2rem solid $light-grey;
+    box-shadow: 0 1.2rem 1rem 0 rgba($black, 0.5);
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      width: 0.2rem;
+      height: 1rem;
+      background-color: $light-grey;
+    }
+    &:before {
+      bottom: 0;
+      left: 0.8rem;
+    }
+    &:after {
+      bottom: 0;
+      right: 0.8rem;
+    }
+  }
+  &__jumper {
+    position: absolute;
+    top: 0;
+    left: 5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 70% 70%, $pink, $black 500%);
+    overflow: hidden;
+  }
+  &__jumper-face {
+    width: 100%;
+    height: 100%;
+  }
+  &__jumper-eyes {
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    height: 0.3rem;
+    &:before,
+    &:after {
+      content: "";
+      width: 0.3rem;
+      height: 0.3rem;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 70% 30%,
+        $white 15%,
+        $black 15%,
+        $black
+      );
+    }
+  }
+  &__jumper-mouth {
+    position: absolute;
+    top: 60%;
+    left: calc(35% - 0.1rem);
+    width: 30%;
+    height: 0.1rem;
+    border-radius: 0 0 1rem 1rem;
+    border: 0.1rem solid $black;
+    border-top: none;
+  }
+  &__text {
+    color: $black;
+    text-align: center;
+    text-transform: uppercase;
+    padding-top: 2rem;
+  }
+  // Animation
+  &__trampoline {
+    @keyframes bounce-trampoline {
+      5% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 50% 45%;
+      }
+      10%,
+      15% {
+        transform: translateY(-0.1rem);
+        box-shadow: 0 1.3rem 1rem 0 rgba($black, 0.5);
+        background-position: 50% 50%;
+      }
+      25% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 45% 45%;
+      }
+      30%,
+      35% {
+        transform: translateY(-0.1rem);
+        box-shadow: 0 1.3rem 1rem 0 rgba($black, 0.5);
+        background-position: 50% 50%;
+      }
+      45% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 60% 45%;
+      }
+      50%,
+      55% {
+        transform: translateY(-0.1rem);
+        box-shadow: 0 1.3rem 1rem 0 rgba($black, 0.5);
+        background-position: 50% 50%;
+      }
+      65% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 40% 40%;
+      }
+      70%,
+      75% {
+        transform: translateY(-0.1rem);
+        box-shadow: 0 1.3rem 1rem 0 rgba($black, 0.5);
+        background-position: 50% 50%;
+      }
+      85% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 60% 35%;
+      }
+      95% {
+        transform: translateY(0.1rem);
+        box-shadow: 0 1.1rem 1rem 0 rgba($black, 0.5);
+        background-position: 48% 50%;
+      }
+      100% {
+        transform: none;
+        background-position: 50% 50%;
+      }
+    }
+    animation: bounce-trampoline;
+    animation-duration: $animation-duration;
+    animation-timing-function: $jumper-animation-timing;
+    animation-iteration-count: infinite;
+  }
+  &__jumper {
+    @keyframes bounce-jumper {
+      5% {
+        transform: translateY(0.5rem);
+        transform-origin: 50% calc(50% - 0.5rem);
+      }
+      15% {
+        transform: translate(0.5rem, -5rem) rotate(20deg);
+        transform-origin: calc(50% - 0.5rem) calc(50% + 5rem);
+      }
+      23% {
+        transform: translate(1rem, 0.5rem) rotate(30deg);
+        transform-origin: calc(50% - 1rem) calc(50% + 0.5rem);
+      }
+      35% {
+        transform: translate(-1rem, -8rem) rotate(-10deg);
+        transform-origin: calc(50% + 1rem) calc(50% + 5rem);
+      }
+      43% {
+        transform: translate(-2rem, 0.5rem) rotate(-20deg);
+        transform-origin: calc(50% + 2rem) calc(50% - 0.5rem);
+      }
+      55% {
+        transform: translate(1.5rem, -6rem) rotate(10deg);
+        transform-origin: calc(50% - 4rem) calc(50% + 6rem);
+      }
+      63% {
+        transform: translate(3.5rem, 0.5rem) rotate(10deg);
+        transform-origin: calc(50% - 3.5rem) calc(50% - 0.5rem);
+      }
+      75% {
+        transform: translate(0, -8rem) rotate(-20deg);
+        transform-origin: 50% calc(50% + 10rem);
+      }
+      83% {
+        transform: translate(-3rem, -0.5rem) rotate(-30deg);
+        transform-origin: calc(50% + 3rem) calc(50% + 0.5rem);
+      }
+      95% {
+        transform: translate(1rem, 0) rotate(20deg);
+        transform-origin: calc(50% - 1rem) 50%;
+      }
+      100% {
+        transform: none;
+        transform-origin: 50% 50%;
+      }
+    }
+    animation: bounce-jumper;
+    animation-duration: $animation-duration;
+    animation-timing-function: $jumper-animation-timing;
+    animation-iteration-count: infinite;
+  }
+  &__jumper-face {
+    @keyframes bounce-face {
+      5% {
+        transform: translateY(0.5rem);
+      }
+      15% {
+        transform: translate(0.5rem, -3rem) rotate(20deg);
+      }
+      24% {
+        transform: translate(1rem, 0.5rem) rotate(30deg);
+      }
+      35% {
+        transform: translate(-1rem, -3rem) rotate(-10deg);
+      }
+      44% {
+        transform: translate(-0.5rem, 0.5rem) rotate(-20deg);
+      }
+      55% {
+        transform: translate(0, -0.5rem) rotate(10deg);
+      }
+      64% {
+        transform: translate(0rem, 0.5rem) rotate(10deg);
+      }
+      75% {
+        transform: translate(0, -1rem) rotate(-20deg);
+      }
+      84% {
+        transform: translate(-0.5rem, 0.5rem) rotate(-30deg);
+      }
+      95% {
+        transform: translate(0.5rem, -0.5rem) rotate(-10deg);
+      }
+      100% {
+        transform: none;
+      }
+    }
+    animation: bounce-face;
+    animation-duration: $animation-duration;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+  }
+  &__jumper-mouth {
+    @keyframes bounce-mouth {
+      15%,
+      75% {
+        height: 0.4rem;
+        border-radius: 0 0 2rem 2rem;
+      }
+    }
+    animation: bounce-mouth $animation-duration;
+    animation-duration: $animation-duration;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+  }
+  &__text {
+    @keyframes bounce-text {
+      5% {
+        transform: translateY(0);
+      }
+      15% {
+        transform: translateY(-0.25rem);
+      }
+      22% {
+        transform: translateY(0);
+      }
+      35% {
+        transform: translateY(-0.25rem);
+      }
+      42% {
+        transform: translateY(0);
+      }
+      55% {
+        transform: translateY(-0.25rem);
+      }
+      62% {
+        transform: translateY(0);
+      }
+      75% {
+        transform: translateY(-0.25rem);
+      }
+      82% {
+        transform: translateY(0);
+      }
+      95% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: none;
+      }
+    }
+    animation: bounce-text;
+    animation-duration: $animation-duration;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+  }
 }
 </style>

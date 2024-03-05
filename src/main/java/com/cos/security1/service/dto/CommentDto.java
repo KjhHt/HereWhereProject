@@ -23,4 +23,8 @@ public class CommentDto {
 	private String id;
 	//작성자 프로필
 	private String profileimage;
+	
+	//댓글 좋아요 개수 및 여부
+	private String like_count;
+	private String user_liked;
 }

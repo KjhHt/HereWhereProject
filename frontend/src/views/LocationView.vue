@@ -379,7 +379,6 @@
     const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
     youtubeData.value=response.data
   }
-  
   async function getNearbyHotels(lat, lng, number, check_in, check_out) {
     try {
       loadinghotel.value = true;
@@ -844,6 +843,7 @@
         if(status !== 'OK') return
         showInter.value = false
         let closeInfo= document.querySelector('.gm-ui-hover-effect')
+              
         if(closeInfo !== null) {
           closeInfo.click()
         }

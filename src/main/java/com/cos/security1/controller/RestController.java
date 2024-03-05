@@ -14,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,11 +27,13 @@ import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
+import com.cos.security1.service.dto.LocationDto;
 import com.cos.security1.service.dto.NoticeDto;
 import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -47,7 +48,6 @@ public class RestController {
 	
 	@GetMapping("/user/test")
 	public String userTest() {
-		System.out.println("user에 접근함");
 		// 문자 메세지~~
 //		DefaultMessageService messageService =  NurigoApp.INSTANCE.initialize("NCSBOMLEW4XQYZAG", "EBSKN1NKGVNW9QZQQSMQYZMJZEBLDMUG", "http://api.coolsms.co.kr");
 //		// Message 패키지가 중복될 경우 net.nurigo.sdk.message.model.Message로 치환하여 주세요
@@ -68,18 +68,6 @@ public class RestController {
 //		  System.out.println(e.getMessage());
 //		}
 		return "user";
-	}
-	
-	@GetMapping("/manager/test")
-	public String managerTest() {
-		System.out.println("manager에 접근함");
-		return "manager";
-	}
-	
-	@GetMapping("/admin/test")
-	public String adminTest() {
-		System.out.println("admin에 접근함");
-		return "admin";
 	}
 
 	// 로그인 후 user권한으로 쿠키에있는 token전달
@@ -154,17 +142,13 @@ public class RestController {
             @RequestPart("lng") String lng,
             HttpServletRequest req
     ) throws IOException, ServletException {
-        // 사용자 데이터 및 프로필 이미지 파일을 받아와 처리하는 로직을 작성
         long size = profileImage.getSize();
         String filesize = Long.toString(size);
-        // 파일 미지정 시 회원가입페이지에서 디폴트 파일객체 보내주도록 설정!!
         String saveDirectory = req.getServletContext().getRealPath("/upload/profile/");
-        //String saveDirectory = "/upload";
         System.out.println(saveDirectory);
 		Collection<Part> parts = req.getParts();
 		StringBuffer filenames = FileUtils.upload(parts, saveDirectory);
 		UserDto dto = new UserDto();
-		//수정해야함
 		dto.setLat(lat);
 		dto.setLng(lng);
 		dto.setId(id); dto.setPwd(pwd); dto.setName(name); 
@@ -174,14 +158,16 @@ public class RestController {
 		dto.setFilename(filenames.toString()); dto.setFileroute(saveDirectory+"\\"+filenames);
 		dto.setFilesize(filesize); dto.setAuthority("ROLE_USER"); dto.setProvider("WIT");
 		service.joinMember(dto);
-		
         return "회원가입 성공";
     }
 	
     
     //게시판
     @GetMapping("/board")
-    public List<BoardDto> board(@RequestParam String num,HttpServletRequest request) {
+    public List<BoardDto> board(
+    		@RequestParam String num,
+    		@RequestParam(required=false) String keyword,
+    		HttpServletRequest request) throws IOException {
 		
     	String token = null;
 		Cookie[] cookies = request.getCookies();
@@ -195,10 +181,7 @@ public class RestController {
 	    }
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
-	    
-    	System.out.println(id);
-    	
-	    List<BoardDto> dto = service.boardList(num);
+	    List<BoardDto> dto = service.boardList(num,request,keyword);
 	    
 	    if(id==null) //비회원일때 좋아요 조회 아이디없으면 guest로 진행
 	    	id = "guest";
@@ -206,7 +189,6 @@ public class RestController {
     	for(BoardDto value : dto) {
     		boolean like = service.isBoardLike(id, value.getBoard_no());
     		if(like) {
-    			System.out.println("좋아요?");
     			value.setLike(true);
     		}
     	}
@@ -216,9 +198,7 @@ public class RestController {
     //프로필 이미지불러오기
     @GetMapping("/profile/{imageName}")
     public ResponseEntity<String> getImage(@PathVariable String imageName,HttpServletRequest req) throws IOException {
-    	
     	System.out.println("프로필 이미지 로직");
-    	
     	String imagePath = req.getServletContext().getRealPath("/upload/profile/")+imageName;
         Path imagePathInFileSystem = Paths.get(imagePath);
         Resource resource = new UrlResource(imagePathInFileSystem.toUri());
@@ -228,38 +208,24 @@ public class RestController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(base64Image);
     }
     
-    
-    //게시판 이미지불러오기
-    @GetMapping("/image/{imageName}")
-    public ResponseEntity<Resource> boardImage(@PathVariable String imageName,HttpServletRequest req) throws MalformedURLException{
-
-    	String imagePath = req.getServletContext().getRealPath("/upload/board/")+imageName;
-        Path imagePathInFileSystem = Paths.get(imagePath);
-        Resource resource = new UrlResource(imagePathInFileSystem.toUri());
-        
-        if (resource.exists() && resource.isReadable()) {
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
     //게시판 등록
-    @PostMapping("/user/boardInsert")
-    public BoardDto boardInsert(
-    		@RequestPart("writer") String boardWriter,
-            @RequestPart("content") String boardContent,
-            @RequestPart("boardImages") List<MultipartFile> boardImages,
+    @PostMapping(value = "/user/boardInsert", consumes = {"multipart/form-data"})
+    public BoardDto handlePostRequest(
+    		@RequestPart("boardImages") List<MultipartFile> boardImages,
+            @RequestParam String title, 
+            @RequestParam String content, 
+            @RequestParam String name, 
+            @RequestParam String profileimage, 
+            @RequestParam(required = false) String tags,
+            @RequestPart("dto") String dtoJson,
             HttpServletRequest req
-    ) throws IOException, ServletException {
-    	
+    		) throws IOException, ServletException {
     	BoardDto dto = new BoardDto();
-    	
 		String token = null;
 		Cookie[] cookies = req.getCookies();
 	    if (cookies != null) {
 	        for (Cookie cookie : cookies) {
-	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	            if ("User-Token".equals(cookie.getName())) {
 	                String cookieValue = cookie.getValue();
 	                token = cookieValue;
 	            }
@@ -267,25 +233,43 @@ public class RestController {
 	    }
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
-
-        dto.setId(id);
-        dto.setBoard_content(boardContent);
-        dto.setBoard_writer(boardWriter);
-        BoardDto returnDto =  service.boardInsert(dto,req);
-        returnDto.setId(id);
-        returnDto.setBoard_content(boardContent);
-        returnDto.setBoard_writer(boardWriter);
-        returnDto.setBoard_no(returnDto.getBoard_no());
-        returnDto.setBoard_createtime(returnDto.getBoard_createtime());
-        
+    	
+        ObjectMapper objectMapper = new ObjectMapper();
+        LocationDto locationdto = objectMapper.readValue(dtoJson, LocationDto.class);
+	    dto.setId(id);
+	    dto.setBoard_writer(name);
+	    dto.setBoard_title(title);
+	    dto.setBoard_content(content);
+	    dto.setBoard_tags(tags);
+	    dto.setProfileimage(profileimage);
+	    BoardDto returnDto =  service.boardInsert(dto,req,locationdto);
+	    returnDto.setId(id);
+	    returnDto.setBoard_writer(name);
+	    returnDto.setBoard_title(title);
+	    returnDto.setBoard_content(content);
+	    returnDto.setBoard_tags(tags);
     	return returnDto;
     }
     
     //댓글
     @GetMapping("/comment")
-    public List<CommentDto> comment(@RequestParam String board_no) {
-    	List<CommentDto> dto = service.commentList(board_no);
+    public List<CommentDto> comment(@RequestParam String board_no,HttpServletRequest req) throws IOException {
+    	List<CommentDto> dto = service.commentList(board_no,req);
     	return dto;
+    }
+    
+    //댓글 좋아요 입력
+    @PostMapping("/commentLike")
+    public void addCommentLike(@RequestBody Map<String, Object> payload) {
+    	String comment_no = (String) payload.get("comment_no");
+    	String id = (String) payload.get("id");
+    	Boolean isLike = (Boolean) payload.get("isLike");
+    	// 좋아요 추가할때
+    	if(isLike)
+    		service.addCommentLike(comment_no,id);
+    	// 좋아요 취소할때
+    	else
+    		service.deleteCommentLike(comment_no,id);
     }
     
     //댓글 입력
@@ -419,7 +403,7 @@ public class RestController {
     }
     
     @GetMapping("/noticeList")
-    public List<NoticeDto> noticeList(HttpServletRequest req){
+    public List<NoticeDto> noticeList(HttpServletRequest req) throws IOException{
 		String token = null;
 		Cookie[] cookies = req.getCookies();
 	    if (cookies != null) {
@@ -432,7 +416,7 @@ public class RestController {
 	    }
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
-    	List<NoticeDto> noticeList = service.noticeList(id);
+    	List<NoticeDto> noticeList = service.noticeList(id,req);
     	return noticeList;
     }
     
@@ -471,5 +455,45 @@ public class RestController {
         System.out.println("wefwef"+reservations);
         return reservations;
     }
+    
+    @PostMapping("/insertReservation")
+    public void insertReservation(@RequestBody ReservationDto reservationDto) {
+    	service.insertReservation(reservationDto);
+    }
+    
+    @PostMapping("/getIsFollowList")
+    public List<FollowDto> getIsFollowList(HttpServletRequest req) {
+    	// 비회원일때 처리해야함.
+		String token = null;
+		Cookie[] cookies = req.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("User-Token".equals(cookie.getName())) {  // 쿠키의 이름이 "User-Token"인 경우
+	                String cookieValue = cookie.getValue();
+	                token = cookieValue;
+	            }
+	        }
+	    }
+	    Map username = JWTTokens.getTokenPayloads(token);
+	    String id = (String)username.get("username");
+	    
+	    List<FollowDto> dto = service.getIsFollowList(id);
+	    
+	    return dto;
+    }
+    
+    @GetMapping("/reservation")
+    public List<ReservationDto> getReservation(@RequestParam String userId) {
+        if (userId == null) {
+            // 예외 처리 또는 다른 로직 추가
+            return null;
+        }
+        List<ReservationDto> reservations = service.findReservationsByUserId(userId);
+        System.out.println("wefwef"+reservations);
+        return reservations;
+    }
+    
+    
+    
     
 }

@@ -2,14 +2,29 @@
     <div class="gl-cpt-search-big-contain">
         <div class="gl-cpt-search gl-cpt-search-big ">
             <div class="gl-cpt-search_input">
-                <input style="text-overflow:ellipsis" placeholder="여행지, 명소, 호텔 등으로 검색" />
+                <input v-model="keyword" style="text-overflow:ellipsis" placeholder="태그로 검색" />
             </div>
             <div class="gl-cpt-search_button">
-                <div class="gl-cpt-search_button-icon"></div>
+                <div @click="searchData" class="gl-cpt-search_button-icon"></div>
             </div>
         </div>
     </div>
 </template>
+<script setup>
+import { ref, watch, defineEmits } from 'vue';
+
+const keyword = ref('');
+const emit = defineEmits(['keywordChanged','search']);
+
+watch(keyword, (newKeyword) => {
+  emit('keywordChanged', newKeyword);
+});
+
+const searchData = () => {
+    emit('search');
+}
+
+</script>
 <style scope>
 .gl-cpt-search-big-contain {
     max-width: 1160px;
@@ -94,5 +109,6 @@
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAZlBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+Vn2moAAAAIXRSTlMA8w5rGwnNxlZABNm1Y/iBJufSvq2mnXQoFHwy3pdOSY7plTuLAAABAklEQVQ4y62S2ZKCMBREE4jIvig7js75/58cMkVlIZZPnrem+4a+qYhvMse/w9ik0Xs3rwoOyu3d9G5bxsvZf0pADlNaNVd2EuX7Wb3b0zHW9jrhnaE6KGarqz0/uIEROu/MCsisbK10Rq5WNVAKHyWhNSqBpzjRw2SuCAj2rpyaCjpxJoO707EIAhsk4iACGQRebnEJ6hxY4ceIEmIj7Gap2/iRBx3ryKhLB43nX276D5YYfaAl332p3A8lMBm53HdZeC8vKoBb+n+fqpForiZhhqiT8v5A0weJfJUYbpmIg4RY1gSN7HVfm/CqbK9s1kVMIhdnguU/JmrZio8skfgGf9q4GqOMmS5bAAAAAElFTkSuQmCC) no-repeat 50%;
     width: 100%;
     height: 100%;
+    cursor: pointer;
 }
 </style>

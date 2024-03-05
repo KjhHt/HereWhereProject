@@ -89,11 +89,9 @@ export default {
       this.closeModal();
     },
     closeModalAndGoToRegistration() {
-    // 모달 닫기
+      // 모달 닫기
       this.closeModal();
-    
-    // 회원가입 페이지로 이동
-      this.goToRegistration();
+      this.$emit('closeModalAndGoToRegistration');
     },
     closeModal() {
       this.$emit('closeModal');
@@ -104,9 +102,6 @@ export default {
       saveData.pwd = this.pwd
       this.$store.dispatch('login',saveData)
       this.closeModal();
-    },
-    goToRegistration() {
-      this.$router.push('/join');
     },
   },
 };

@@ -127,7 +127,46 @@ const S = {
 }, null, -1)), E = [
   B
 ];
+
+function startSpeechToText() {
+  console.log('STT를 시작합니다.');
+  // 여기에 STT 기능을 구현할 코드를 추가할 수 있습니다.
+  console.log('STT를 시작합니다.');
+  // 여기에 STT 기능을 구현할 코드를 추가할 수 있습니다.
+  if (!('webkitSpeechRecognition' in window)) {
+    console.log('Your browser does not support Speech Recognition.')
+  } else {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)()
+    recognition.lang = 'Microsoft Heami - Korean (Korean)', 'Google US English'
+    recognition.interimResults = true
+
+    recognition.onspeechstart = () => {
+      console.log('Recognition Start!')
+    }
+
+    recognition.onspeechend = () => {
+      console.log('Recognition Stop!')
+      recognition.stop()
+    }
+
+    recognition.onresult = async event => {
+      console.log('event.results:', event.results)
+      const transcript = Array.from(event.results).map(results => results[0].transcript).join("")
+      console.log('Transcript:', transcript)
+
+      // 여기에 STT 결과를 처리하는 코드를 추가할 수 있습니다.
+    }
+
+    recognition.onerror = event => {
+      console.error('Speech recognition error: ' + event.error)
+    }
+
+    recognition.start()
+  }
+}
+// @@@@@@@@@@@@@새로운버튼추가
 function D(t, o, e, c, d, s) {
+  // r("form" >> onSubmit 핸들러는 sendMessage 메서드를 호출합니다.
   return l(), r("form", {
     onSubmit: o[1] || (o[1] = (...a) => s.sendMessage && s.sendMessage(...a)),
     style: n({
@@ -151,9 +190,15 @@ function D(t, o, e, c, d, s) {
         fontSize: "1rem"
       })
     }, null, 44, P),
+    // 첫 번째 버튼 (이전에 사용하던 버튼)
     i("button", {
+      onClick: () => {
+        // 첫 번째 버튼이 클릭되었을 때 실행될 동작 구현
+        console.log("이전 버튼이 클릭되었습니다.");
+        // 여기에 sendMessage 메서드 호출을 추가할 수 있음
+      },
       style: n({
-        backgroundColor: e.bgColorInput || "white",
+        backgroundColor: "transparent", // SVG 색상과 일치하도록 투명 배경 설정
         flexShrink: "0",
         all: "unset",
         cursor: "pointer",
@@ -168,9 +213,77 @@ function D(t, o, e, c, d, s) {
         class: "svg",
         strokeWidth: 1.5
       }, E, 8, V))
-    ], 4)
+    ], 4),
+    // 두 번째 버튼 (새로운 버튼)
+    i("button", {
+      onClick: (event) => {
+        // 두 번째 버튼이 클릭되었을 때 실행될 동작 구현
+        console.log("새로운 버튼이 클릭되었습니다.");
+        // 기본 동작 중지
+        event.preventDefault();
+
+        // 두 번째 버튼 클릭 이벤트 핸들러
+        startSpeechToText();
+      },
+      style: n({
+        backgroundColor: "blue", // 버튼의 배경색
+        color: "white", // 버튼 텍스트 색상
+        flexShrink: "0",
+        all: "unset",
+        cursor: "pointer",
+        margin: "auto 1rem"
+      })
+    }, "stt") // 버튼 텍스트
   ], 36);
 }
+
+
+// @@@@@@@@@@@@@@@주석으로 남기기@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// function D(t, o, e, c, d, s) {
+//   return l(), r("form", {
+//     onSubmit: o[1] || (o[1] = (...a) => s.sendMessage && s.sendMessage(...a)),
+//     style: n({
+//       display: "flex",
+//       height: e.inputHeight || "60px",
+//       backgroundColor: e.bgColorInput || "white",
+//       color: e.textColorInput || "black"
+//     })
+//   }, [
+//     i("input", {
+//       class: "input",
+//       placeholder: e.inputPlaceholder || "Type your message here",
+//       onInput: o[0] || (o[0] = (a) => t.inputField = a.target.value),
+//       value: t.inputField,
+//       style: n({
+//         borderWidth: "0px",
+//         backgroundColor: e.bgColorInput || "white",
+//         color: e.textColorInput || "black",
+//         width: "100%",
+//         marginLeft: "1rem",
+//         fontSize: "1rem"
+//       })
+//     }, null, 44, P),
+//     i("button", {
+//       style: n({
+//         backgroundColor: e.bgColorInput || "white",
+//         flexShrink: "0",
+//         all: "unset",
+//         cursor: "pointer",
+//         margin: "auto 1rem"
+//       })
+//     }, [
+//       (l(), r("svg", {
+//         xmlns: "http://www.w3.org/2000/svg",
+//         fill: "none",
+//         viewBox: "0 0 24 24",
+//         stroke: "currentColor",
+//         class: "svg",
+//         strokeWidth: 1.5
+//       }, E, 8, V))
+//     ], 4)
+//   ], 36);
+// }
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 const F = /* @__PURE__ */ C(S, [["render", D], ["__scopeId", "data-v-46284fc5"]]), z = {
   name: "chat-icon"
 }, A = { style: {
@@ -337,7 +450,8 @@ function ee(t, o, e, c, d, s) {
         transform: t.chatOpen ? "translateY(100%)" : "translateY(0%)",
         transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
         transitionDuration: "300ms",
-        transitionDelay: t.chatOpen ? "0ms" : "300ms"
+        transitionDelay: t.chatOpen ? "0ms" : "300ms",
+        zIndex: "9998" 
       })
     }, [
       i("div", {
@@ -367,7 +481,8 @@ function ee(t, o, e, c, d, s) {
         transform: t.chatOpen ? "translateY(0%)" : "translateY(100%)",
         transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
         transitionDuration: "300ms",
-        transitionDelay: t.chatOpen ? "300ms" : "0ms"
+        transitionDelay: t.chatOpen ? "300ms" : "0ms",
+        zIndex: "9998" 
       })
     }, [
       i("div", {

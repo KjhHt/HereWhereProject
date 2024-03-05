@@ -21,7 +21,7 @@ public class ChatDto {
 	private String dm_no;
 	private String dm_sender_id;
 	private String dm_recipient_id;
-	private Date dm_sendtime;
+	private String dm_sendtime;
 	private String dm_type;
 
 	//소켓 아이디 설정

@@ -13,11 +13,9 @@ const routes = [
     beforeEnter: (to, from, next) => {
       //
       if (store.state.loginStore.isLogin){
-        console.log('로그인 된 상태')
         next();
       }
       else{
-        console.log('로그인 안 된 상태');
         axios.get(process.env.VUE_APP_API_URL+'/isSocialLogin')
         .then(res=>{
           console.log(res.data)
@@ -26,7 +24,6 @@ const routes = [
             next();
           }
           else{
-            console.log('들어오지????')
             store.dispatch('saveToken', res.data)
             next();
           }
@@ -51,7 +48,6 @@ const routes = [
     name: 'travel',  // 추가
     component: TravelPage,  // 추가
   },
-  
 ]
 
 const router = createRouter({

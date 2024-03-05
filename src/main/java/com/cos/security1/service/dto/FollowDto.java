@@ -1,7 +1,5 @@
 package com.cos.security1.service.dto;
 
-import java.sql.Date;
-
 import org.apache.ibatis.type.Alias;
 
 import lombok.AllArgsConstructor;
@@ -30,4 +28,5 @@ public class FollowDto {
 	private String notice_no;
 	
 	private String follow_isRequest;
+	
 }
