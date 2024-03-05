@@ -733,7 +733,7 @@ const clickFlight = async (flightInfo) => {
 #icon-route{
     width: 32px;
     height: 32px;
-    margin-left: -70px;
+    margin-left: -170px;
     position: absolute;
     margin-top: 58px;
     z-index: 1061;
@@ -741,7 +741,7 @@ const clickFlight = async (flightInfo) => {
 #icon-route1{
     width: 32px;
     height: 32px;
-    margin-left: -70px;
+    margin-left: -170px;
     position: absolute;
     margin-top: 58px;
     z-index: 1061;
@@ -756,7 +756,7 @@ const clickFlight = async (flightInfo) => {
 
 }
 #icon-road{
-   margin-left: 15px;
+   margin-left: 3px;
    margin-top: -10px;
    width: 60px;
    height: 60px;
@@ -784,7 +784,9 @@ const clickFlight = async (flightInfo) => {
     width: 30px;
     height: 30px;    
 }
-
+button> span{
+    display: block;
+}
 #btn_find{
     width: 60px;
     height: 45px;

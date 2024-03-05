@@ -1,0 +1,170 @@
+[
+    {
+        "name": "모란재",
+        "rating": "4.7",
+        "price": "",
+        "convenience": "",
+        "image": "https://lh5.googleusercontent.com/p/AF1QipP9u5FmokEizMXmDmFvaK7sNZ-whyufHHDn7Gbl=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 경기도 하남시 감이동 361 18번지",
+        "latlng": {
+            "lat": 37.4925945,
+            "lng": 127.1600864
+        }
+    },
+    {
+        "name": "Seongnam Gaeul",
+        "rating": "4.0",
+        "price": "₩38,302",
+        "convenience": "",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WLWWdwJx6DYRsKrCh0WFgxbqJw5jU2uzUExt2ofXYoqMopUK8h427fhA1QjDxKMP43dz-6Ar-JqxXCiUubBrd4RI7se3ntRb0YYXFv-LbhljVVzkOKwNDiV-druxZgcprgA1L72WFs3PdLBn3B5sUIQ4WvUhjKs77UPi5R6iIgJfwQKDCB7EIjg=s287-w287-h192-n-k-no-v1",
+        "address": "Jung-g, 7 논골로 7beon-gil, 성남시 경기도 대한민국",
+        "latlng": {
+            "lat": 37.454721,
+            "lng": 127.159981
+        }
+    },
+    {
+        "name": "호텔 2.4",
+        "rating": "3.6",
+        "price": "₩73,704",
+        "convenience": "3성급 호텔 호텔 2.4의 편의시설: 무료 Wi-Fi, 무료 주차, 수영장, 에어컨, 레스토랑, 유아 동반 환영, 금연 시설,3성급 호텔무료 Wi-Fi무료 주차수영장에어컨레스토랑유아 동반 환영금연 시설",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WL8I7546jqxaF0gYOIxjfZ3cbrUkCOWSkzdzQhoagkc-SZgfRaXarEJk7ZnusKl_9k2E1qPX0rcLGvkI7t8w0Tm-MJ8-C9MzUcS8JZwL67upDb0g6QsXh5pfzOp91ZoIEFj9GJo5ioxwJbp_5E7WtKlaQEKXpWgeBchqleWuhzdfmBLLldsFSL3=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 서울특별시 송파구 방이동 오금로11길 55-16",
+        "latlng": {
+            "lat": 37.5157075,
+            "lng": 127.1138079
+        }
+    },
+    {
+        "name": "호텔 더캐슬 잠실",
+        "rating": "4.2",
+        "price": "₩65,000",
+        "convenience": "호텔 더캐슬 잠실의 편의시설: 무료 Wi-Fi, 무료 주차, 에어컨, 레스토랑, 금연 시설,무료 Wi-Fi무료 주차에어컨레스토랑금연 시설",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WKdohWjJYTrlPU_KqHhkvaQIDDnDXvUx0iIupkK7WxA4dlXtQfmSqDmIUFV_teA4rIKb-CTz51mBc6DbYpzeV3HoUUrcgtjO4q3-xj9IyEdBb_oth9ZdNe-60Q_7E7AedKWRRXNf0fMeHSEY8b7UsZp1JwgPEqgrGQ794RclKy8g8i_TU8txvY=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 서울특별시 송파구 방이동 올림픽로32길 7",
+        "latlng": {
+            "lat": 37.5154176,
+            "lng": 127.109082
+        }
+    },
+    {
+        "name": "성남 저스트스테이호텔 남한산성점",
+        "rating": "3.8",
+        "price": "₩45,000",
+        "convenience": "",
+        "image": "https://lh5.googleusercontent.com/p/AF1QipOrGmdQUhDLCw-ozWZJGDhgsGYHiPQQC6zBbTHw=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 경기도 성남시 수정구 단대동 67-6 KR",
+        "latlng": {
+            "lat": 37.45452119999999,
+            "lng": 127.1603643
+        }
+    },
+    {
+        "name": "넘버25호텔 방이점",
+        "rating": "4.1",
+        "price": "₩55,000",
+        "convenience": "넘버25호텔 방이점의 편의시설: 무료 Wi-Fi, 무료 주차,무료 Wi-Fi무료 주차",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WK1ZQPpCq0aF35XaHHyh92grmUG3WANL2q70IpCnFOG8tMH0mkabYmuxCVIrxtl1AVSfmVVuCU87PnaAORdEP1M6OlKvT7F_c47g41kyurwRJDU1wfr76KzG2oTBQV7tkdYd8mz0iK92xJavFGNOLbKv4614DgBzLwzcXc71k2hhREWovVRkQN2=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 서울특별시 송파구 오금로11길 21-13",
+        "latlng": {
+            "lat": 37.5155227,
+            "lng": 127.1092643
+        }
+    },
+    {
+        "name": "Seongnam Self Check in Hotel PC",
+        "rating": "4.2",
+        "price": "₩50,000",
+        "convenience": "",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WKqVepZNBh09fcfoLrJA4m6mH6wI_CMpqXCD40FVS-oQJ0TkJR8Nh2PJyJkt9lruJFXYkZhz_1VxRswfv-zfk1rg2UD4qMylCxp7C0M0SVHFkaFh-jRIorNfICBiv85eMuJm-cR1hG7ofewvzHOZjsMJXtcGluaa2a-VfKZEFcnzu6GnFoZSH35=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 경기도 성남시 수정구",
+        "latlng": {
+            "lat": 37.441859,
+            "lng": 127.147752
+        }
+    },
+    {
+        "name": "녹원여관",
+        "rating": "2.7",
+        "price": "",
+        "convenience": "",
+        "image": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=2sfc6uvRqvU-qUfPW8J-Aw&cb_client=search.gws-prod.gps&yaw=293.8135&pitch=0&thumbfov=100&w=1024&h=192&scale=2",
+        "address": "대한민국 화성시",
+        "latlng": {
+            "lat": 37.1812732,
+            "lng": 126.8719996
+        }
+    },
+    {
+        "name": "미투호텔",
+        "rating": "4.4",
+        "price": "₩40,000",
+        "convenience": "미투호텔의 편의시설: 조식 포함, 무료 Wi-Fi, 에어컨,조식 포함무료 Wi-Fi에어컨",
+        "image": "https://lh5.googleusercontent.com/p/AF1QipPIjH4ujg8oe-h0nWD0NqkP8Q5yDbDHXQ2C8Qff=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 경기도 성남시 수정구 수진동 30",
+        "latlng": {
+            "lat": 37.44147,
+            "lng": 127.135216
+        }
+    },
+    {
+        "name": "뉴타임",
+        "rating": "2.7",
+        "price": "₩40,000",
+        "convenience": "",
+        "image": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=tZyKDXe9w90n14UZMdjhTg&cb_client=search.gws-prod.gps&yaw=290.46576&pitch=0&thumbfov=100&w=1024&h=192&scale=2",
+        "address": "대한민국 수정구 수진동 2954번지 성남시 경기도 KR",
+        "latlng": {
+            "lat": 37.4399553,
+            "lng": 127.1311659
+        }
+    },
+    {
+        "name": "Jamsil Time",
+        "rating": "3.5",
+        "price": "₩40,000",
+        "convenience": "",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WLYwNgOjJfTAzMBaG2zj5owpzfTtaCXhqoNAd2Nninkkhv4-uXSQhepST2-0h4g-tLjfa084yWnkBoxjVGtE6Faw3gjq9kXSgifsYuQ1cHvegsP4py03BkVrt5J5nvRg5yymvpsHUrypTH28hS2C_sPgUty3zf02QsbDmvtRIhZ5agCMEWjOMw=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 서울특별시 송파구 올림픽로 265",
+        "latlng": {
+            "lat": 37.5140623,
+            "lng": 127.1020525
+        }
+    },
+    {
+        "name": "허브",
+        "rating": "3.5",
+        "price": "₩40,800",
+        "convenience": "",
+        "image": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=yVpLvfwEXoBU5ux489TVzg&cb_client=search.gws-prod.gps&yaw=165.76488&pitch=0&thumbfov=100&w=1024&h=192&scale=2",
+        "address": "대한민국 방이동 89-1번지 올림픽선수촌상가 120호 송파구 서울특별시 KR",
+        "latlng": {
+            "lat": 37.5143967,
+            "lng": 127.1360093
+        }
+    },
+    {
+        "name": "Seongnam Opera",
+        "rating": "1.0",
+        "price": "₩48,874",
+        "convenience": "",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WJRzBJcyvXxMCcEqchvadYycfe1EAiRzk3ACaIeI2JsHZKquVkyINPz32ApXMHEgRQKUdOYkL1YcqaqSEcooRgmTgMqBVon4SozwyvuRRAiQTgM2cZVH2UQNNQiDYyYxvuB-dqMuyAHUXZAbTe_FpJpcWysmblO-lBJcBbMOLiq7OAgfOW7IuI5=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 경기도 성남시 분당구 야탑동 757",
+        "latlng": {
+            "lat": 37.4029457,
+            "lng": 127.1305838
+        }
+    },
+    {
+        "name": "딜라이트호텔",
+        "rating": "3.9",
+        "price": "₩73,441",
+        "convenience": "2성급 호텔 딜라이트호텔의 편의시설: 조식($), 무료 Wi-Fi, 무료 주차, 에어컨, 레스토랑, 세탁 서비스 제공, 금연 시설,2성급 호텔조식($)무료 Wi-Fi무료 주차에어컨레스토랑세탁 서비스 제공금연 시설",
+        "image": "https://lh3.googleusercontent.com/gps-proxy/AMy85WJUkwVMEWdrtPTvmr5oe3nviKlQgdKnAN6BpzNbhFJ7RiHAbFKbvff2Syyf7HPAeZabE4s3cVOZk-HqXgu7t-6QPggcggpp9NQwflRyf0NKXVMwlfRUxUy5cwi3-hw2mXRU21AeNNCS5MmUXJ8SYEf9BqCkEEzG6PIvFFR5ERErQcGXVVh-Ta-S=s287-w287-h192-n-k-no-v1",
+        "address": "대한민국 서울특별시 송파구 방이동 오금로11길 21-9",
+        "latlng": {
+            "lat": 37.5153507,
+            "lng": 127.1092966
+        }
+    }
+]

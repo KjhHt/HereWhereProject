@@ -43,8 +43,7 @@ watch(() => [route.query.origin, route.query.destination, route.query.adults], (
 
 
 onMounted(() => {
-  //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
-  /*
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;
   if (userInfo != null && userInfo.id != null) {
     stompClient.value = getStompClient();  // 웹소켓 연결을 가져옵니다.
@@ -73,10 +72,9 @@ onMounted(() => {
     });
     //console.log("웹소켓 연결 및 구독 성공!");
     noticeList(userInfo.id);
-  }*/
+  }
 });
 
-/*
 function noticeList(){
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;

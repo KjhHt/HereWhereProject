@@ -9,6 +9,15 @@
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/260383242.jpg?k=1bff16529cf65e0c7baff40f71999f5350f103ac7c6b3fd6f7093bdb035cf469&o="
     },
     {
+        "hotel": "보코서울강남",
+        "address": "144 Dosan daero (Nonhyun dong)",
+        "lat": 37.517879854,
+        "lng": 127.02465462,
+        "review": 8.9,
+        "price": "251,900원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/351045313.jpg?k=9d36985a1fa797c5f7e4ce2b745d2292173e171a7f70d4b73499b56525c0ae21&o="
+    },
+    {
         "hotel": "RYSE, Autograph Collection, Seoul",
         "address": "130, Yanghwa-ro, Mapo-gu",
         "lat": 37.554058,
@@ -32,7 +41,7 @@
         "lat": 37.565614,
         "lng": 126.98933,
         "review": 8.6,
-        "price": "160,000원",
+        "price": "210,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/439519069.jpg?k=24b179d31b3b68ded7aa8427541a866eb6d9bbc00cd88e949a5b59a26819cde8&o="
     },
     {
@@ -41,8 +50,17 @@
         "lat": 37.561153,
         "lng": 126.976972,
         "review": 8.6,
-        "price": "220,000원",
+        "price": "235,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/515431322.jpg?k=ee5b76c4002c2ad6730ee534b09e1d3f2347a16c7e60800ad4fd166a2ae2eab9&o="
+    },
+    {
+        "hotel": "홀리데이 인 익스프레스 서울 홍대",
+        "address": "188, Yanghwa-ro, Mapo-gu, ",
+        "lat": 37.557498,
+        "lng": 126.926772,
+        "review": 8.6,
+        "price": "218,900원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/246338503.jpg?k=88c070045304c5262e697a83fd313cc5e3b91c5d3cc7374dd6fc2620bdac5e1c&o="
     },
     {
         "hotel": "더블트리 바이 힐튼 서울 판교 레지던스",
@@ -59,17 +77,8 @@
         "lat": 37.4829635665719,
         "lng": 126.89876049757,
         "review": 8.4,
-        "price": "110,000원",
+        "price": "135,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/475218326.jpg?k=c515c146f4f0f8d61866d78325855b32072e4247f024b49e077ba371094787fa&o="
-    },
-    {
-        "hotel": "그래비티 서울 판교 오토그래프 컬렉션 메리어트 인터내셔널",
-        "address": "2, Pangyoyeok-ro 146beon-gil, Bundang-gu",
-        "lat": 37.393626,
-        "lng": 127.109994,
-        "review": 8.4,
-        "price": "200,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426601317.jpg?k=a898ab9740bdfc0e7ea19906eb7a1819f489720da92950111e973dcbac938a1b&o="
     },
     {
         "hotel": "포포인츠 바이 쉐라톤 조선, 서울역",
@@ -86,7 +95,7 @@
         "lat": 37.5176722385238,
         "lng": 126.904186606407,
         "review": 8.3,
-        "price": "200,000원",
+        "price": "255,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/430807867.jpg?k=f22bd347fa0e3a8e458917f1a5ebea09f05d6abf41bc4ed7fbee03567e22045c&o="
     },
     {
@@ -104,17 +113,8 @@
         "lat": 37.397547945482,
         "lng": 127.110566496849,
         "review": 8.1,
-        "price": "260,000원",
+        "price": "440,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461632617.jpg?k=94e13091560280b63d1cbf6d6955a5174ed6f7ac68332602f64433d672e33ba6&o="
-    },
-    {
-        "hotel": "포포인츠 바이 쉐라톤 서울 강남",
-        "address": "203, Dosan-daero, Gangnam-gu",
-        "lat": 37.520168,
-        "lng": 127.028421,
-        "review": 7.9,
-        "price": "260,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461635269.jpg?k=eb6529167c8ce7073b092a9ac2247659cf246c426f839fb7629598bf8b1c3c93&o="
     },
     {
         "hotel": "이비스 스타일 앰배서더 서울 용산",
@@ -133,15 +133,6 @@
         "review": 7.7,
         "price": "198,000원",
         "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599489.jpg?k=9b5cf43612ab70cb8e2cb3e4275bb440e747b401167bd93fb3d147b68abbd51a&o="
-    },
-    {
-        "hotel": "호텔 디아망",
-        "address": "190, Nambusunhwan-ro, Gangseo-gu",
-        "lat": 37.5484222382822,
-        "lng": 126.819477081299,
-        "review": 7.0,
-        "price": "45,000원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/15404218.jpg?k=5d1b7c174898d713281e865c7616edbdbd047844a8f270e938856d84469c24d7&o="
     },
     {
         "hotel": "코코모 호텔",

@@ -1,0 +1,20 @@
+[
+    {
+        "hotel": "메이저 호텔 2",
+        "address": "40, Eunnam 4-gil",
+        "lat": 33.4864311797081,
+        "lng": 126.491571742328,
+        "review": 7.5,
+        "price": "68,400원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/79385517.jpg?k=e013a932f8c9f8f83f6cf6504f93d1a22337aae8eae59db308c2626b712b60d2&o="
+    },
+    {
+        "hotel": "뉴 제주호텔",
+        "address": "2, Wonnohyeong 6-gil",
+        "lat": 33.4855063723292,
+        "lng": 126.482656002045,
+        "review": 7.5,
+        "price": "53,500원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/293271502.jpg?k=4d84d07ef4cee4854b0f86e5fb2a7eb290f3faec5ec3cce882d6a05888e59ca9&o="
+    }
+]
