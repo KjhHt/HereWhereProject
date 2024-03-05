@@ -28,7 +28,7 @@ def hotel_address(hotel_name,place):
         'input': f'{hotel_name} {place}',
         'inputtype': 'textquery',
         'fields': 'formatted_address,geometry',
-        'key': 'AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k',
+        'key': os.getenv("api_key"),
     }
     response = requests.get(endpoint, params=params)
     result = response.json()

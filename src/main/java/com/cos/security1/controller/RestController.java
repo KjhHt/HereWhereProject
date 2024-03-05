@@ -29,6 +29,7 @@ import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
@@ -447,6 +448,28 @@ public class RestController {
     	service.FailFollow(notice_no);
     	service.deleteNotice(notice_no);
     	return "fail";
+    }
+
+    @PostMapping("/insertReservation")
+    public void insertReservation(@RequestBody ReservationDto reservationDto) {
+    	System.out.println("1 : "+reservationDto.getId());
+    	System.out.println("2 : "+reservationDto.getReservation_pricename());
+    	System.out.println("3 : "+reservationDto.getReservation_receipturl());
+    	System.out.println("4 : "+reservationDto.getReservation_lat());
+    	System.out.println("5 : "+reservationDto.getReservation_lng());
+    	System.out.println("6 : "+reservationDto.getReservation_price());
+    	
+    	service.insertReservation(reservationDto);
+    }
+    @GetMapping("/reservation")
+    public List<ReservationDto> getReservation(@RequestParam String userId) {
+        if (userId == null) {
+            // 예외 처리 또는 다른 로직 추가
+            return null;
+        }
+        List<ReservationDto> reservations = service.findReservationsByUserId(userId);
+        System.out.println("wefwef"+reservations);
+        return reservations;
     }
     
 }

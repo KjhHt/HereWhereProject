@@ -1,8 +1,8 @@
 <template>
   <div id="main-page">
     <div class="cInnerContent">
-      <h1 class="header-section gs_reveal ipsType_center">
-        <strong>이미지 검색 여행 서비스, <br>HERE WHERE에 오신 것을 환영합니다!!!</strong>
+      <h1 class="header-section gs_reveal text-center">
+        <ImageCompare @searchImgLocation = 'handleSearchImgLocation'/>
       </h1>
       <div class="menu">
         <div  @click="changeComponent(0)" class="menu-item" :class="{active: currentIndex === 0}" style="text-decoration: none;">
@@ -43,24 +43,25 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ref,onMounted,defineEmits } from 'vue';
 import CarouselComponent from '@/components/CarouselComponent.vue';
+import ImageCompare from "@/components/main/ImageCompare.vue";
 
-const emit = defineEmits(['imgClick']);
+const emit = defineEmits(['imgClick','searchImgLocation']);
+
+const handleSearchImgLocation = (location) => {
+  emit('searchImgLocation', location);
+};
 
 const handleImgClick = (value) => {
-  console.log('과연 ??~~~',value);
+  console.log('밸류',value)
   emit('imgClick', value);
 }
 
 let currentIndex = ref(0);
-
 const changeComponent = (index) => {
   currentIndex.value = index;
 };
-
 gsap.registerPlugin(ScrollTrigger);
-
 onMounted(initGSAP);
-
 function initGSAP() {
   function animateFrom(elem, x, y) {
     elem.style.transform = `translate(${x}px, ${y}px)`;
@@ -89,12 +90,17 @@ function initGSAP() {
       onLeave: () => { hide(elem) } // assure that the element is hidden when scrolled into view
     });
   });
-
-
 }
+
 </script>
 
 <style scoped>
+.preview-image {
+  max-height: 300px;
+  margin-bottom: 20px;
+  border-radius: 5px; 
+}
+
 body {
   font-weight: 300;
 }
@@ -112,13 +118,15 @@ img {
 
 .header-section {
   margin: 0px auto;
-  padding: 200px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
+  padding: 50px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
   background-image: url('@/assets/female_travel.WEBP'); /* 이미지 경로 설정 (상대 경로 또는 모듈 경로 사용) */
   background-size: cover; /* 배경 이미지 크기를 커버로 설정 */
   background-position: center; /* 배경 이미지 위치를 가운데로 설정 */
   position: relative; /* 배경 이미지를 포함한 상대적인 위치 설정 */
   color: #ffffff;
   margin-bottom: 40px;
+  max-height: 567px; /* Maximum height for the header section */
+  overflow: hidden; /* Hide overflowing content */
 }
 
 .gs_reveal {

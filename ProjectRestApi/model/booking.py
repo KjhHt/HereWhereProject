@@ -63,7 +63,7 @@ def hotel_search(lat, lng, number, check_in, check_out):
         }
 
         headers = {
-            "X-RapidAPI-Key": "65f6c8f946msh703bd8a4fa8c1e3p141540jsn260a5d1f5db4",
+            "X-RapidAPI-Key": os.getenv("X-RapidAPI-Key"),
             "X-RapidAPI-Host": "booking-com.p.rapidapi.com"
         }
 

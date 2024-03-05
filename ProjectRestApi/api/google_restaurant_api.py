@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from model.google_restaurant import find_nearby_places
+import os
 
 class Restaurant(Resource):
     def get(self):
@@ -7,7 +8,7 @@ class Restaurant(Resource):
         parser.add_argument('lat', location='args')  # 'lat'와 'lng'를 분리
         parser.add_argument('lng', location='args')  # 'lat'와 'lng'를 분리
         args = parser.parse_args()
-        api_key = 'AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k'
+        api_key = os.getenv("api_key")
         lat = args['lat']
         lng = args['lng']
         max_results = 25

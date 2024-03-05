@@ -14,7 +14,7 @@
         <div class="arrival">
           <label for="arrival">Check-In</label>
           <br>
-          <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate">
+          <input id="arrival" name="arrival" type="date" v-model="checkInDate" @change="setMinCheckOutDate" :min="today.toISOString().split('T')[0]">
         </div>
         <div class="departure">
           <label for="departure">Check-Out</label>
@@ -22,13 +22,13 @@
           <input id="departure" name="departure" type="date" v-model="checkOutDate" :min="minCheckOutDate">
         </div>
       </div>
-      <button type="submit" class="btn">Search Hotel</button>
+      <button type="submit" class="btn" @click="clearPlaces">Search Hotel</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, getCurrentInstance } from 'vue';
+import { ref, computed, watch, defineProps, getCurrentInstance ,defineEmits } from 'vue';
 
 const today = new Date();
 const tomorrow = new Date(today.getTime()); // Create a new Date object for tomorrow
@@ -38,50 +38,81 @@ let checkInDate = ref(today.toISOString().split('T')[0]); // Default check-in da
 let checkOutDate = ref(tomorrow.toISOString().split('T')[0]); // Initialize check-out date as empty
 
 const props = defineProps({
-  places: Object
+  places: Object,
+  imgplaces : Object,
+  latNumber: Number,
+  lngNumber: Number
 });
-
-const instance = getCurrentInstance(); // Get current component instance
+const instance = getCurrentInstance();
 
 const increaseGuests = () => {
-  guests.value = Math.min(guests.value + 1, 6); // Maximum 6 guests
+  guests.value = Math.min(guests.value + 1, 6); 
 };
 
 const decreaseGuests = () => {
-  guests.value = Math.max(guests.value - 1, 1); // Minimum 1 guest
+  guests.value = Math.max(guests.value - 1, 1); 
 };
 
-// Set minimum check-out date as the day after check-in
 const setMinCheckOutDate = () => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  checkOutDate.value = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  checkOutDate.value = date.toISOString().split('T')[0];
 };
 
 // Compute minimum check-out date
 const minCheckOutDate = computed(() => {
   let date = new Date(checkInDate.value);
   date.setDate(date.getDate() + 1);
-  return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  return date.toISOString().split('T')[0]; 
 });
-
-// Watch check-in date and update minimum check-out date accordingly
 watch(checkInDate, setMinCheckOutDate);
 
-// Function to handle searchHotel button click
 const searchHotel = () => {
+  let lat, lng;
+  //메인 사진 눌렀을때,검색했을때
+  if (Object.keys(props.places).length > 0) {
+    console.log('1111111')
+    console.log('props.places',props.places)
+    lat = props.places.geometry.location.lat();
+    lng = props.places.geometry.location.lng();
+  } 
+  //이미지 지도에서 검색
+  else if (props.imgplaces) {
+    console.log('222222')
+    console.log('props.imgplaces',props.imgplaces)
+    lat = props.imgplaces.geometry.location.lat;
+    lng = props.imgplaces.geometry.location.lng;
+  } 
+  //이미지 예측, 헤드위치검색 눌렀을때
+  else if (props.latNumber && props.lngNumber) {
+    console.log('3333333')
+    console.log('props.latNumber',props.latNumber)
+    lat = props.latNumber;
+    lng = props.lngNumber;
+  } 
+
+  else {
+    console.log('444444')
+    lat = 0;
+    lng = 0;
+  }
+
   const searchData = {
     guests: guests.value,
     checkInDate: checkInDate.value,
     checkOutDate: checkOutDate.value,
-    lat: props.places.geometry.location.lat(),
-    lng: props.places.geometry.location.lng()
+    lat: lat,
+    lng: lng
   };
   instance.emit('search-event', searchData);
 };
+const emit = defineEmits(['clearPlaces'])
+
+const clearPlaces = () => {
+  emit('clearPlaces');
+};
 </script>
 
-    
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
 

@@ -10,6 +10,7 @@ import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 
 @Mapper
@@ -64,5 +65,7 @@ public interface MybatisMapper {
 	void successFollow(String notice_no);
 	void FailFollow(String notice_no);
 	void deleteNotice(String notice_no); 
-	
+	//호텔예약
+	void insertReservation(ReservationDto reservationDto);
+	List<ReservationDto> findReservationsByUserId(String id);
 }

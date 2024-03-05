@@ -40,18 +40,48 @@
                   />
           </div>
         </CustomMarker>
+        <CustomMarker :options="{position: {lat:parseFloat(props.locationLatLng[0]),lng:parseFloat(props.locationLatLng[1])}}">
+          <div style="text-align: center">
+              <img 
+                  class="rounded-circle" 
+                  src="@/assets/mapiconlg.png" 
+                  width="50" height="50" style="margin-bottom: 15px" 
+                  />
+          </div>
+        </CustomMarker>
+        <CustomMarker v-if="props.placeLatLng" :options="{position: {lat:props.placeLatLng.lat,lng:props.placeLatLng.lng}}">
+          <div style="text-align: center">
+              <img 
+                  class="rounded-circle" 
+                  src="@/assets/mapiconlg.png" 
+                  width="50" height="50" style="margin-bottom: 15px" 
+                  />
+          </div>
+        </CustomMarker>
+        <CustomMarker v-for="(stopOver,index) in props.stopOver" :key="index" :options="{position: {lat:stopOver.lat,lng:stopOver.lng}}">
+          <div style="text-align: center">
+              <img 
+                  class="rounded-circle" 
+                  src="@/assets/stopover.png" 
+                  width="40" height="40" style="margin-bottom: 30px" 
+                  />
+          </div>
+        </CustomMarker>
     </MarkerCluster>
 </template>
 
 <script setup>
 import { MarkerCluster,CustomMarker } from "vue3-google-map"
-import { defineProps,defineEmits } from "vue"
+import { defineProps,defineEmits,watch } from "vue"
 
 const props= defineProps({
     attractionsInfo: Object,
-    intersInfo: Object,
+    plansInfo: Object,
     hotelsInfo: Object,
-    restaurantsInfo: Object
+    restaurantsInfo: Object,
+    locationLatLng : Object,
+    placeLatLng : Object,
+    stopOver: Array
 })
 
 const emit= defineEmits(['clickMarker'])
@@ -60,5 +90,8 @@ const clickMarker=(places)=>{
     emit('clickMarker',places)
 }
 
+watch(()=>props.stopOver, stopOver=>{
+  console.log('경유지', stopOver)
+})
 
 </script>

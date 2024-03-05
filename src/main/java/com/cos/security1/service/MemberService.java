@@ -15,6 +15,7 @@ import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.ReservationDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 
@@ -239,7 +240,13 @@ public class MemberService {
 		mapper.deleteNotice(notice_no);
 	}
 
-
+	public void insertReservation(ReservationDto reservationDto) {
+		mapper.insertReservation(reservationDto);
+	}
+	
+	public List<ReservationDto> findReservationsByUserId(String id) {
+	    return mapper.findReservationsByUserId(id);
+	}
 
     
 

@@ -19,7 +19,8 @@ const stompClient = ref(null);
 const noticeListData = ref([]);
 const noticeCountData = ref(0);
 const locationValue = ref('');
-
+const locationLatLng = ref([]);
+// const locationLatLng2 = ref([]);
 onMounted(() => {
   //const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   /*
@@ -116,11 +117,22 @@ const data = ref([
 
 //메인페이지에서 지도 페이지로 값 넘기기
 const handleImgClick = (value) =>{
-  console.log('app.vue에서 : ',locationValue.value);
   locationValue.value = value;
-  console.log('app.vue에서 : ',locationValue.value);
   page_.value = 'location';
 }
+const handleItemClick = (value) =>{
+  locationLatLng.value = value;
+  page_.value = 'location';
+}
+const handleSearchImgLocation = (value) =>{
+  const latLngArray = [value.geometry.location.lat, value.geometry.location.lng];
+  locationLatLng.value = latLngArray;
+  page_.value = 'location';
+}
+const disconnectLocation= ()=> {
+  locationValue.value= '',
+  locationLatLng.value = [];
+} 
 
 const page_=ref('main')
 
@@ -133,21 +145,16 @@ console.log(ref)
 function selectPage(page){
   page_.value=page
 }
-
-const disconnectLocation= ()=> {
-  locationValue.value= ''
-}
-
 </script>
 <template>
   <PanolensPage/>    
    <Header @selectPage="selectPage" :noticeListData="noticeListData" :noticeCountData="noticeCountData"/>
-    <MainPage v-if="page_=='main'" @imgClick="handleImgClick"/>
+    <MainPage v-if="page_=='main'" @imgClick="handleImgClick" @searchImgLocation="handleSearchImgLocation"/>
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Admin v-if="page_=='admin'"/>
-    <Location v-if="page_=='location'" :locationValue="locationValue" @disconnect="disconnectLocation"/>
-    <MyPageView v-if="page_=='mypage'"/>
+    <Location v-if="page_=='location'" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
+    <MyPageView v-if="page_=='mypage'" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <Chat :onSend="handleSendEvent" :chat="data" />
     <TestView v-if="page_=='test'"/>

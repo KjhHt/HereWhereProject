@@ -19,14 +19,14 @@
         </div>
         <div class="offcanvas-body">
           <div class="mt-3">
-              <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick" />
+            <SearchCard v-for="search in searchList" :key="search.name" :search="search" @searchCard="searchClick" />
           </div>
           <div class="search-container">
             <input placeholder="Here Where검색, 이미지검색" ref="searchRef"/>
             <button type="button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
-            <SearchImage @searchLocation="searchLocation"/>
+            <SearchImage @searchImgLocation="searchImgLocation" @clearPlaces="clearPlaces"/>
           </div>
           <div>
             <Weather :weather="weatherData"/>
@@ -76,13 +76,17 @@
       <!-- 2.21일 수정 -->
       <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
             <div>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="interRef" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="planRef" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
             </div>
             <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Travel Plan</h5>
             <div style="width: same-as-button;"></div>
           </div>
       <div class="offcanvas-body">
-        <InterCard v-for="inter in intersInfo" :key="inter.id" :inter="inter" @passArrival="arrivalRoute"/>
+        <PlanCard v-show="showPlan" v-for="plan in plansInfo" :key="plan.id" :plan="plan" @passArrival="arrivalRoute"/>
+        <div class="noplan-div" v-show="!showPlan">
+          <strong>여행계획이 없습니다.</strong>
+          <a href="#" class="btn btn-light">여행일정 만들기</a>
+        </div>
       </div>
     </div>
     <!--음식점 오프-->
@@ -123,7 +127,7 @@
             <div style="width: same-as-button;"></div>
           </div>
         <div class="offcanvas-body">
-          <HotelDate :places="places" @search-event="handleSearchEvent"/>
+          <HotelDate :places="places" :imgplaces="imgsearchplaces" :latNumber="latNumber" :lngNumber="lngNumber" @search-event="handleSearchEvent" />
           <LoadingOverlay :loading="loadinghotel" />
           <LoadingOverlay :loading="loadingdetail" />
           <HotelCard v-for="hotel in hotelsInfo" :key="hotel.id" :hotel="hotel"/>      
@@ -165,7 +169,6 @@
           </div>
         </div>
       </div>
-      <TravelPlan />
 
     <GoogleMap 
       :api-key="apiKey" 
@@ -196,19 +199,22 @@
             :options="windowOptions"
             :model-value="infoWindow"       
             ref="infoRef">
-            <div class="card" style="width: 18rem; height: 24rem;">
+            <div class="card" style="width: 18rem;">
               <img :src="locationInfo.placeImage" class="card-img-top img-fluid" :alt=locationInfo.placeName style="height: 250px">
               <div class="card-body">
                 <h5 class="card-title">{{locationInfo.placeName}}</h5>
                 <p class="card-text">{{ locationInfo.placeAddress }}</p>
                 <p class="card-text">{{ locationInfo.placeRating }}</p>
-                <a href="#" class="btn btn-primary" @click="setIntersInfo">Pick</a> &nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="#" class="btn btn-primary" @click="arrivalRoute(places)">경로</a>
+                <a href="#" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#scheduleDateModal">일정추가</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="#" class="btn btn-light" @click="arrivalRoute(places)">경로찾기</a>
               </div>
             </div>
         </InfoWindow>
-        <MarkerCluster :intersInfo="intersInfo" :hotelsInfo="hotelsInfo" :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
-            @clickMarker="(info)=>clickCustomMarker(info)"/>
+        <ScheduleDate @addSchedule="setIntersInfo"/>
+        <MarkerCluster :plansInfo="plansInfo" :hotelsInfo="hotelsInfo" :stopOver="stopOver"
+                          :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
+                            :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng"
+                              @clickMarker="(info)=>clickCustomMarker(info)"/>
       </GoogleMap>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
   </div>
@@ -225,7 +231,7 @@
   import { ThreeJSOverlayView } from '@googlemaps/three';
   // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import * as THREE from 'three';
-  import { ref, watch, computed, onMounted, defineProps } from "vue";
+  import { ref, watch, computed, onMounted, defineProps, defineEmits, onUnmounted } from "vue";
   import { geoLocation } from '@/composable/geoLocation'
   import gsap from 'gsap'
   import axios from "axios";
@@ -237,7 +243,7 @@
   import RouteRecommendation from "@/components/search/RouteRecommendation.vue";
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
   import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js, 경로검색 placeholder토글
-  import InterCard from "@/components/search/InterestingCard.vue";
+  import PlanCard from "@/components/search/PlanCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
   import SearchCard from '@/components/search/SearchCard.vue'
@@ -245,12 +251,12 @@
   import Weather from "@/components/search/WeatherCard.vue";
   import News from "@/components/search/NewsCard.vue";
   import MarkerCluster from "@/components/search/MarkerCluster.vue";
-  import TravelPlan from "@/components/search/TravelPlan.vue";
   import LoadingOverlay from '@/components/search/LoadingModal.vue';
+  import ScheduleDate from '@/components/search/ScheduleDate.vue'
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
-  const interRef= ref(false);
+  const planRef= ref(false);
   const showInter= ref(false);
   const leftOffButton= ref(null);
   const routeCoords=ref({});
@@ -258,6 +264,9 @@
   const weatherData=ref([]);
   const newsData=ref([]);
   let clickInfo= ref({})
+  let placeLatLng = ref(null);
+  let stopOver= ref([])
+  let showPlan= ref(false)
 
   const locationInfo=ref({
     placeName:'',
@@ -268,7 +277,8 @@
   const profileImage = ref('');
 
   const props = defineProps({
-    locationValue: Object,
+    locationValue: String,
+    locationLatLng : Object
   });
 
   onMounted(()=>{
@@ -276,6 +286,25 @@
     profileImage.value=localStorage.getItem('profileImage');
     createObserver();
   });
+
+  const emit= defineEmits(['disconnect'])
+  const disconnect=()=>{
+    emit('disconnect')
+  }
+  onUnmounted(()=>{
+    disconnect()
+  })
+
+  function getNextDay(date = new Date()) {
+    if (!(date instanceof Date)) {
+        date = new Date(date); // 문자열을 Date 객체로 변환
+    }
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1);
+    return nextDay.toISOString().split('T')[0];
+  }
+  const nextDay = getNextDay();
+  const followingDay = getNextDay(nextDay);
 
   function updateInfoWindow(places){
     let photoUrl;
@@ -298,12 +327,9 @@
       locationInfo.value.placeRating= places.rating
       locationInfo.value.placeImage= places.image
     }else{
-      console.log('photos',places.photos) //검색 결과 이미지 배열
-
       if (places.photos && places.photos.length > 0) {
         const photo = places.photos[0]; 
         const photoReference = photo.photo_reference;
-        console.log('레퍼런스',photoReference)
       
         if (photoReference) {
           photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference=${photoReference}&key=${apiKey}`;
@@ -320,14 +346,13 @@
         locationInfo.value.placeAddress=places['formatted_address']
         locationInfo.value.placeRating=places.rating
         locationInfo.value.placeImage=photoUrl
-        console.log('포토유알엘',photoUrl)
     }
   }
 
   const hotelsInfo=ref([])
   const restaurantsInfo=ref([])
   const attractionsInfo=ref([])
-  const intersInfo= ref([])
+  const plansInfo= ref([])
   const youtubeData=ref([])
   const loadinghotel = ref(false);
   const loadingrestaurant = ref(false);
@@ -336,27 +361,25 @@
 
   function setIntersInfo(){
     showInter.value= false;
-    if(intersInfo.value.length !== 0){
-      for(let i=0; i<intersInfo.value.length; i++){
-        if(intersInfo.value[i].name === places.name) {
+    if(plansInfo.value.length !== 0){
+      for(let i=0; i<plansInfo.value.length; i++){
+        if(plansInfo.value[i].name === places.name) {
           infoRef.value.close()
           showInter.value= !showInter.value
           return;
         }
       }
     }
-    intersInfo.value.push(places)
-    console.log('관심여행지',intersInfo.value)
+    plansInfo.value.push(places)
     infoRef.value.close()
     showInter.value= !showInter.value
   }
-  /*
+ 
   async function getYoutubeData(address){
-    console.log(address);
     const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
-    console.log(response);
     youtubeData.value=response.data
-  }*/
+  }
+  
   async function getNearbyHotels(lat, lng, number, check_in, check_out) {
     try {
       loadinghotel.value = true;
@@ -375,56 +398,71 @@
       hotelsInfo.value = response.data;
   }
 
-async function getNearbyRestaurants(lat, lng) {
-  try {
-    loadingrestaurant.value = true;
-    restaurantsInfo.value = []
-    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
-    restaurantsInfo.value = response.data;
-  } catch (error) {
-    console.error("An error occurred while fetching restaurant data:", error);
-  } finally {
-    loadingrestaurant.value = false;
+  async function getNearbyRestaurants(lat, lng) {
+    try {
+      loadingrestaurant.value = true;
+      restaurantsInfo.value = []
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/restaurant', { params: { lat, lng } });
+      restaurantsInfo.value = response.data;
+    } catch (error) {
+      console.error("An error occurred while fetching restaurant data:", error);
+    } finally {
+      loadingrestaurant.value = false;
+    }
   }
-}
 
-async function getNearbyAttractions(lat, lng) {
-  try {
-    loadingattraction.value = true;
-    attractionsInfo.value = []
-    const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
-    attractionsInfo.value = response.data;
-  } catch (error) {
-    console.error("An error occurred while fetching attraction data:", error);
-  } finally {
-    loadingattraction.value = false;
+  async function getNearbyAttractions(lat, lng) {
+    try {
+      loadingattraction.value = true;
+      attractionsInfo.value = []
+      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/attraction', { params: { lat, lng } });
+      attractionsInfo.value = response.data;
+    } catch (error) {
+      console.error("An error occurred while fetching attraction data:", error);
+    } finally {
+      loadingattraction.value = false;
+    }
   }
-}
 
-async function getWeather(lat,lng){
-  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
-  weatherData.value=response.data
-}
+  async function getWeather(lat,lng){
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/weather',{params:{lat,lng}})
+    weatherData.value=response.data
+  }
 
-async function getNews(lat,lng){
-  const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
-  newsData.value=response.data
-}
+  async function getNews(lat,lng){
+    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/news',{params:{lat,lng}})
+    newsData.value=response.data
+  }
+
+  let imgsearchplaces = ref(null)
+
+  function searchImgLocation(imgplaces){
+    imgsearchplaces.value = imgplaces
+    let location= imgplaces.geometry.location;
+    getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
+    getYoutubeData(imgplaces.name)
+    getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    moveToPosition(location)
+    updateInfoWindow(imgplaces)
+  }
   
   function searchLocation(places){
     let location= places.geometry.location;
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-02")
-    //getYoutubeData(places.name)
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
+    getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
-    console.log('로케이션',location)
     moveToPosition(location)
     updateInfoWindow(places)
   }
     
   const customMarkerRef=ref(null);
+
   function customMarkerLoaded(){
      if(customMarkerRef.value){
       gsap.to(customMarkerRef.value, {
@@ -436,16 +474,17 @@ async function getNews(lat,lng){
       });
      }
   }
+
   const {coords} = geoLocation()
   const currPos = computed(() => {
-    return !props.locationLatLng
+    return props.locationLatLng.length === 0
       ? {
           lat: parseFloat(coords.value.latitude),
           lng: parseFloat(coords.value.longitude),
         }
       : {
-          lat: props.locationLatLng.lat,
-          lng: props.locationLatLng.lng,
+          lat: parseFloat(props.locationLatLng[0]),
+          lng: parseFloat(props.locationLatLng[1]),
         };
   });
   
@@ -461,12 +500,10 @@ async function getNews(lat,lng){
       gestureHandling: 'auto',
       keyboardShortcuts: false,
     });
-  const locations = ref([]);
 
+  const locations = ref([]);
   //검색한 목적지 좌표
   const targetLocation=ref(null)
-  
-  
   const infoRef=ref(null);
   const mapRef=ref(null);
   const infoWindow=ref(false);
@@ -475,18 +512,12 @@ async function getNews(lat,lng){
   let map;
   let overlay=null;
   let scene,renderer,camera;
+
   watch(()=>mapRef.value?.ready,(ready)=>{
       if(!ready) return;
       map=mapRef.value.map;
       initMap(map);
   });
-  
-  watch(()=>infoRef.value?.ready,(ready)=>{
-      if(!ready) return;
-      infoRef.value.infoWindow.addListener('closeclick',()=>{
-          console.log('closeclick')
-      })
-  });  
   
   const selectedMarkerIndex=ref(null);
     
@@ -519,7 +550,7 @@ async function getNews(lat,lng){
     // 위치 업데이트
     const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed;
     const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed;
-  
+    
     map.setCenter({ lat: newLat, lng: newLng });
   
     // 카메라 이동
@@ -535,7 +566,6 @@ async function getNews(lat,lng){
     } else {
       // 애니메이션 완료 후 인포 윈도우 위치 업데이트
       windowOptions.value.position = { lat: savedPosition.lat-0.00025, lng: savedPosition.lng+0.00012 };
-      console.log('인포윈도우',infoRef.value)
       infoRef.value.infoWindow.setPosition(windowOptions.value.position);
       infoRef.value.infoWindow.open(mapRef.value.map);
     }
@@ -557,9 +587,7 @@ async function getNews(lat,lng){
       lng: parseFloat(getPositionValue(targetPosition.lng))
     };
     targetLocation.value=savedPosition
-  
     animateMap()
-
   }
   
   const geocoder=ref(null)
@@ -578,7 +606,6 @@ async function getNews(lat,lng){
       const newLng = originalLatLng.lng() + dir[1] * delta;
       points.push(`${newLat},${newLng}`);
     });
-  
     return points
   }
   
@@ -612,9 +639,14 @@ async function getNews(lat,lng){
   const directionRenderer=ref(null);
   const placesService=ref(null);
   let places={}
+  let latNumber= ref(null)
+  let lngNumber= ref(null)
+
+  const clearPlaces = () => {
+    places = {}; // Clear places
+  };
 
   function initMap(googleMap) {
-    console.log('mapref.value.api:',mapRef.value.api);
     const autoCompleteOptions={
       fields:['formatted_address','geometry','name','rating','photos'],
       strictBounds:false
@@ -634,7 +666,6 @@ async function getNews(lat,lng){
     autoComplete.bindTo("bounds", map);
     autoComplete.addListener('place_changed',()=>{
       places=autoComplete.getPlace();
-      console.log('플레이스',places)
       if(Object.keys(places).length > 1) {
         leftOffButton.value.click();
         searchLocation(places)
@@ -644,7 +675,6 @@ async function getNews(lat,lng){
         placesService.value.textSearch(request,(result,status)=>{
           if(status === 'OK') {
             searchList.value= result;
-            console.log('리절트',result)
           }
           return;
         });
@@ -677,10 +707,6 @@ async function getNews(lat,lng){
       camera,
     });
     
-    overlay.onAdd=()=>{
-      console.log('add')
-    }
-    
     overlay.onContextRestored=({gl})=>{
       renderer=new THREE.WebGLRenderer({
         canvas:gl.canvas,
@@ -707,22 +733,55 @@ async function getNews(lat,lng){
       // Always reset the GL state.
       renderer.resetState();
     }
-    //22일 매인 페이지에서 로케이션으로 값 및 검색 자동으로 추가 
-    if (props.locationValue) {  
-      if(searchRef.value) placesService.value.textSearch({query:props.locationValue},(result,status)=>{
-        if(status==='OK') places=result[0]
-        console.log(places.geometry.location.lat())
-        // const location = places.geometry.location
-        getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-        getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-        getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,"2024-04-01","2024-04-03")
-        //getYoutubeData(places.name)
-        map.setCenter({ lat: places.geometry.location.lat(), lng: places.geometry.location.lng() });
-        // moveToPosition(location)
-        updateInfoWindow(places)
-        getWeather(places.geometry.location.lat(),places.geometry.location.lng())
-        getNews(places.geometry.location.lat(),places.geometry.location.lng())        
-      })
+
+    const getPlaceData = (place) => {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
+      getNearbyRestaurants(lat, lng);
+      getNearbyAttractions(lat, lng);
+      getNearbyHotels(lat, lng, 2, nextDay,followingDay);
+      map.setCenter({ lat, lng });
+      updateInfoWindow(place);
+      getWeather(lat, lng);
+      getNews(lat, lng);
+    }
+    
+    if (props.locationValue && searchRef.value) {
+      placesService.value.textSearch({query:props.locationValue + '시청'}, (result, status) => {
+            if (status === 'OK') {
+              places = result[0]
+              getPlaceData(places);
+        } 
+      });
+    }
+    else if (props.locationLatLng && props.locationLatLng.length >=1 ) {
+      latNumber.value = parseFloat(props.locationLatLng[0]);
+      lngNumber.value = parseFloat(props.locationLatLng[1]);
+      const dataLatLng = {
+        lat: latNumber.value,
+        lng: lngNumber.value,
+      };
+      map.setCenter(dataLatLng);
+      getNearbyRestaurants(latNumber.value, lngNumber.value);
+      getNearbyAttractions(latNumber.value, lngNumber.value);
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+      getWeather(latNumber.value, lngNumber.value);
+      getNews(latNumber.value, lngNumber.value);
+    }
+    else {
+      latNumber.value = parseFloat(37.4923615);
+      lngNumber.value = parseFloat(127.0292881);
+      const dataLatLng = {
+        lat: latNumber.value,
+        lng: lngNumber.value,
+      };
+      map.setCenter(dataLatLng);
+      getNearbyRestaurants(latNumber.value, lngNumber.value);
+      getNearbyAttractions(latNumber.value, lngNumber.value);
+      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+      getWeather(latNumber.value, lngNumber.value);
+      getNews(latNumber.value, lngNumber.value);
     }
   }
 
@@ -741,14 +800,19 @@ async function getNews(lat,lng){
         showRoute.value= true
       })
   }
+  
   const setDraw=(drivePath)=>{
+    stopOver.value= []
     routeCoords.value= drivePath
+    if(drivePath && 'transit' in drivePath[0]){
+      drivePath.forEach((path,index)=>{
+        if(index > 0 && index < drivePath.length-1) stopOver.value.push(path)
+      })
+    }
   }
 
   const cameraCenter=(data)=>{
-    console.log('데이타',data)
     let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
-    console.log('디스탄스',distance)
     if(distance<1) map.moveCamera({zoom:17})
     else if(distance<5) map.moveCamera({zoom:15})
     else if(distance<20) map.moveCamera({zoom:12})
@@ -769,28 +833,24 @@ async function getNews(lat,lng){
       geocoder.value.geocode({location:{lat:e.latLng.lat(), lng:e.latLng.lng()}})
       .then(result=>{
         clickInfo.value= result.results[0]
-        console.log('클릭',clickInfo.value)
         return
       })
     }
-    if(e.placeId!==undefined && showRoute.value!==true){
-      let service= new mapRef.value.api.places.PlacesService(mapRef.value.map)
+    if(e.placeId && !showRoute.value){
       let request= {
         placeId:e.placeId
       }
-      service.getDetails(request, (place, status)=>{
-        if(status !== 'OK') {console.log('스테이터스',status);return}
+      placesService.value.getDetails(request, (place, status)=>{
+        if(status !== 'OK') return
         showInter.value = false
         let closeInfo= document.querySelector('.gm-ui-hover-effect')
-              
         if(closeInfo !== null) {
           closeInfo.click()
         }
         let closeButton= document.querySelectorAll('.btn-close')
         if(closeButton.forEach(x=>{
           x.click()
-        }))
-        console.log('클로즈버튼',closeButton)
+        }));
         places= place
         searchLocation(place)
         return;
@@ -812,7 +872,6 @@ async function getNews(lat,lng){
     if("attraction" in info || "restaurant" in info || "hotel" in info){
       geocoder.value.geocode({location:{lat:info.lat,lng:info.lng}})
       .then(result=>{
-        console.log('리썰트',result)
         places= result.results[0]
         searchLocation(places)
       })
@@ -844,161 +903,72 @@ async function getNews(lat,lng){
   }
   /********************************************************************경로 지정 */
   .map-container {
-    position: relative;
-  }
-  .search-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1001;
-    background-color: white;
-    padding: 10px;
-    border-radius: 30px;
-    border: 2px solid black;
-  }
-  .search-container input {
-    width: 290px;
-    height: 30px;
-    padding: 5px;
-    margin-right: 5px;
-    border: 1px solid white; /* Change the border color to white */
-    border-radius: 5px;
-  }
+  position: relative;
+}
+.search-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  background-color: white;
+  padding: 10px;
+  border-radius: 30px;
+  border: 2px solid black;
+}
+.search-container input {
+  width: 290px;
+  height: 30px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid white; /* Change the border color to white */
+  border-radius: 5px;
+}
+
+.search-button {
+  padding: 5px;
+  background-color: white;
+  color: #000; /* Set the color to black */
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#startDate,
+#endDate,
+#time,
+#memo {
+  border: 2px solid black; /* 검은색 선 추가 */
+  border-radius: 10px; /* 끝을 뭉특하게 만듦 */
+  padding: 8px; /* 내부 여백 추가 */
+  font-size: 16px; /* 글자 크기 설정 */
+}
+
+#memo {
+  max-height: 50px;
+  resize: none; /* 사용자가 수동으로 크기를 조절하지 못하도록 함 */
+  overflow-y: auto; /* 초과된 내용을 숨기도록 함 */
+  width: calc(100% - 20px); /* 왼쪽 모달창의 패딩을 고려하여 폭을 조절 */
+}
+
+.place-details,
+.reservation-form,
+.scrollable-list {
+  height: calc(850px * 2 / 6); /* 전체 높이의 2/6 */
+  flex-grow: 1; /* 이 섹션들 사이에서 남은 공간을 균등하게 분배 */
   
-  .search-button {
-    padding: 5px;
-    background-color: white;
-    color: #000; /* Set the color to black */
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
- 
-  .place-info {
-    display: flex;
-    flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
-    height: 100%;
-    border-radius: 30px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .place-image {
-    
-    flex: 2; /* 이미지 영역이 더 많은 공간을 차지하도록 설정 */
-    display: flex; /* 내부 컨테이너를 flex로 변경 */
-    justify-content: center; /* 내부 컨테이너를 수평 중앙 정렬 */
-    align-items: center; /* 내부 컨테이너를 수직 중앙 정렬 */ 
-  }
-  .place-image img {
-    width: 100%; /* 이미지가 부모 요소에 꽉 차도록 변경 */
-    max-height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .place-details {
-    padding : 16px 24px 0; 
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* 세로로 나란히 배열하도록 변경 */
-    align-items: flex-start; /* 왼쪽 정렬 설정 */
-   
-  }
-  
-  /* 구분선 스타일 */
-  .place-details::after {
-    content: '';
-    display: block;
-    width: 100%; /* 가로로 꽉 차게 설정합니다. */
-    height: 1px; /* 높이는 구분선의 두께입니다. 필요에 따라 조절하세요. */
-    background-color: #ddd; /* 구분선의 색상을 설정하세요. */
-    margin: 10px 0; /* 위아래 여백을 추가해 간격을 조절하세요. */
-  }
-  
-  .rating {
-    color: #f39c12;
-  }
-  
-  .rating span {
-    font-size: 20px;
-    margin-right: 2px;
-  }
-  
-  
-  .reservation-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin : 16px;
-    margin-bottom: 20px;
-  }
-  
-  .form-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  
-  .scrollable-list {
-    height: 150px; /* 원하는 높이로 조절하세요 */
-    overflow-y: auto;
-    border: 1px solid #ddd; /* 스크롤 가능한 영역에 경계를 줄 수 있습니다. */
-  }
-  
-  .list-item {
-    border-bottom: 1px solid #ddd; /* 목록 항목 사이에 구분선을 추가합니다. */
-    padding: 8px;
-  }
-  
-  #startDate,
-  #endDate,
-  #time,
-  #memo {
-    border: 2px solid black; /* 검은색 선 추가 */
-    border-radius: 10px; /* 끝을 뭉특하게 만듦 */
-    padding: 8px; /* 내부 여백 추가 */
-    font-size: 16px; /* 글자 크기 설정 */
-  }
-  
-  #memo {
-    max-height: 50px;
-    resize: none; /* 사용자가 수동으로 크기를 조절하지 못하도록 함 */
-    overflow-y: auto; /* 초과된 내용을 숨기도록 함 */
-    width: calc(100% - 20px); /* 왼쪽 모달창의 패딩을 고려하여 폭을 조절 */
-  }
-  
-  .label-memo {
-    white-space: nowrap; /* 줄바꿈 방지 */
-  }
-  
-  .place-image {
-    height: calc(850px * 1 / 6 ); /* 전체 높이의 1/6 */
-  }
-  
-  .place-details,
-  .reservation-form,
-  .scrollable-list {
-    height: calc(850px * 2 / 6); /* 전체 높이의 2/6 */
-    flex-grow: 1; /* 이 섹션들 사이에서 남은 공간을 균등하게 분배 */
-    
-  }
-  .custom-hamburger-menu{
-    position: absolute;
-    top: 10px;
-    left: 0px; /* 원하는 위치로 조절하세요 */
-    z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
-    
-    width: 65px;
-    height: 50px;
-  }
-  .btn-close {
-    background: none;
-  }
-  .carousel-control-prev,
+}
+.custom-hamburger-menu{
+  position: absolute;
+  top: 10px;
+  left: 0px; /* 원하는 위치로 조절하세요 */
+  z-index: 1001; /* z-index 값을 더 큰 값으로 설정 */
+  width: 65px;
+  height: 50px;
+}
+.btn-close {
+  background: none;
+}
+.carousel-control-prev,
 .carousel-control-next {
   background-color: #000; /* 배경색 */
   border-radius: 50%; /* 모서리 둥글게 */
@@ -1030,5 +1000,13 @@ async function getNews(lat,lng){
   margin-top: 20px;
   font-weight: bold;
 }
-
+.noplan-div{
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 100px;
+  color: #808080;
+  align-content: center;
+}
   </style> 

@@ -1,4 +1,4 @@
-import requests,json
+import requests,json,os
 
 
 def find_nearby_places(api_key, lat, lng, radius=4000):
@@ -65,7 +65,7 @@ def get_place_details(api_key, place_id):
         return '운영 시간을 제공하지 않는 장소입니다'
 
 def get_photo_url(photo_reference, max_size=200):
-    api_key = 'AIzaSyBMpSPfY-brXtLzGQNDvnsJyf-r61u-H6k'
+    api_key = os.getenv('api_key')
     base_url = 'https://maps.googleapis.com/maps/api/place/photo'
 
     params = {

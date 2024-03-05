@@ -104,7 +104,24 @@
                                 </div>
                             </div>
                         </div>     
-                    </div>      
+                    </div>
+                    <div class="routes-card" v-show="showFlightCard" v-for="(flightInfo,index) in flightList" :key="index" @click="clickFlight(flightInfo)">
+                        <div class="card-body">
+                            <div class="card-info" id="flight-card-info">
+                                <div id="index-circle">{{ index+1 }}</div>
+                                <div class="card-info-head">
+                                    <span class="transit-space" id="airplan-img">
+                                        <img :src="require('@/assets/airplane.png')"/>                              
+                                    </span>
+                                    <span><strong>{{ parseInt(flightInfo.legs[0].durationInMinutes/60) }}시간 {{ parseInt(flightInfo.legs[0].durationInMinutes%60) }}분</strong></span>
+                                    <span><small>경유 {{ flightInfo.legs[0].stopCount }}회</small></span>
+                                    <ul class="drive-ul">
+                                        <li>비용 {{ parseInt(flightInfo.price.raw*1335.21) }}원</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>          
                 </div>
             </li>
             <li v-else-if="activeMode === 'car_btn'">
@@ -142,10 +159,10 @@
                     <div class="card-body">
                         <div class="card-info">
                             <img :src="require('@/assets/location2.png')" id="search-icon" />
-                            <div class="card-info-head">
+                            <div id="search-head" class="card-info-head">
                             <p>{{ searchInfo.name }}</p>
                             </div>
-                            <div class="card-info-body">
+                            <div id="search-body" class="card-info-body">
                             <p> {{ searchInfo.formatted_address }}</p>
                             </div>
                         </div>
@@ -172,8 +189,9 @@
 </template>
 
 <script setup>
-import { defineProps, ref, watch, defineEmits } from 'vue'
+import { defineProps, ref, watch, defineEmits, toRaw } from 'vue'
 import axios from 'axios'
+//import Papa from 'papaparse';
 import { getDistanceInKm } from '@/composable/custom';
 
 const departuresRef=ref(null)
@@ -187,7 +205,9 @@ let walkInfo= ref([])
 const placesService= ref()
 const directionsService= ref()
 const directionsRenderer= ref()
+const directionsRenderer_= ref()
 const geocoder= ref()
+let showFlightCard= ref(false)
 let routeLocation= ref({})
 let showRoading= ref(false)
 let searchTarget
@@ -234,7 +254,8 @@ watch(() => props.map?.ready, ready => {
     if (props.map.api && props.map.api.places) {
         placesService.value= new props.map.api.places.PlacesService(props.map.map)
         directionsService.value= new props.map.api.DirectionsService()
-        directionsRenderer.value= new props.map.api.DirectionsRenderer();
+        directionsRenderer.value= new props.map.api.DirectionsRenderer()
+        directionsRenderer_.value= new props.map.api.DirectionsRenderer()
         geocoder.value= new props.map.api.Geocoder()
         // departures 입력 필드에 대한 Autocomplete 인스턴스 생성
         const departuresAutocomplete = new props.map.api.places.Autocomplete(departuresRef.value, autoCompleteOptions);
@@ -261,10 +282,10 @@ watch(()=>props.arrivals, arrivals=>{ //부모 컴포넌트에서 경로 목적�
     arrivalsRef.value.value= arrivals.formatted_address
 })
 
-watch(()=>props.showRoute, showRoute=>{
-    console.log('경로감지')
+watch(()=>props.showRoute, showRoute=>{ //그려진 경로 초기화
     if(!showRoute) {
         if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+        if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
         activeMode.value= null
         document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
             if(button.classList.contains('active')) button.classList.remove('active')
@@ -300,6 +321,9 @@ const searchObserve=()=>{
 const searchRoute=()=>{ //출발지 목적지 좌표 얻기
     if(departuresRef.value.value.trim() === '' || departuresRef.value.value.trim()==='') return
     routeLocation.value={}
+    flightList.value= []
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     placesService.value.textSearch({query:departuresRef.value.value}, (result,status)=>{
         if(status === 'OK'){
             routeLocation.value.departures={lat:result[0].geometry.location.lat(), lng:result[0].geometry.location.lng()}
@@ -327,39 +351,160 @@ function displayDuration(duration) {
     return parseInt(duration / 3600) + '시간 ' + parseInt((duration % 3600) / 60) + '분';
 }
 
+let departuresQuery
+let arrivalsQuery
+let flightRouteInfo
+let flightList= ref([])
+let latLng
 
 const findRoute= async(route)=> { //경로 찾기 이벤트
-    driveList.value= []
-    transitList.value= []
-    walkInfo.value= []
-    showRoading.value= true;
-    let driveResponse= await getDriveRoute(route)
-    transitResponse= await getTransitRoute(route)
-    let walkResponse
-    if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
-            route.arrivals.lat, route.arrivals.lng) < 30){
-        walkResponse= await getWalkRoute(route)
+    try{
+        showFlightCard.value= false
+        driveList.value= []
+        transitList.value= []
+        walkInfo.value= []
+        flightList.value= []
+        showRoading.value= true;
+        let driveResponse= await getDriveRoute(route)
+        transitResponse= await getTransitRoute(route)
+        let walkResponse
+        if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
+                route.arrivals.lat, route.arrivals.lng) < 30){
+            walkResponse= await getWalkRoute(route)
+        }
+        if(driveResponse){
+            driveResponse.data.routes.forEach(routes=>{
+                routes.summary.distance = displayDistance(routes.summary.distance);
+                routes.summary.duration = displayDuration(routes.summary.duration);
+                if(routes.summary.fare.toll===0) delete routes.summary.fare.toll
+                else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'
+            })
+            driveList.value= driveResponse.data.routes
+        }
+        transitList.value= transitResponse.routes
+        if(walkResponse) {
+            walkInfo.value= walkResponse.data
+            let properties= walkInfo.value.features[0].properties
+            properties.totalDistance= displayDistance(properties.totalDistance)
+            properties.totalTime= displayDuration(properties.totalTime)
+            console.log('워크인포',walkInfo.value)
+        }
+        showRoading.value= false;
+        document.querySelector('.bus_btn').click()
+    }catch(error){
+        if(error==='ZERO_RESULTS'){
+            getFlightPath(route)
+        }else{
+            console.log('error',error)
+        }
     }
-    if(driveResponse){
-        driveResponse.data.routes.forEach(routes=>{
-            routes.summary.distance = displayDistance(routes.summary.distance);
-            routes.summary.duration = displayDuration(routes.summary.duration);
-            if(routes.summary.fare.toll===0) delete routes.summary.fare.toll
-            else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'
-        })
-        driveList.value= driveResponse.data.routes
-    }
-    transitList.value= transitResponse.routes
-    if(walkResponse) {
-        walkInfo.value= walkResponse.data
-        let properties= walkInfo.value.features[0].properties
-        properties.totalDistance= displayDistance(properties.totalDistance)
-        properties.totalTime= displayDuration(properties.totalTime)
-        console.log('워크인포',walkInfo.value)
-    }
-    showRoading.value= false;
-    document.querySelector('.bus_btn').click()
   }
+
+  const nextDate=()=>{
+    // 현재 날짜를 가져옵니다.
+    let date = new Date();
+
+    // 현재 날짜에 하루를 더합니다.
+    date.setDate(date.getDate() + 1);
+
+    // 년, 월, 일을 가져옵니다.
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1; // JavaScript의 월은 0부터 시작하므로 1을 더해줍니다.
+    let day = date.getDate();
+
+    // 월과 일이 한 자리 수일 경우 앞에 0을 붙여 두 자리로 만듭니다.
+    if (month < 10) month = '0' + month;
+    if (day < 10) day = '0' + day;
+
+    // 년, 월, 일을 '-'로 연결하여 날짜 문자열을 만듭니다.
+    let nextDay = year + '-' + month + '-' + day;
+    return nextDay
+  }
+
+  function getFlightPath(route){
+    flightList.value= []
+    latLng= {}
+    geocoder.value.geocode({location:route.departures, language: 'en'}, async (result1,status)=>{
+        if(status==='OK') {
+            result1[0].address_components.forEach(address=>{
+                address.types.forEach(type=>{
+                    if(type.toLowerCase().includes('administrative_area_level_1'))
+                        departuresQuery= address.short_name
+                })
+            })
+            try{
+                getFlightCode.params.query= departuresQuery
+                const departuresPromise = axios.request(getFlightCode);
+
+                geocoder.value.geocode({location:route.arrivals, language: 'en'},async (result2,status)=>{
+                    if(status==='OK') {
+                        result2[0].address_components.forEach(address=>{
+                            address.types.forEach(type=>{
+                                if(type.toLowerCase().includes('administrative_area_level_1'))
+                                    arrivalsQuery= address.short_name
+                            })
+                        })
+                        try{
+                            getFlightCode.params.query= arrivalsQuery
+                            const arrivalsPromise = axios.request(getFlightCode);
+
+                            const [departuresInfo, arrivalsInfo] = await Promise.all([departuresPromise, arrivalsPromise]);
+
+                            let date= new Date()
+                            date.setDate(date.getDate() + 1)
+                            getFlightRoute.params= {fromEntityId: departuresInfo.data.data[0].presentation.id,
+                                                    toEntityId: arrivalsInfo.data.data[0].presentation.id,
+                                                    departDate: nextDate()}
+                            flightRouteInfo= await axios.request(getFlightRoute)
+                            console.log('비행경로',flightRouteInfo)
+                            latLng= route
+                            flightList= flightRouteInfo.data.data.itineraries
+                            showRoading.value= false;
+                            const transitBtn= document.querySelector('.bus_btn')
+                            if(!transitBtn.classList.contains('active'))
+                                transitBtn.click()
+                            showFlightCard.value= true
+                        }catch(error){
+                            console.log('비행경로를 찾을 수 없습니다.',error)
+                            showFlightCard.value= false
+                            showRoading.value= false
+                        }
+                    }
+                })
+            }catch(error){
+                console.log('error',error)
+                showRoading.value= false;
+            }
+        }
+    })
+}
+
+  const getFlightCode = {
+    method: 'GET',
+    url: 'https://sky-scanner3.p.rapidapi.com/flights/auto-complete',
+    params: {
+        query: '',
+        placeTypes: 'AIRPORT'
+    },
+    headers: {
+        'X-RapidAPI-Key': process.env.VUE_APP_RAPID_API_KEY,
+        'X-RapidAPI-Host': 'sky-scanner3.p.rapidapi.com'
+    }
+  };
+
+  const getFlightRoute = {
+    method: 'GET',
+    url: 'https://sky-scanner3.p.rapidapi.com/flights/search-one-way',
+    params: {
+        fromEntityId: '',
+        toEntityId: '',
+        departDate: '<REQUIRED>'
+    },
+    headers: {
+        'X-RapidAPI-Key': process.env.VUE_APP_RAPID_API_KEY,
+        'X-RapidAPI-Host': 'sky-scanner3.p.rapidapi.com'
+    }
+  };
 
   async function getDriveRoute(route){ //카카오 운전 경로 API
     let response = await axios.get('https://apis-navi.kakaomobility.com/v1/directions', {
@@ -438,6 +583,7 @@ const clickDrive=(driveInfo)=>{
         }
     }
     if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     setDraw(drivePath)
 }
 
@@ -462,6 +608,7 @@ const clickWalk=(walkInfo)=>{
         }
     }
     if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
     setDraw(walkPath)
 }
 
@@ -470,6 +617,100 @@ const clickTransit=(transitInfo)=>{
     setDraw(null)
     directionsRenderer.value.setMap(props.map.map)
     directionsRenderer.value.setDirections(transitResponse)
+    console.log('트랜짓',transitInfo)
+    geocoder.value.geocode({location:{lat:35.95223,lng:-112.1469}},(result,status)=>{
+        console.log('상태',status)
+        if(status==='OK') console.log('리절트',result)
+    })
+}
+
+// 출발지 검색 함수
+async function searchOrigin(originName) {
+    return new Promise((resolve, reject) => {
+        placesService.value.textSearch({query: originName}, (result, status) => {
+            if(status === 'OK'){
+                const location = {
+                    lng: result[0].geometry.location.lng(),
+                    lat: result[0].geometry.location.lat()
+                };
+                resolve(location)
+            } else {
+                reject('에러')
+                showRoading.value= false
+            }
+        });
+    });
+}
+
+// 목적지 검색 함수
+async function searchDestinations(segments) {
+    return Promise.all(segments.map(segment => {
+        return new Promise((resolve, reject) => {
+            placesService.value.textSearch({query: segment.destination.name}, (result, status) => {
+                if(status === 'OK'){
+                    const location = {
+                        lng: result[0].geometry.location.lng(),
+                        lat: result[0].geometry.location.lat()
+                    };
+                    resolve(location)
+                } else {
+                    reject('에러')
+                    showRoading.value= false
+                }
+            })
+        })
+    }))
+}
+
+const clickFlight = async (flightInfo) => {
+    setDraw(null);
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
+    let coords= {}; // 출발지에서 근처공항까지의 좌표를 담을 dictionary
+    let transitResponse= {}; // 구글 대중교통 경로 api의 결과를 담을 dictionary
+    let drivePath = []; // polyline으로 그려줄 좌표 리스트 []
+
+    try{
+        console.log('flightInfo', flightInfo);
+
+        let originLocation = await searchOrigin(flightInfo.legs[0].origin.name);
+        coords.departures = toRaw(latLng.departures);
+        coords.arrivals = originLocation;
+
+        transitResponse = await getTransitRoute(coords);
+        console.log('공항까지 경로', transitResponse);
+        directionsRenderer.value.setMap(props.map.map);
+        directionsRenderer.value.setDirections(transitResponse);
+
+        drivePath.push({lng: transitResponse.request.destination.location.lng(),
+                        lat: transitResponse.request.destination.location.lat(),
+                        transit: 'FLIGHT'});
+
+        let locations = await searchDestinations(flightInfo.legs[0].segments);
+        drivePath.push(...locations);
+        setDraw(drivePath);
+        const request = {
+            origin: drivePath[drivePath.length-1],
+            destination: latLng.arrivals,
+            travelMode: 'DRIVING'
+        };
+
+        directionsService.value.route(request, async (result, status) => {
+            if(status === 'OK'){
+                directionsRenderer_.value.setMap(props.map.map);
+                directionsRenderer_.value.setDirections(result);
+            } else {
+                let directionsInfo= await getTransitRoute(request.origin)
+                directionsRenderer_.value.setMap(props.map.map);
+                directionsRenderer_.value.setDirections(directionsInfo);
+                return;
+            }
+        });
+
+    } catch(error) {
+        console.log('경로를 찾을 수 없습니다.', error);
+        showRoading.value = false;
+    }
 }
 </script>
 
@@ -638,7 +879,7 @@ const clickTransit=(transitInfo)=>{
     width: 32px;
     height: 32px;
     margin-left: -37px;
-    position: absolute;
+    position: relative;
     margin-top: 25px;
     z-index: 1061;
 }
@@ -647,6 +888,9 @@ const clickTransit=(transitInfo)=>{
   padding: 10px; /* 내용 주변에 여백 추가 */
   padding-left: 40px;
   text-align: left;
+  overflow: hidden; /* 텍스트가 넘칠 경우 자르기 */
+  white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 설정 */
+  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 마침표로 표시 */
 }
 .card-info-head {
   text-overflow: ellipsis;  /* 넘친 텍스트를 ...으로 표시 */
@@ -794,6 +1038,14 @@ const clickTransit=(transitInfo)=>{
     text-align:right;
     padding: 0;
 }
+#flight-card-info{
+    padding-left:10px;
+    padding-top:0;
+}
+#airplan-img{
+    margin-right:20px;
+}
+
 #planeLoading {
 margin-left: auto;
 margin-right: auto;
@@ -854,19 +1106,25 @@ animation-fill-mode: forwards;
     animation-fill-mode: forwards;
 }
 @keyframes wave0 {
-100%{
-    transform: initial;
+    100%{
+        transform: initial;
+    }
+    0%, 30%, 60% {
+        -webkit-transition: all 200ms ease-in;
+        -webkit-transform: scale(1.2);
+        -ms-transition: all 200ms ease-in;
+        -ms-transform: scale(1.2);
+        -moz-transition: all 200ms ease-in;
+        -moz-transform: scale(1.2);
+        transition: all 200ms ease-in;
+        transform: scale(1.2);
+        background: #DEDEDE;
+    }
 }
-0%, 30%, 60% {
-    -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1.2);
-    -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.2);
-    -moz-transition: all 200ms ease-in;
-    -moz-transform: scale(1.2);
-    transition: all 200ms ease-in;
-    transform: scale(1.2);
-    background: #DEDEDE;
+#search-head{
+    margin-top: -50px;
 }
+#search-body{
+    margin-top: -5px;
 }
 </style>

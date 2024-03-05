@@ -156,9 +156,12 @@ function imgError(event){
   width: 100%;
 }
 .card-info {
-  width: 60%; /* 내용과 이미지 사이의 비율을 조절 */
+  width: calc(100% - 40px); /* 내용과 이미지 사이의 비율을 조절 */
   padding: 10px; /* 내용 주변에 여백 추가 */
   text-align: left;
+  overflow: hidden; /* 텍스트가 넘칠 경우 자르기 */
+  white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 설정 */
+  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 마침표로 표시 */
 }
 .card-attraction-name{
   font-weight: bold;
@@ -257,4 +260,5 @@ img {
   background: rgb(105,132,255);
   background: linear-gradient(180deg, rgba(105,132,255,1) 0%, rgba(34,74,255,1) 100%);
 }
+
 </style>

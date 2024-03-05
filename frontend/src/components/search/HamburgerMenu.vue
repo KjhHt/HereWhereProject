@@ -23,9 +23,9 @@
         <a href="#" 
         type="button" 
         data-bs-toggle="offcanvas" 
-        data-bs-target="#offcanvasPlan" 
-        aria-controls="offcanvasPlan"
-        ref="planRef"
+        data-bs-target="#offcanvasInter" 
+        aria-controls="offcanvasInter"
+        ref="interRef"
         class="search-button nav-icon"
         @click="closeMenu">
           <i class="bi bi-calendar-plus-fill" style="font-size: 27px;"></i>
@@ -92,7 +92,7 @@ const props= defineProps({
 })
 
 watchEffect(()=>{
-  if(props.showInter === true) {
+  if(props.showInter) {
     interRef.value.click();
   }
 })

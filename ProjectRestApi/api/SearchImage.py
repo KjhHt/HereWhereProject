@@ -11,6 +11,7 @@ class SearchImage(Resource):
         args=parser.parse_args()
         image_file=args['image']
         print(image_file)
+
         if image_file:
             filename = secure_filename(image_file.filename)
             file_path = os.path.join('upload', filename)
@@ -18,16 +19,13 @@ class SearchImage(Resource):
             print('-' * 50)
             print(file_path)
             descriptions, urls = report(annotate(file_path))
-            # asyncio.run(image_download(urls, descriptions))
             address = descriptions[0]
             print('address:', address)
             language = 'ko'
-            key = 'AIzaSyBHIoqDklX-4Y0HMdrYSL-JqAyx09SkIik'
+            api_key = os.environ['api_key']
             url = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
-            res = requests.get(f"{url}?input={address}&inputtype=textquery&key={key}&language=ko")
+            res = requests.get(f"{url}?query={address}&inputtype=textquery&language=ko&key={api_key}")
             res.encoding = 'utf-8'
-            # url=f'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={descriptions[0]}&inputtype=textquery&key={key}'
-            # res=requests.get(url)
             print(res.status_code)
             print(res.json())
             res.headers = {'Content-Type': 'application/json'}

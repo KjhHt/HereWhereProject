@@ -3,58 +3,104 @@
     <!-- 모달 열기 버튼 -->
     <button @click="fetchReservation" class="btn btn-primary">결제 내역</button>
     <!-- 모달 컨텐츠 -->
-    <div v-if="showModal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog centered modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">결제 내역</h5>
-            <button type="button" class="close" @click="closeModal">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <!-- 호텔 결제 내역 -->
-            <h6>호텔 결제 내역</h6>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">결제 번호</th>
-                  <th scope="col">날짜</th>
-                  <th scope="col">상품 정보</th>             
-                  <th scope="col">가격</th>
-                  <th scope="col">영수증</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item, index in reservationItems" :key="index">
-                  <td>{{ item.reservation_no }}</td>
-                  <td>{{ item.reservation_purchastime }}</td>
-                  <td>{{ item.reservation_pricename }}</td>
-                  <td>{{ item.reservation_price }}</td>
-                  <td><a :href="item.reservation_receipturl" target="_blank">영수증 보기</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModal">닫기</button>
+    <transition name="modal">
+      <div v-if="showModal" class="modal" tabindex="-1" role="dialog" @click="closeModal">
+        <div class="modal-dialog centered modal-lg" role="document" @click.stop>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ name }}님의 결제 내역</h5>
+              <button :class="{ 'active': currentView === 'hotel' }" @click="toggleView('hotel')" class="toggle-btn"><i class="fas fa-bed"></i> 호텔</button>
+              <button :class="{ 'active': currentView === 'plane' }" @click="toggleView('plane')" class="toggle-btn"><i class='fas fa-plane-departure'></i> 항공권</button>
+            </div>
+            <div class="modal-body">
+              <!-- 호텔 결제 내역 -->
+              <div v-show="currentView === 'hotel'">
+                <h6 class="modal_header">호텔 결제 내역</h6>
+                <table v-if="reservationItems.length > 0" class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">결제 번호</th>
+                      <th scope="col">날짜</th>
+                      <th scope="col">상품 정보</th>
+                      <th scope="col">가격</th>
+                      <th scope="col">영수증</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item, index in reservationItems" :key="index">
+                      <td>{{ item.reservation_no }}</td>
+                      <td>{{ item.reservation_purchastime }}</td>
+                      <td @click="textClick([item.reservation_lat,item.reservation_lng])">{{ item.reservation_pricename }}</td>
+                      <td>{{ Number(item.reservation_price).toLocaleString() }}원</td>
+                      <td><a :href="item.reservation_receipturl" target="_blank">영수증 보기</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div v-else>
+                  호텔 결제 내역이 없습니다.
+                </div>
+              </div>
+              <!-- 항공권 결제 내역 -->
+              <div v-show="currentView === 'plane'">
+                <h6 class="modal_header">항공권 결제 내역</h6>
+                <table v-if="planereservationItems.length > 0" class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">결제 번호</th>
+                      <th scope="col">날짜</th>
+                      <th scope="col">상품 정보</th>
+                      <th scope="col">가격</th>
+                      <th scope="col">영수증</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item, index in planereservationItems" :key="index">
+                      <td>{{ item.reservation_no }}</td>
+                      <td>{{ item.reservation_purchastime }}</td>
+                      <td>{{ item.reservation_pricename }}</td>
+                      <td>{{ Number(item.reservation_price).toLocaleString() }}원</td>
+                      <td><a :href="item.reservation_receipturl" target="_blank">영수증 보기</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div v-else>
+                  항공권 결제 내역이 없습니다.
+              </div>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <!-- 이 부분에 footer 내용 추가 -->
+              <button type="button" class="btn btn-primary" @click="closeModal">닫기</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import axios from 'axios';
 
 const showModal = ref(false);
 const reservationItems = ref([]);
+const planereservationItems = ref([]);
+const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+const userInfo = vuexStore.loginStore.userInfo;
+const name = userInfo.name;
+const currentView = ref('hotel'); 
+const emit = defineEmits('handleItemClick');
+
+const toggleView = (view) => {
+  currentView.value = view;
+};
+
+const textClick = (value) => {
+  emit('handleItemClick', value);
+}
 
 async function fetchReservation() {
-  // 여기서 결제 내역을 가져오는 비동기 작업 수행
-  // 결제 내역을 가져온 후 reservationItems에 할당
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userId = vuexStore.loginStore.userInfo.id;
   
@@ -62,14 +108,18 @@ async function fetchReservation() {
   const response = await axios.get(`${process.env.VUE_APP_API_URL}/reservation`, {
     params: { userId }
   });
-  reservationItems.value = response.data;
-  console.log(reservationItems)
-  console.log(reservationItems.value)
-  showModal.value = true; // 모달 열기
+
+  // 가져온 데이터를 날짜 순으로 정렬 
+  reservationItems.value = response.data.sort((a, b) => {
+    const dateA = new Date(a.reservation_purchastime);
+    const dateB = new Date(b.reservation_purchastime);
+    return dateB - dateA;  
+  });
+  showModal.value = true;
 }
 
 const closeModal = () => {
-  showModal.value = false; // 모달 닫기
+  showModal.value = false; 
 };
 </script>
 
@@ -85,29 +135,84 @@ const closeModal = () => {
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
 }
+.modal-dialog.modal-lg {
+  max-width: 70%; /* 원하는 가로 크기를 % 또는 px 단위로 설정하세요. */
+}
+
 .modal-dialog {
   position: relative;
   margin: 10% auto;
-  padding: 20px;
+  padding: 10px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 .modal-header {
   position: relative;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #dee2e6;
+  padding: 10px;
+  background-color: #9893ea; 
+  border-radius: 10px 10px 0 0; 
+  text-align: center;
+  display: inline-block;
 }
 .modal-title {
   margin: 0;
+  font-size: 1.8rem;
+  color: #333333;
+  font-weight: bold;
 }
 .modal-body {
   padding: 20px;
 }
-.modal-footer {
-  padding-top: 20px;
-  text-align: right;
-  border-top: 1px solid #dee2e6;
+.modal_header{
+  font-size: 20px;
+  font-weight: bold;
 }
 
+/* 애니메이션 스타일 */
+.modal-enter-active, .modal-leave-active {
+    transition: opacity .5s;
+  }
+.modal-enter-from, .modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-to, .modal-leave-from {
+  opacity: 1;
+}
+
+/* 닫기 아이콘 스타일 */
+.close-icon {
+  position: absolute;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: black; /* 검은색 아이콘 */
+}
+
+/* Footer 스타일 */
+.modal-footer {
+  padding: 10px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  text-align: right;
+}
+.toggle-btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #9893ea;
+  color: #333333;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background-color: #837ad5;
+}
+.toggle-btn.active {
+  background-color: #837ad5;
+}
 </style>
