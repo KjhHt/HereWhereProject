@@ -266,5 +266,21 @@
     	SELECT * FROM reservation_table WHERE id = #{id}
 	</select>
 	
+	<!-- 일정 -->
+	<insert id="insertSchedule" parameterType="ScheduleDto">
+		INSERT INTO schedule_table VALUES(SEQ_SCHEDULE.nextval,#{title},#{start_date},#{end_date},#{id})
+	</insert>
+	
+	<insert id="insertPlan" parameterType="PlanDto">
+		INSERT INTO plan_table VALUES(#{place_name},#{place_img},#{schedule_id},#{place_id},SYSDATE)
+	</insert>
+	
+	<select id="getSchedules" parameterType="String" resultType="ScheduleDto">
+		SELECT * FROM schedule_table WHERE id=#{id} ORDER BY START_DATE ASC
+	</select>
+	
+	<select id="getPlans" parameterType="Long" resultType="PlanDto">
+		SELECT * FROM plan_table WHERE schedule_id=#{schedule_id}
+	</select>
 
 </mapper>

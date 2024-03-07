@@ -1,7 +1,6 @@
 package com.cos.security1.controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -23,13 +22,16 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cos.security1.service.MemberService;
+import com.cos.security1.service.PlanService;
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LocationDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.PlanDto;
 import com.cos.security1.service.dto.ReservationDto;
+import com.cos.security1.service.dto.ScheduleDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
@@ -45,6 +47,8 @@ public class RestController {
 	
 	@Autowired
 	private MemberService service;	
+	@Autowired
+	private PlanService planService;
 	
 	@GetMapping("/user/test")
 	public String userTest() {
@@ -433,28 +437,6 @@ public class RestController {
     	service.deleteNotice(notice_no);
     	return "fail";
     }
-
-    @PostMapping("/insertReservation")
-    public void insertReservation(@RequestBody ReservationDto reservationDto) {
-    	System.out.println("1 : "+reservationDto.getId());
-    	System.out.println("2 : "+reservationDto.getReservation_pricename());
-    	System.out.println("3 : "+reservationDto.getReservation_receipturl());
-    	System.out.println("4 : "+reservationDto.getReservation_lat());
-    	System.out.println("5 : "+reservationDto.getReservation_lng());
-    	System.out.println("6 : "+reservationDto.getReservation_price());
-    	
-    	service.insertReservation(reservationDto);
-    }
-    @GetMapping("/reservation")
-    public List<ReservationDto> getReservation(@RequestParam String userId) {
-        if (userId == null) {
-            // 예외 처리 또는 다른 로직 추가
-            return null;
-        }
-        List<ReservationDto> reservations = service.findReservationsByUserId(userId);
-        System.out.println("wefwef"+reservations);
-        return reservations;
-    }
     
     @PostMapping("/insertReservation")
     public void insertReservation(@RequestBody ReservationDto reservationDto) {
@@ -493,7 +475,26 @@ public class RestController {
         return reservations;
     }
     
+    @PostMapping("/addSchedule")
+    public void insertSchedule(@RequestBody ScheduleDto scheduleDto) {
+    	System.out.println("스케쥴"+scheduleDto);
+    	//planService.addSchedule(scheduleDto);
+    }
     
+    @PostMapping("/addPlan")
+    public void insertPlan(@RequestBody PlanDto planDto) {
+    	planService.addPlan(planDto);
+    }
+    
+    @GetMapping("/getSchedule")
+    public List<ScheduleDto> findSchedule(@RequestParam String id){
+    	return planService.findSchedules(id);
+    }
+    
+    @GetMapping("/getPlan")
+    public List<PlanDto> findPlan(@RequestParam Long scheduleId){
+    	return planService.findPlans(scheduleId);
+    }
     
     
 }

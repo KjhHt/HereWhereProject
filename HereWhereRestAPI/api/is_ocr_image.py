@@ -6,7 +6,7 @@ import os
 
 class isOcrImage(Resource):
     def __init__(self):
-        self.credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS2']
+        self.credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
     def authenticate_service_account(self):
         credentials = service_account.Credentials.from_service_account_file(self.credentials_path)

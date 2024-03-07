@@ -23,7 +23,7 @@ export function setPhotoUrl(photos,photoUrl){
     const photoReference = photo.photo_reference;
   
     if (photoReference) {
-      const apiKey='AIzaSyA16otojrK96bOUH8jhs4Fp4gC3Glt2xrY';
+      const apiKey= process.env.VUE_APP_GOOGLE_API_KEY;
       photoUrl.value = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
     } else if (photo.getUrl) {
       photoUrl.value = photo.getUrl({maxWidth: 400});
@@ -33,6 +33,22 @@ export function setPhotoUrl(photos,photoUrl){
   } else {
     photoUrl.value = 'place_default.png'; // 기본 이미지 URL을 설정하세요
   }
+}
+
+export function setPhotoUrl_(photos) {
+  let photoUrl = 'place_default.png'; // 기본 이미지 URL
+  if (photos && photos.length > 0) {
+      const photo = photos[0]; 
+      const photoReference = photo.photo_reference;
+
+      if (photoReference) {
+          const apiKey= process.env.VUE_APP_GOOGLE_API_KEY;
+          photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+      } else if (photo.getUrl) {
+          photoUrl = photo.getUrl({maxWidth: 400});
+      }
+  }
+  return photoUrl;
 }
 
 export function routeHandler(event,arrivals){

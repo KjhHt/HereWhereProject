@@ -13,6 +13,7 @@
     </template>
     
     <script>
+    /*
     import * as PANOLENS from 'panolens';
     
     export default {
@@ -62,6 +63,7 @@
         },
       },
     };
+    */
     </script>
     
     <style>

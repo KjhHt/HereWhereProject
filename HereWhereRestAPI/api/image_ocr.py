@@ -12,7 +12,7 @@ import cv2
 
 class ImageOcr(Resource):
     def __init__(self):
-        self.credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS2']
+        self.credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
         self.translate_client = translate.Client(credentials=self.authenticate_service_account())
 
     def authenticate_service_account(self):

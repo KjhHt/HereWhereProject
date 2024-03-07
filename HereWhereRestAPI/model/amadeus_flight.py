@@ -114,7 +114,6 @@ class Amadeus():
             validatingAirlineCodes: 항공편을 검증하는 항공사 코드입니다.
             travelerPricings: 여행자 별 가격 정보를 나타냅니다.
             '''
-
             response = self.make_request_with_exponential_backoff(
                 lambda: self.amadeus.shopping.flight_offers_search.get(
                     originLocationCode=self.client_data['origin'],

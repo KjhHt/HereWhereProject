@@ -23,9 +23,9 @@
         <a href="#" 
         type="button" 
         data-bs-toggle="offcanvas" 
-        data-bs-target="#offcanvasInter" 
-        aria-controls="offcanvasInter"
-        ref="interRef"
+        data-bs-target="#offcanvasPlan" 
+        aria-controls="offcanvasPlan"
+        ref="planRef"
         class="search-button nav-icon"
         @click="closeMenu">
           <i class="bi bi-calendar-plus-fill" style="font-size: 27px;"></i>
@@ -39,7 +39,7 @@
         data-bs-target="#offcanvasHotel" 
         aria-controls="offcanvasHotel" 
         class="search-button nav-icon"
-        @click="closeMenu">
+        @click="closeMenu('hotel')">
           <i class="fas fa-bed" style="font-size: 25px;"></i>
           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
         </a>
@@ -51,7 +51,7 @@
         data-bs-target="#offcanvasAttraction" 
         aria-controls="offcanvasAttraction"
         class="search-button nav-icon"
-        @click="closeMenu">
+        @click="closeMenu('attraction')">
           <i class="fas fa-camera-retro" style="font-size: 27px;"></i>
           <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
         </a>
@@ -63,7 +63,7 @@
         data-bs-target="#offcanvasRestaurant" 
         aria-controls="offcanvasRestaurant" 
         class="search-button nav-icon"
-        @click="closeMenu">
+        @click="closeMenu('restaurant')">
           <i class="fas fa-utensils" style="font-size: 27px;"></i>
           <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
         </a>
@@ -73,27 +73,30 @@
 </template>
   
 <script setup>
-import { ref,defineProps,watchEffect } from 'vue';
+import { ref,defineProps,watchEffect,defineEmits } from 'vue';
 
-const interRef= ref(null);
+const planRef= ref(null);
 
 const menuOpened = ref(false);
+
+const emit= defineEmits(['setMarkerStatus']);
 
 const toggleClass = () => {
   menuOpened.value = !menuOpened.value;
 };
 
-const closeMenu = () => {
+const closeMenu = (status) => {
   menuOpened.value = false;
+  if(status) emit('setMarkerStatus',status);
 };
 
 const props= defineProps({
-  showInter: Boolean
+  showPlan: Boolean
 })
 
 watchEffect(()=>{
-  if(props.showInter) {
-    interRef.value.click();
+  if(props.showPlan) {
+    planRef.value.click();
   }
 })
 </script>

@@ -1,20 +1,137 @@
 [
     {
-        "hotel": "메이저 호텔 2",
-        "address": "40, Eunnam 4-gil",
-        "lat": 33.4864311797081,
-        "lng": 126.491571742328,
-        "review": 7.5,
-        "price": "68,400원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/79385517.jpg?k=e013a932f8c9f8f83f6cf6504f93d1a22337aae8eae59db308c2626b712b60d2&o="
+        "hotel": "머큐어 앰배서더 서울 홍대",
+        "address": "144, Yanghwa-ro, Mapo-gu",
+        "lat": 37.555135,
+        "lng": 126.922511,
+        "review": 9.0,
+        "price": "250,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/260383242.jpg?k=1bff16529cf65e0c7baff40f71999f5350f103ac7c6b3fd6f7093bdb035cf469&o="
     },
     {
-        "hotel": "뉴 제주호텔",
-        "address": "2, Wonnohyeong 6-gil",
-        "lat": 33.4855063723292,
-        "lng": 126.482656002045,
-        "review": 7.5,
-        "price": "53,500원",
-        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/293271502.jpg?k=4d84d07ef4cee4854b0f86e5fb2a7eb290f3faec5ec3cce882d6a05888e59ca9&o="
+        "hotel": "RYSE, Autograph Collection, Seoul",
+        "address": "130, Yanghwa-ro, Mapo-gu",
+        "lat": 37.554058,
+        "lng": 126.921033,
+        "review": 8.9,
+        "price": "320,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426598388.jpg?k=9533aa15e6f40040cc64108c9d42b0c8953764de4990f8fcb83610a7495cbcc4&o="
+    },
+    {
+        "hotel": "코트야드 바이 메리어트 서울 보타닉파크",
+        "address": "10, Magokjungang 12-ro, Gangseo-gu",
+        "lat": 37.567006,
+        "lng": 126.828967,
+        "review": 8.8,
+        "price": "220,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/447015135.jpg?k=1f011ef8e6df2ffc5a62156e408e1cf8a6cacaaef1cdd30b68f0595718fc7b3b&o="
+    },
+    {
+        "hotel": "포포인츠 바이 쉐라톤 조선, 서울 명동",
+        "address": "36, Samil-daero 10-gil, Jung-gu",
+        "lat": 37.565614,
+        "lng": 126.98933,
+        "review": 8.6,
+        "price": "190,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/439519069.jpg?k=24b179d31b3b68ded7aa8427541a866eb6d9bbc00cd88e949a5b59a26819cde8&o="
+    },
+    {
+        "hotel": "코트야드 메리어트 서울 남대문",
+        "address": "9, Namdaemun-ro, Jung-gu",
+        "lat": 37.561153,
+        "lng": 126.976972,
+        "review": 8.6,
+        "price": "220,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/515431322.jpg?k=ee5b76c4002c2ad6730ee534b09e1d3f2347a16c7e60800ad4fd166a2ae2eab9&o="
+    },
+    {
+        "hotel": "더블트리 바이 힐튼 서울 판교 레지던스",
+        "address": "26, Baekhyeon-ro, Bundang-gu",
+        "lat": 37.38089,
+        "lng": 127.10418,
+        "review": 8.6,
+        "price": "187,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/482599549.jpg?k=abb1571b76a9ebcb20e574e77e7cb82717e930960b95711a191529fe34eab84a&o="
+    },
+    {
+        "hotel": "포포인츠 바이 쉐라톤 서울 구로",
+        "address": "72, Digital-ro 32-gil, Guro-gu",
+        "lat": 37.4829635665719,
+        "lng": 126.89876049757,
+        "review": 8.4,
+        "price": "130,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/475218326.jpg?k=c515c146f4f0f8d61866d78325855b32072e4247f024b49e077ba371094787fa&o="
+    },
+    {
+        "hotel": "그래비티 서울 판교 오토그래프 컬렉션 메리어트 인터내셔널",
+        "address": "2, Pangyoyeok-ro 146beon-gil, Bundang-gu",
+        "lat": 37.393626,
+        "lng": 127.109994,
+        "review": 8.4,
+        "price": "190,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/426601317.jpg?k=a898ab9740bdfc0e7ea19906eb7a1819f489720da92950111e973dcbac938a1b&o="
+    },
+    {
+        "hotel": "코트야드 메리어트 서울 타임스퀘어",
+        "address": "15, Yeongjung-ro, Yeongdeungpo-gu",
+        "lat": 37.5176722385238,
+        "lng": 126.904186606407,
+        "review": 8.3,
+        "price": "200,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/430807867.jpg?k=f22bd347fa0e3a8e458917f1a5ebea09f05d6abf41bc4ed7fbee03567e22045c&o="
+    },
+    {
+        "hotel": "코트야드 바이 메리어트 수원 ",
+        "address": "320, Gwanggyohosugongwon-ro, Yeongtong-gu",
+        "lat": 37.285056,
+        "lng": 127.057861,
+        "review": 8.2,
+        "price": "210,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/515364950.jpg?k=1169be796c397aded14d1affbe2df2d5260d849c381c20bce571b1775655c0b7&o="
+    },
+    {
+        "hotel": "코트야드 바이 메리어트 서울 판교",
+        "address": "192-12, Pangyoyeok-ro, Bundang-gu",
+        "lat": 37.397547945482,
+        "lng": 127.110566496849,
+        "review": 8.1,
+        "price": "260,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461632617.jpg?k=94e13091560280b63d1cbf6d6955a5174ed6f7ac68332602f64433d672e33ba6&o="
+    },
+    {
+        "hotel": "포포인츠 바이 쉐라톤 서울 강남",
+        "address": "203, Dosan-daero, Gangnam-gu",
+        "lat": 37.520168,
+        "lng": 127.028421,
+        "review": 7.9,
+        "price": "270,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/461635269.jpg?k=eb6529167c8ce7073b092a9ac2247659cf246c426f839fb7629598bf8b1c3c93&o="
+    },
+    {
+        "hotel": "이비스 스타일 앰배서더 서울 용산",
+        "address": "95, Cheongpa-ro 20-gil, Yongsan-gu",
+        "lat": 37.532285,
+        "lng": 126.961738,
+        "review": 7.9,
+        "price": "145,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/211739143.jpg?k=7a72f116f210272beb3cb4b0ade5c459f47884e59a0290949ba6039e78ad6ef0&o="
+    },
+    {
+        "hotel": "더블트리 바이 힐튼 서울 판교",
+        "address": "26, Baekhyeon-ro, Bundang-gu",
+        "lat": 37.38,
+        "lng": 127.104453,
+        "review": 7.7,
+        "price": "198,000원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/487316724.jpg?k=34d0799da5d576650402a7cde7e0a6ae54ba17e9d58ce9e895fdc1f2deeaadab&o="
+    },
+    {
+        "hotel": "코코모 호텔",
+        "address": "20, Saemal-ro, Guro-gu ",
+        "lat": 37.5019765,
+        "lng": 126.8833649,
+        "review": 5.0,
+        "price": "72,800원",
+        "img_urls": "https://cf.bstatic.com/xdata/images/hotel/max1280x900/517552037.jpg?k=e0fd64f20fbb66cb8b7250291223b8f1de8783c59bc0e02ab6ca823dd0a45eb3&o="
     }
 ]

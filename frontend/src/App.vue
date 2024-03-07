@@ -27,6 +27,7 @@ const noticeCountData = ref(0);
 const locationValue = ref('');
 const locationLatLng = ref([]);
 const initialSearchParameters=ref({});
+let placeId= ref('');
 
 watch(() => [route.query.origin, route.query.destination, route.query.adults], ([origin, destination, adults]) => {
   if (origin && destination && adults) {
@@ -115,6 +116,7 @@ const handleSearchImgLocation = (value) =>{
 const disconnectLocation= ()=> {
   locationValue.value= '',
   locationLatLng.value = [];
+  placeId.value= '';
 } 
 
 computed(showHeader)
@@ -144,7 +146,8 @@ const resetCount = () => {
 }
 
 function moveLocationViewHandler(place_id){
-  console.log('app.vue에서 place_id : ',place_id);
+  placeId.value= place_id;
+  page_.value= 'location';
 }
 </script>
 <template>
@@ -153,7 +156,7 @@ function moveLocationViewHandler(place_id){
     <MainPage v-if="page_=='main'" @imgClick="handleImgClick" @searchImgLocation="handleSearchImgLocation"/>
     <Join v-if="page_=='join'"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
-    <Location v-if="page_=='location'" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
+    <Location v-if="page_=='location'" :appPlaceId="placeId" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
     <MyPageView v-if="page_=='mypage'" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <ChatBot/>

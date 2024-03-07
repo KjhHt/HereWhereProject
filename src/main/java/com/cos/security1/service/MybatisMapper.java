@@ -12,7 +12,9 @@ import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LikeDto;
 import com.cos.security1.service.dto.LocationDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.PlanDto;
 import com.cos.security1.service.dto.ReservationDto;
+import com.cos.security1.service.dto.ScheduleDto;
 import com.cos.security1.service.dto.UserDto;
 
 @Mapper
@@ -77,6 +79,11 @@ public interface MybatisMapper {
 	void insertReservation(ReservationDto reservationDto);
 	List<FollowDto> getIsFollowList(String id);
 	List<ReservationDto> findReservationsByUserId(String id);
-
+	
+	//일정
+	void insertSchedule(ScheduleDto scheduleDto);
+	void insertPlan(PlanDto planDto);
+	List<ScheduleDto> getSchedules(String id);
+	List<PlanDto> getPlans(Long scheduleId);	
 	
 }

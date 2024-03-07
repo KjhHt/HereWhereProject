@@ -18,7 +18,7 @@ class FlightBooking(Resource):
             destination = request.args.get('destination')
             departureDate = request.args.get('departureDate')
             # 필요한 경우 추가 검색 조건을 여기에 추가
-
+            print(origin, destination, departureDate)
             # 검색 조건을 기반으로 항공편 검색 수행
             search_results = self.amadeus.search_flights_list({
                 'origin': origin,
