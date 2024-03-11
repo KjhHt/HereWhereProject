@@ -1,33 +1,33 @@
 <template>
     <div class="index_trip_moment_con">
     <div class="card-container">
-        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="photo in photos" :key="photo.image" v-show="photos.length">
-            <div class="sub_con">
+        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="photo in props.boardData" :key="photo.board_no" v-show="props.boardData.length">
+            <div class="sub_con" @click="$emit('moveDetailView',photo)">
                 <div class="layer_con"></div>
                 <div class="tag_con">
-                    <div class="tag" v-for="tag in photo.tags" :key="tag" style="margin-left: 16px">{{ tag }}</div>
+                    <div class="tag" v-for="tag in photo.boardTags" :key="tag" style="margin-left: 16px">{{ tag }}</div>
                 </div>
                 <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
                     <div class="img">
-                        <img :src="photo.image" />
+                        <img :src="photo.base64BoardImages[0]" />
                     </div>
                 </div>
                 <div class="bottom_con">
-                    <div class="bottom_desc" style="-webkit-box-orient: vertical">{{ photo.description }}</div>
+                    <div class="bottom_desc" style="-webkit-box-orient: vertical">{{ photo.board_content }}</div>
                     <div class="bottom_user_con">
                         <div class="bottom_user_left">
-                            <img class="user_avatar" :src="photo.user.avatar" />
-                            <span>{{ photo.user.name }}</span>
+                            <img class="user_avatar" :src="photo.profileimage" />
+                            <span>{{ photo.board_writer }}</span>
                         </div>
                         <div class="bottom_user_right">
                             <i class="fas fa-thumbs-up"></i>
-                            <span>{{ photo.user.likes }}</span>
+                            <span>{{ photo.like_count }}</span>
                         </div>
                     </div>      
                 </div>
             </div>   
         </div>
-        <div v-show="!photos.length" class="empty-container">
+        <div v-show="!props.boardData.length" class="empty-container">
             <img src="@/assets/no_image.png" />
             <p class="message">아직 등록한 글이 없습니다! 글을 등록해 보세요!</p>
         </div>
@@ -35,32 +35,12 @@
 </div>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup>
+import { defineProps } from 'vue';
   
-  const photos = ref([
-  {
-          tags: ['2024소원이벤트', '푸꾸옥여행'],
-          image: 'https://ak-d.tripcdn.com/images/1mi40224x8tzgi6zoECCA_C_405_455_R5.jpg_.webp?proc=source/trip',
-          description: '같은 카페 웬만하면 두 번은 잘 안가는데, 푸꾸옥 하이랜드 ☕️커피숍은 전통 베트남식 인테리어가 너무 예쁘고,',
-          user: {
-              avatar: 'https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces',
-              name: 'janedoe_',
-              likes: 3
-          }
-      },
-      {
-          tags: ['2024소원이벤트', '수원스타필드'],
-          image: 'https://ak-d.tripcdn.com/images/1mi0q224x8tzddfjz5DD5_C_405_455_R5.jpg_.webp?proc=source/trip',
-          description: '#2024소원이벤트 #수원스타필드 #바이닐스타필드수원 수많은 Lp판들 사이에 별마당 도서관 뷰를 볼 수 있는 이곳',
-          user: {
-            avatar: 'https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces',
-              name: 'janedoe_',
-              likes: 3
-          }
-      },
-    // ...
-  ]);
+const props = defineProps({
+    boardData : Array,
+})
   
   </script>
   

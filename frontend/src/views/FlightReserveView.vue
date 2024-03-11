@@ -38,11 +38,13 @@ let travelClass = ref('ECONOMY');
 
 const props=defineProps({
   initialSearchParameters:Object,
+  iataCode:Object
 })
 
 onMounted(async () => {
   loading.value=true
   await getAirportsList();
+  if(Object.keys(props.iataCode).length) console.log('iataCode',props.iataCode) //경로에서 받은 공항 데이터
   amadeusToken.value=await getAmadeusAccessToken();
   if(props.initialSearchParameters) 
     await onSearchFlight(props.initialSearchParameters);

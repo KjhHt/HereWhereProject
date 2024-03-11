@@ -454,10 +454,10 @@ export default {
               alert('회원가입에 필요한 정보를 올바르게 입력해주세요.');
           }
         },
-            joinMembering() {
+          joinMembering() {
             // 회원가입 로직 수행
-            // ...
             alert('회원가입이 완료되었습니다!');
+            this.$emit('selectPage', 'main');
           },
 
           custominput(){
@@ -849,11 +849,8 @@ export default {
       },
       useProfile() {
           if (this.image_url) {
-              console.log('image_url:', this.image_url);
               this.imageData.poto = this.image_url;
               this.imageSize = '250px';
-
-
           }
       },
       modalOpen() {

@@ -20,18 +20,18 @@
                   <thead>
                     <tr>
                       <th scope="col">결제 번호</th>
-                      <th scope="col">날짜</th>
                       <th scope="col">상품 정보</th>
                       <th scope="col">가격</th>
+                      <th scope="col">결제 일자</th>
                       <th scope="col">영수증</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="item, index in reservationItems" :key="index">
                       <td>{{ item.reservation_no }}</td>
-                      <td>{{ item.reservation_purchastime }}</td>
                       <td @click="textClick([item.reservation_lat,item.reservation_lng])">{{ item.reservation_pricename }}</td>
                       <td>{{ Number(item.reservation_price).toLocaleString() }}원</td>
+                      <td>{{ item.reservation_purchastime }}</td>
                       <td><a :href="item.reservation_receipturl" target="_blank">영수증 보기</a></td>
                     </tr>
                   </tbody>
@@ -47,19 +47,25 @@
                   <thead>
                     <tr>
                       <th scope="col">결제 번호</th>
-                      <th scope="col">날짜</th>
-                      <th scope="col">상품 정보</th>
+                      <th scope="col">운행 시간</th>
+                      <th scope="col">상품 정보(도착지)</th>
+                      <th scope="col">좌석 정보</th>
+                      <th scope="col">좌석 번호</th>
                       <th scope="col">가격</th>
+                      <th scope="col">결제 일자</th>
                       <th scope="col">영수증</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="item, index in planereservationItems" :key="index">
-                      <td>{{ item.reservation_no }}</td>
-                      <td>{{ item.reservation_purchastime }}</td>
-                      <td>{{ item.reservation_pricename }}</td>
-                      <td>{{ Number(item.reservation_price).toLocaleString() }}원</td>
-                      <td><a :href="item.reservation_receipturl" target="_blank">영수증 보기</a></td>
+                      <td>{{ item.flight_no }}</td>
+                      <td>{{item.flight_duration }}</td>
+                      <td>{{ item.flight_productname }}</td>
+                      <td>{{ item.flight_seattype }}</td>
+                      <td>{{ item.flight_seatnumber }}</td>
+                      <td>{{ item.flight_price }}</td>
+                      <td>{{ item.flight_paymentdate }}</td>
+                      <td><a :href="item.flight_receipt" target="_blank">영수증 보기</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -115,6 +121,17 @@ async function fetchReservation() {
     const dateB = new Date(b.reservation_purchastime);
     return dateB - dateA;  
   });
+
+  const flightResponse = await axios.get(`${process.env.VUE_APP_API_URL}/flightReservation`, {
+    params: { userId }
+  });
+
+  planereservationItems.value = flightResponse.data.sort((a, b) => {
+    const dateA = new Date(a.flight_paymentdate);
+    const dateB = new Date(b.flight_paymentdate);
+    return dateB - dateA;  
+  });
+
   showModal.value = true;
 }
 

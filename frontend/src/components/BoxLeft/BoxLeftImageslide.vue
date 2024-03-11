@@ -5,11 +5,8 @@
             class="image-gallery-slide"
             :class="{ center: props.currentIndex === index + 1, right: props.currentIndex < index + 1 }"
             :style="{ transform: `translate3d(${(index - props.currentIndex + 1) * 100}%, 0, 0)`, transition: 'all 450ms ease-out 0s' }">
-                <button v-if="isOcrImage[index] && !isTranslated[index]" @click="translateImage(index)">번역하기</button>
-                <button v-if="isTranslated[index] && !rotate[index]" @click="toggleRotate(index)">번역사진</button>
-                <button v-if="rotate[index]" @click="toggleRotate(index)">원본</button>
             <div class="image-gallery-image ">
-                <div class="lazyload-wrapper " style="width:650px;height:812px">
+                <div class="lazyload-wrapper " style="width:650px;height:484.59px">
                     <div class="image-flip" :class="{ rotate: rotate[index] }">
                         <div class="front">
                             <img :alt="image.alt" 
@@ -27,13 +24,19 @@
                         </div>
                     </div>
                 </div>
+            <button class="gallery-button" v-if="isOcrImage[index] && !isTranslated[index]" @click="translateImage(index)">번역하기</button>
+            <button class="gallery-button" v-if="isTranslated[index] && !rotate[index]" @click="toggleRotate(index)">번역사진</button>
+            <button class="gallery-button" v-if="rotate[index]" @click="toggleRotate(index)">원본</button>
+            <!-- <button class="gallery-button" @click="openModal">원본</button>     -->
             </div>
         </div>
     </div>
+    <LoadingModal />
 </template>
 <script setup>
 import axios from 'axios';
-import { ref,defineProps,defineEmits } from 'vue';
+import { ref,defineProps,defineEmits,provide } from 'vue';
+import LoadingModal from './LoadingModal.vue';
 //import axios from 'axios';
 
 const props = defineProps({
@@ -44,6 +47,13 @@ const props = defineProps({
 
 let rotate = ref(new Array(props.images.length).fill(false));
 let isTranslated = ref(new Array(props.images.length).fill(false));
+let isModalVisible = ref(false);
+
+// const openModal = () => {
+//   isModalVisible.value = true;
+// };
+
+provide('isModalVisible', isModalVisible);
 
 const toggleRotate = (index) => {
     rotate.value[index] = !rotate.value[index];
@@ -52,6 +62,7 @@ const toggleRotate = (index) => {
 //testImage.value = reader.result.split(",")[0]+','+response.data;
 const emit = defineEmits(['updateOcrImage']);
 const translateImage = async (index) => {
+    isModalVisible.value = true;
     let base64Image = props.images[index].src.split(",")[1];
     const sliceData = props.images[index].src.split(",")[0];
     axios.post(process.env.VUE_APP_PYTHON_API_URL+'/imageOcr', {
@@ -60,6 +71,7 @@ const translateImage = async (index) => {
     .then(response => {
         emit('updateOcrImage',index,response.data,sliceData);
         isTranslated.value[index] = true;
+        isModalVisible.value = false;
     })
     .catch(error => {
         console.log(error);
@@ -68,11 +80,32 @@ const translateImage = async (index) => {
 
 </script>
 <style scope>
+
+.image-gallery-image {
+    position: relative;
+}
+
+.gallery-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 15px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background .3s;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+
 .image-flip {
     position: relative;
     transform-style: preserve-3d;
     transition: transform 1s;
-    height: 812px;
+    height: 484.58px;
 }
 
 .front, .back {
@@ -91,7 +124,7 @@ const translateImage = async (index) => {
 }
 
 .hwNqPL .gl-cpt_imagallery .photo-list-warp .photo-list-imgs-list .image-gallery-slides {
-    padding-bottom: 812px;
+    padding-bottom: 484.58px;
     width: 100%;
 }
 @media screen and (min-width: 426px){

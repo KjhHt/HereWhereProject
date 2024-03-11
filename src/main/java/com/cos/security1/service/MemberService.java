@@ -126,6 +126,40 @@ public class MemberService {
 		return list;
 	}
 
+	public List<BoardDto> myBoard(String id, HttpServletRequest request) throws IOException {
+		List<BoardDto> list = mapper.myBoard(id);
+		for(BoardDto value : list) {
+			value.setProfileimage(convertProfileImageToBase64(value.getProfileimage(), request));
+			value.setBase64BoardImages(convertBoardImagesToBase64(value.getBoard_imageFileName(), request));
+		    //태그 (,)구분자로 리스트로 만들어서 전달!
+		    String boardTags = value.getBoard_tags();
+		    if(boardTags == null) {
+		    	//null 일때는 빈리스트 전달
+		    	value.setBoardTags(new String[0]);
+		    }
+		    else {
+		    	String[] splitBoardTags = boardTags.split(",");
+		    	value.setBoardTags(splitBoardTags);
+		    }
+		    String html = value.getBoard_content();
+		    String text = Jsoup.parse(html).text();
+		    value.setBoard_content(text);
+		    // 좋아요 누른사람들의 데이타 가져가보자.. (닉네임, 프로필이미지)
+		    List<LikeDto> likeList = mapper.getLikeList(value.getBoard_no());
+		    for(LikeDto likeValue : likeList) {
+		    	likeValue.setProfileimage(convertProfileImageToBase64(likeValue.getProfileimage(),request));
+		    }
+		    value.setLikeList(likeList);
+		    
+		    // 음.. 지역정보가 있는 테이블인지도 넣어주자!
+		    LocationDto locationDto = mapper.getLocationData(value.getBoard_no());
+		    value.setLocationList(locationDto);
+		}
+		
+		return list;
+	}
+
+	
 	public String convertProfileImageToBase64(String profileImage, HttpServletRequest req) throws IOException {
 	    //프로필 이미지가 서버에 저장이 되어있을때
 	    if( profileImage.startsWith("D:") || profileImage.startsWith("E:") ) {
@@ -368,6 +402,32 @@ public class MemberService {
 	public List<ReservationDto> findReservationsByUserId(String id) {
 		return mapper.findReservationsByUserId(id);
 	}
+
+	public void insertFlightReservation(ReservationDto reservationDto) {
+		mapper.insertFlightReservation(reservationDto);
+	}
+
+	public List<ReservationDto> findFlightReservationsByUserId(String id) {
+		return mapper.findFlightReservationsByUserId(id);
+	}
+
+	public UserDto getMypageHeader(String id,HttpServletRequest request) throws IOException {
+		
+		UserDto list = mapper.getMypageHeader(id);
+		
+		list.setProfileimage(convertProfileImageToBase64(list.getProfileimage(), request));
+		
+		return list;
+	}
+
+	public List<FollowDto> getMyFollowList(String id, HttpServletRequest request) throws IOException {
+		List<FollowDto> list = mapper.getMyFollowList(id);
+		for(FollowDto value : list) {
+			value.setProfileImage(convertProfileImageToBase64(value.getProfileImage(), request));
+		}
+		return list;
+	}
+
 
 
 

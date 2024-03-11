@@ -27,4 +27,9 @@ public class CommentDto {
 	//댓글 좋아요 개수 및 여부
 	private String like_count;
 	private String user_liked;
+	
+	//댓글 감정분석
+	private String comment_result;
+	private String comment_probability;
+	private String comment_sentiment;
 }

@@ -12,13 +12,12 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class ScheduleDto {
 	
-	private Long schedule_id;
-	private String title;
-	private Date start_date;
-	private Date end_date;
+	private Long schedule_no;
+	private String schedule_title;
+	private Date schedule_startdate;
+	private Date schedule_enddate;
 	private String id;
 
 }

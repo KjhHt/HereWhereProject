@@ -3,7 +3,7 @@
       <div class="card-body d-flex justify-content-between">
         <div class="card-info">
           <div class="card-info-head">
-            <p>{{ props.schedule.title }}</p>
+            <p>{{ props.schedule.schedule_title }}</p>
           </div>
           <br/>
           <div class="card-info-body">
@@ -11,13 +11,13 @@
                 <div class="d-flex flex-column align-items-center">
                     <label for="departure">여행 시작</label>
                     <br>
-                    <input :value="props.schedule.departure" id="departure" name="departure" type="date" :min="today" readonly>
+                    <input :value="formattedDate(props.schedule.schedule_startdate)" id="departure" name="departure" type="date" readonly>
                 </div>
                 <span>~</span>
                 <div class="d-flex flex-column align-items-center">
                     <label for="arrival">여행 끝</label>
                     <br>
-                    <input :value="props.schedule.departure" id="arrival" name="arrival" type="date" :min="today" readonly>
+                    <input :value="formattedDate(props.schedule.schedule_enddate)" id="arrival" name="arrival" type="date" readonly>
                 </div>
             </div>
           </div>
@@ -27,30 +27,20 @@
           </div>
         </div>
         <div class="card-image">
-            <img v-if="props.schedule.plans.length !==0" :src="setPhotoUrl_(schedule.plans[0].photos)" alt="일정 여행지사진" />
-            <img v-else :src="setPhotoUrl_(null)" alt="일정 여행지사진" />
+            <!--<img v-if="plan.photos.length !==0" :src="setPhotoUrl_(schedule.plans[0].photos)" alt="일정 여행지사진" />-->
+            <img :src="setPhotoUrl_(null)" alt="일정 여행지사진" />
         </div>
       </div>
     </div>
 </template>
     
 <script setup>
-import { defineProps, ref } from 'vue';
-import { setPhotoUrl_ } from '@/composable/custom';
+import { defineProps } from 'vue';
+import { setPhotoUrl_,formattedDate } from '@/composable/custom';
 
 const props=defineProps({
-    schedule: Object
+    schedule: Object,
 })
-
-const getTodayDate=()=>{
-    const today = new Date();
-    const month = ('0' + (today.getMonth() + 1)).slice(-2);
-    const day = ('0' + today.getDate()).slice(-2);
-    return `${today.getFullYear()}-${month}-${day}`;
-}
-
-const today= ref(getTodayDate())
-
 </script>
 
 <style scoped>

@@ -28,7 +28,7 @@ watch(()=>props.coords, coords=>{
         strokeOpacity: 1.0,
         strokeWeight: 2,
       }
-    sendCamera(coords)
+      sendCamera(coords);
   }
 },{deep:true})
 

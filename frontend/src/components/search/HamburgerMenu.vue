@@ -6,7 +6,7 @@
       <path class="line bottom" d="m 30,67 h 40 c 0,0 8.5,0.149796 8.5,-8.5 0,-8.649796 -8.5,-8.5 -8.5,-8.5 h -20 v 20" />
     </svg>
     <!-- 2.21일 수정 -->
-    <ul :style="{ height: menuOpened ? '260px' : '0px', transition: 'height 0.3s', padding: menuOpened ? '0px' : '0px' }">
+    <ul :style="{ height: menuOpened ? '300px' : '0px', transition: 'height 0.3s', padding: menuOpened ? '0px' : '0px' }">
       <li>
         <a href="#" 
         type="button" 
@@ -25,7 +25,6 @@
         data-bs-toggle="offcanvas" 
         data-bs-target="#offcanvasPlan" 
         aria-controls="offcanvasPlan"
-        ref="planRef"
         class="search-button nav-icon"
         @click="closeMenu">
           <i class="bi bi-calendar-plus-fill" style="font-size: 27px;"></i>
@@ -68,18 +67,25 @@
           <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
         </a>
       </li>
+      <li>
+        <a href="#" 
+        type="button" 
+        class="search-button nav-icon"
+        @click="showRoute">
+          <i class="fa-solid fa-diamond-turn-right" style="font-size: 27px;"></i>
+          <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
+        </a>
+      </li>
     </ul>
   </nav>
 </template>
   
 <script setup>
-import { ref,defineProps,watchEffect,defineEmits } from 'vue';
-
-const planRef= ref(null);
+import { ref,defineEmits } from 'vue';
 
 const menuOpened = ref(false);
 
-const emit= defineEmits(['setMarkerStatus']);
+const emit= defineEmits(['setMarkerStatus','showRoute']);
 
 const toggleClass = () => {
   menuOpened.value = !menuOpened.value;
@@ -90,15 +96,9 @@ const closeMenu = (status) => {
   if(status) emit('setMarkerStatus',status);
 };
 
-const props= defineProps({
-  showPlan: Boolean
-})
-
-watchEffect(()=>{
-  if(props.showPlan) {
-    planRef.value.click();
-  }
-})
+const showRoute= ()=> {
+  emit('showRoute');
+}
 </script>
   
 <style scoped>
@@ -113,6 +113,7 @@ ul {
     float: right;
     width: 100%;
     border-radius: 10px;
+    margin-bottom: 0;
 }
 li {
   float: right;

@@ -38,7 +38,6 @@ onMounted(() => {
 });
 
 const handleImgClick = (value) => {
-  console.log('과연 ??~~',value);
   emit('imgClick', value);
 }
 
@@ -58,7 +57,7 @@ const prev = () => {
 .carousel-control-prev,
 .carousel-control-next {
   position: fixed;
-  top: 85%; /* 버튼을 화면 세로 중앙에 위치시킵니다 */
+  top: 89%; /* 버튼을 화면 세로 중앙에 위치시킵니다 */
   transform: translateY(-50%); /* 버튼의 중앙이 화면 세로 중앙에 정확히 오도록 조정합니다 */
   background-color: black;
   width: 50px;

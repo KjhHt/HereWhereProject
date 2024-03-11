@@ -48,4 +48,6 @@ public class BoardDto {
 	
 	//게시판 위치정보
 	private LocationDto locationList;
+	
+	
 }

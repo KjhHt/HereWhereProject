@@ -13,10 +13,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PlanDto {
 
-	private String place_name;
-	private String place_img;
-	private Long schedule_id;
-	private String place_id;
-	private Date plan_date;
+	private Long plan_no;
+	private String plan_name;
+	private String plan_img;
+	private String plan_placeid;
+	private Date plan_registrationdate;
+	private Long schedule_no;
 	
 }

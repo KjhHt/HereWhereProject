@@ -77,3 +77,30 @@ var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
 var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 return earthRadiusKm * c;
 }
+
+export function formattedDate(date){
+  let dateStr = date
+  let dateObj = new Date(dateStr)
+  return dateObj.toISOString().split('T')[0]
+}
+
+export function nextSevenDay(){
+  // 현재 날짜를 가져옵니다.
+  let date = new Date();
+
+  // 현재 날짜에 하루를 더합니다.
+  date.setDate(date.getDate() + 7);
+
+  // 년, 월, 일을 가져옵니다.
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1; // JavaScript의 월은 0부터 시작하므로 1을 더해줍니다.
+  let day = date.getDate();
+
+  // 월과 일이 한 자리 수일 경우 앞에 0을 붙여 두 자리로 만듭니다.
+  if (month < 10) month = '0' + month;
+  if (day < 10) day = '0' + day;
+
+  // 년, 월, 일을 '-'로 연결하여 날짜 문자열을 만듭니다.
+  let nextDay = year + '-' + month + '-' + day;
+  return nextDay
+}

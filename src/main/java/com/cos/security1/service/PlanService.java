@@ -26,8 +26,12 @@ public class PlanService {
 		return mapper.getSchedules(id);
 	}
 	
-	public List<PlanDto> findPlans(Long scheduleId){
-		return mapper.getPlans(scheduleId);
+	public List<PlanDto> findPlans(Long scheduleNo){
+		return mapper.getPlans(scheduleNo);
+	}
+
+	public ScheduleDto findScheduleByNo(String schedule_no) {
+		return mapper.getScheduleByNo(schedule_no);
 	}
 	
 }

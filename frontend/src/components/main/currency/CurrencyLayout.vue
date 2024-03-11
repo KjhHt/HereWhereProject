@@ -1,6 +1,6 @@
 <template>
     <CurrencyTitle :currency-title="currencyData" @select-code="selectCode"/>
-    <CurrencySelectTab @select-tab="selectTab"/>
+    <CurrencySelectTab @select-tab="selectTab" :data-type="dataType"/>
     <CurrencyChart :currencyData="currencyData" :data-type="dataType"/>
     
 </template>
@@ -12,7 +12,7 @@ import { formattedCurrencyCodes } from '@/config/currencyConfig';
 import { ref } from 'vue'
 import axios from 'axios'
 
-const currencyData=ref([]);
+const currencyData=ref({});
 const countryNumber=ref(1);
 const dataType=ref('all');
 

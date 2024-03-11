@@ -72,6 +72,6 @@ color:rgb(240, 62, 62);
 .image-item {
 display: flex; /* 이미지와 이미지 정보를 세로로 배치 */
 flex-direction: column; /* 요소들을 세로로 배치 */
-max-width: 19em;
+
 }
 </style>

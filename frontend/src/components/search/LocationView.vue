@@ -6,10 +6,10 @@
       </header> -->
       <div class="map-container">
         <div class="custom-hamburger-menu">
-          <Hamburgermenu :showPlan="showPlan" @setMarkerStatus="status=>markerStatus=status"/>
+          <Hamburgermenu :showPlan="showPlan" @setMarkerStatus="status=>markerStatus=status" @showRoute="showRoute=true"/>
         </div>
         <!--검색 오프-->
-      <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 430px;  height: calc(100vh - 90px); bottom: 0; top: auto; border: none;">
+      <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 430px;  height: calc(100vh - 80px); bottom: 0; top: auto; border: none;">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>
           <!-- 2.21일 수정 -->
@@ -70,31 +70,32 @@
         </div>
       </div>
 
-    <!--관심여행 오프-->
+    <!--일정 오프-->
     <div class="offcanvas offcanvas-start"
           data-bs-scroll="true"
           data-bs-backdrop="false"
           tabindex="-1"
           id="offcanvasPlan"
           aria-labelledby="offcanvasPlan"
-          style="width: 410px; height: calc(100vh - 90px); bottom: 0; top: auto; border: none;">
+          ref="planRef"
+          style="width: 410px; height: calc(100vh - 80px); bottom: 0; top: auto; border: none;">
       <!-- 2.21일 수정 -->
       <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
             <div>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" ref="planRef" @click="hideDetail"><i class="bi bi-chevron-double-left"></i></button> 
+              <button type="button" class="btn-close" aria-label="Close" @click="closeSchedule"><i class="bi bi-chevron-double-left"></i></button> 
             </div>
             <h5 style="margin-top: 11px; margin-left: -13px;">Here Where Travel Plan</h5>
             <div style="width: same-as-button;"></div>
           </div>
       <div class="offcanvas-body">
-        <ScheduleCard v-show="showSchedule" v-for="(schedule,index) in scheduleList" :key="index" :schedule="schedule" @click="getPlan(scheduleList,index)"/>
+        <ScheduleCard v-show="showSchedule" v-for="(schedule,index) in scheduleList" :key="index" :schedule="schedule" @click="getPlanList(schedule)"/>
         <div v-show="!showSchedule">{{ planTitle }}</div>
         <PlanCard v-show="!showSchedule" v-for="(plan,index) in plansList" :key="index" :plan="plan" @passArrival="arrivalRoute"/>
         <div class="noplan-div" v-show="scheduleList.length === 0">
-          <strong>여행계획이 없습니다.</strong>
+          <strong>여행일정이 없습니다.</strong>
           <a href="#" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#scheduleDateModal">여행일정 만들기</a>
         </div>
-        <div class="" v-show="showAddSchedule">
+        <div class="" v-if="scheduleList.length > 0 && showSchedule">
           <a href="#" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#scheduleDateModal">여행일정 만들기</a>
         </div>
       </div>
@@ -106,7 +107,7 @@
           tabindex="-1"
           id="offcanvasRestaurant"
           aria-labelledby="offcanvasRestaurantLabel"
-          style="width: 410px; height: calc(100vh - 90px); bottom: 0; top: auto; border: none;">
+          style="width: 410px; height: calc(100vh - 80px); bottom: 0; top: auto; border: none;">
           <!-- 2.21일 수정 -->
           <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
             <div>
@@ -127,7 +128,7 @@
           tabindex="-1"
           id="offcanvasHotel"
           aria-labelledby="offcanvasHotelLabel"
-          style="width: 410px;  height: calc(100vh - 90px); bottom: 0; top: auto; border: none;">
+          style="width: 410px;  height: calc(100vh - 80px); bottom: 0; top: auto; border: none;">
           <!-- 2.21일 수정 -->
           <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
             <div>
@@ -150,7 +151,7 @@
           tabindex="-1"
           id="offcanvasAttraction"
           aria-labelledby="offcanvasAttractionLabel"
-          style="width: 410px;  height: calc(100vh - 90px); bottom: 0; top: auto; border: none;">
+          style="width: 410px;  height: calc(100vh - 80px); bottom: 0; top: auto; border: none;">
           <!-- 2.21일 수정 -->
           <div class="offcanvas-header d-flex justify-content-between align-items-center" style="height: 50px;">
             <div>
@@ -172,7 +173,7 @@
         </div>
         <div class="offcanvas-form" id="modal_form">
           <div class="offcanvas-start">
-            <RouteRecommendation @setDraw="drivePath=>setDraw(drivePath)" 
+            <RouteRecommendation @passIataCode="passIataCode" @setDraw="drivePath=>setDraw(drivePath)"
                   @passRouteLocation="e=>routeCoords=e" :routeInfo="clickInfo" 
                   :arrivals="arrivalsValue" :map="mapRef" :showRoute="showRoute"
             />
@@ -245,14 +246,14 @@
   // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import * as THREE from 'three';
   import { ref, watch, computed, onMounted, defineProps, defineEmits, onUnmounted } from "vue";
-  import { geoLocation } from '@/composable/geoLocation'
-  import gsap from 'gsap'
+  import { geoLocation } from '@/composable/geoLocation';
+  import gsap from 'gsap';
   import axios from "axios";
-  import StreetView from '@/components/search/StreetView.vue'
-  import SearchImage from '@/components/search/SearchImage.vue'
-  import RestaurantCard from '@/components/search/RestaurantCard.vue'
+  import StreetView from '@/components/search/StreetView.vue';
+  import SearchImage from '@/components/search/SearchImage.vue';
+  import RestaurantCard from '@/components/search/RestaurantCard.vue';
   import AttractionCard from '@/components/search/AttractionCard.vue';
-  import Hamburgermenu from '@/components/search/HamburgerMenu.vue'
+  import Hamburgermenu from '@/components/search/HamburgerMenu.vue';
   import RouteRecommendation from "@/components/search/RouteRecommendation.vue";
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
   import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js, 경로검색 placeholder토글
@@ -265,14 +266,17 @@
   import News from "@/components/search/NewsCard.vue";
   import MarkerCluster from "@/components/search/MarkerCluster.vue";
   import LoadingOverlay from '@/components/search/LoadingModal.vue';
-  import ScheduleDate from '@/components/search/ScheduleDate.vue'
-  import Recommend from '@/components/search/RecommendTravel.vue'
+  import ScheduleDate from '@/components/search/ScheduleDate.vue';
+  import ScheduleCard from "@/components/search/ScheduleCard.vue";
+  import PlanModal from "@/components/search/PlanModal.vue";
+  import Recommend from '@/components/search/RecommendTravel.vue';
+  import { Offcanvas } from "bootstrap";
   
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
-  const planRef= ref(false);
   const showPlan= ref(false);
   const leftOffButton= ref(null);
+  const planRef= ref(null);
   const routeCoords=ref({});
   let searchList= ref([]);
   const weatherData=ref([]);
@@ -285,6 +289,7 @@
   let showAddSchedule= ref(false);
   let planTitle= ref('');
   let markerStatus= ref('');
+  let planOff = null
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
 
   const locationInfo=ref({
@@ -298,16 +303,18 @@
   const props = defineProps({
     locationValue: String,
     locationLatLng : Object,
-    predictimg: Object
+    predictimg: Object,
   });
 
   onMounted(()=>{
     searchRef.value.value=props.locationValue
     profileImage.value=localStorage.getItem('profileImage');
     createObserver();
+    getScheduleList();
+    planOff= new Offcanvas(planRef.value);
   });
 
-  const emit= defineEmits(['disconnect'])
+  const emit= defineEmits(['disconnect','passIataCode'])
   const disconnect=()=>{
     emit('disconnect')
   }
@@ -382,28 +389,26 @@
   //일정 함수
   function addSchedule(schedule){ //일정 추가 이벤트    
     axios.post(process.env.VUE_APP_API_URL+'/addSchedule', {
-      title: schedule.title,
-      start_date: schedule.departure,
-      end_date: schedule.arrival,
+      schedule_title: schedule.title,
+      schedule_startdate: schedule.departure,
+      schedule_enddate: schedule.arrival,
       id: vuexStore.loginStore.userInfo.id
     }).then(()=>{
-      scheduleList.value.push(schedule);
+      getScheduleList();
       showAddSchedule.value= false;
     }).catch(error=>{
-      console.log(error);
-      /*수정*/
-      scheduleList.value.push(schedule);
-      showAddSchedule.value= false;
+      console.log('일정추가 실패',error);
     });
   }
 
-  function getPlan(scheduleList, index){ //일정 클릭해서 여행계획 보여주기
-    if(scheduleList[index].plans.length > 0){
-      plansList.value= scheduleList[index].plans;
-      planTitle.value= scheduleList[index].title;
-      showSchedule.value= false;
-      showAddSchedule.value= false;
-    }
+  function getScheduleList(){ //일정 가져오기
+    axios.get(process.env.VUE_APP_API_URL+'/getSchedule', {
+      params:{id: vuexStore.loginStore.userInfo.id}
+    }).then(response=>{
+      scheduleList.value= response.data;
+    }).catch(error=>{
+      console.log('일정가져오기 실패',error);
+    });
   }
 
   function addPlan(){
@@ -411,21 +416,34 @@
       var addScheduleModal= new Modal(document.querySelector('#scheduleDateModal'),{});
       addScheduleModal.show();
     }else{
-      console.log(scheduleList.value)
       var addPlanModal= new Modal(document.querySelector('#addPlanModal'),{});
       addPlanModal.show();
     }
   }
 
-  function setPlan(passScheduleList){
-    scheduleList.value= passScheduleList;
+  function getPlanList(schedule){
+    axios.get(process.env.VUE_APP_API_URL+'/getPlan',{
+      params:{schedule_no: schedule.schedule_no}
+    }).then(response=>{
+      plansList.value= response.data;
+      showPlan.value= true;
+      showSchedule.value= false;
+    }).catch(error=>{
+      console.log('plan가져오기 실패',error);
+    });
+  }
+
+  function setPlan(schedule){
+    getPlanList(schedule);
     showPlan.value= true;
+    showSchedule.value= false;
   }
  
   async function getYoutubeData(address){
     const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
     youtubeData.value=response.data
   }
+
   async function getNearbyHotels(lat, lng, number, check_in, check_out) {
     try {
       loadinghotel.value = true;
@@ -506,7 +524,6 @@
     moveToPosition(location)
     updateInfoWindow(places)
   }
-    
   const customMarkerRef=ref(null);
 
   function customMarkerLoaded(){
@@ -568,54 +585,36 @@
   const selectedMarkerIndex=ref(null);
     
   let targetZoom = 18; // 최종적으로 도달하고자 하는 zoom 수준
-  let targetHeading = 160; // 최종적으로 도달하고자 하는 헤딩 값
-  let targetTilt = 47.5; // 최종적으로 도달하고자 하는 틸트 값
   let savedPosition;//,startPosition,startTime=null;
-  let currentZoom,currentHeading,currentTilt;
-  // let duration=3000;
    
   function animateMap() {
-    if (!savedPosition) return;
-  
-    const currentPosition = { lat: map.getCenter().lat(), lng: map.getCenter().lng() };
-    const diffLat = Math.abs(currentPosition.lat - savedPosition.lat);
-    const diffLng = Math.abs(currentPosition.lng - savedPosition.lng);
-    // const currentDistance = calculateDistance(currentPosition, savedPosition);
-  
-    // 이동, 회전, 틸트 속도 조절 (값은 예시로, 상황에 맞게 조절)
-    const moveSpeed = 0.02;
-    const tiltSpeed = 0.03;
-    const headingSpeed = 0.03;
-    const zoomSpeed = 0.03;
-  
-    // 현재 줌, 헤딩, 틸트 값 업데이트
-    currentZoom = map.getZoom() + (targetZoom - map.getZoom()) * zoomSpeed;
-    currentHeading = map.getHeading() + (targetHeading - map.getHeading()) * headingSpeed;
-    currentTilt = map.getTilt() + (targetTilt - map.getTilt()) * tiltSpeed;
-  
-    // 위치 업데이트
-    const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed;
-    const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed;
-    
-    map.setCenter({ lat: newLat, lng: newLng });
-  
-    // 카메라 이동
-    map.moveCamera({
-      zoom: currentZoom,
-      heading: currentHeading,
-      tilt: currentTilt
-    });
-  
-    // 모든 조건이 충족될 때까지 재귀 호출
-    if (diffLat > 0.0001 || diffLng > 0.0001 || Math.abs(currentZoom - targetZoom) > 0.1 || Math.abs(currentHeading - targetHeading) > 1 || Math.abs(currentTilt - targetTilt) > 1) {
-      requestAnimationFrame(animateMap);
-    } else {
-      // 애니메이션 완료 후 인포 윈도우 위치 업데이트
-      windowOptions.value.position = { lat: savedPosition.lat-0.00025, lng: savedPosition.lng+0.00012 };
-      infoRef.value.infoWindow.setPosition(windowOptions.value.position);
-      infoRef.value.infoWindow.open(mapRef.value.map);
-    }
+  if (!savedPosition) return;
+
+  const currentPosition = { lat: map.getCenter().lat(), lng: map.getCenter().lng() };
+
+  const moveSpeed = 1;
+  const zoomSpeed = 0.03;
+
+  // 위치와 줌 업데이트
+  const newLat = currentPosition.lat + (savedPosition.lat - currentPosition.lat) * moveSpeed;
+  const newLng = currentPosition.lng + (savedPosition.lng - currentPosition.lng) * moveSpeed;
+  const newZoom = map.getZoom() + (targetZoom - map.getZoom()) * zoomSpeed;
+
+  map.setCenter({ lat: newLat, lng: newLng });
+
+  // 카메라 이동
+  map.moveCamera({ zoom: newZoom });
+
+  // 조건이 충족되지 않으면 계속해서 animateMap 함수를 호출
+  if (Math.abs(newZoom - targetZoom) > 0.1) {
+    requestAnimationFrame(animateMap);
+  } else {
+    // 애니메이션 완료 후 인포 윈도우 위치 업데이트
+    windowOptions.value.position = { lat: savedPosition.lat+0.00015, lng: savedPosition.lng };
+    infoRef.value.infoWindow.setPosition(windowOptions.value.position);
+    infoRef.value.infoWindow.open(mapRef.value.map);
   }
+}
   
   function getPositionValue(value) {
     if (typeof value === 'function') {
@@ -685,6 +684,7 @@
   const directionRenderer=ref(null);
   const placesService=ref(null);
   let places={}
+  let autoplaces={}
   let latNumber= ref(null)
   let lngNumber= ref(null)
   let predict = ref(null)
@@ -722,13 +722,13 @@
     // 요청에 bounds 옵션이 있습니다.
     autoComplete.bindTo("bounds", map);
     autoComplete.addListener('place_changed',()=>{
-      places=autoComplete.getPlace();
-      if(Object.keys(places).length > 1) {
+      autoplaces=autoComplete.getPlace();
+      if(Object.keys(autoplaces).length > 1) {
         leftOffButton.value.click();
-        searchLocation(places)
+        searchLocation(autoplaces)
       }else{
         searchList.value= [];
-        let request= {query: places.name};
+        let request= {query: autoplaces.name};
         placesService.value.textSearch(request,(result,status)=>{
           if(status === 'OK') {
             searchList.value= result;
@@ -736,7 +736,7 @@
           return;
         });
       }
-    });  
+    });
   
     scene = new THREE.Scene();
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
@@ -790,27 +790,15 @@
       // Always reset the GL state.
       renderer.resetState();
     }
-
-    const getPlaceData = (place) => {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      placeLatLng.value = { lat, lng }; // 위도와 경도를 저장합니다.
-      getNearbyRestaurants(lat, lng);
-      getNearbyAttractions(lat, lng);
-      getNearbyHotels(lat, lng, 2, nextDay,followingDay);
-      getYoutubeData(place.name)
-      map.setCenter({ lat, lng });
-      updateInfoWindow(place);
-      getWeather(lat, lng);
-      getNews(lat, lng);
-    }
     
     if (props.locationValue && searchRef.value) {
+      console.log(props.locationValue);
       placesService.value.textSearch({query:props.locationValue}, (result, status) => {
             if (status === 'OK') {
-              places = result[0]
-              getPlaceData(places);
-        } 
+              places = result[0];
+              console.log(places);
+              searchLocation(places);
+            }else(console.log(status)) 
       });
     }
     else if (props.locationLatLng && props.locationLatLng.length >=1 ) {
@@ -849,6 +837,7 @@
 
   function routeToggle(){
     showRoute.value = false;
+    stopOver.value= [];
   }
 
   const arrivalRoute=arrival=>{
@@ -870,13 +859,26 @@
     }
   }
 
+  function getMidpoint(lat1, lng1, lat2, lng2) {
+    const midLat = (lat1 + lat2) / 2;
+    const midLng = (lng1 + lng2) / 2;
+    
+    return { lat: midLat, lng: midLng };
+  }
+
   const cameraCenter=(data)=>{
     let distance= getDistanceInKm(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng);
-    if(distance<1) map.moveCamera({zoom:17})
-    else if(distance<5) map.moveCamera({zoom:15})
-    else if(distance<20) map.moveCamera({zoom:12})
-    else if(distance<100) map.moveCamera({zoom:8})
-    mapRef.value.map.setCenter(data[parseInt(data.length/2)]);
+    setTimeout(()=>{
+      if(distance<1) map.moveCamera({zoom:17});
+      else if(distance<5) map.moveCamera({zoom:15});
+      else if(distance<20) map.moveCamera({zoom:12});
+      else if(distance<100) map.moveCamera({zoom:8});
+      else if(distance<500) map.moveCamera({zoom:7});
+      else if(distance<1000) map.moveCamera({zoom:5});
+      else map.moveCamera({zoom:3});
+      let midPoint= getMidpoint(data[0].lat,data[0].lng,data[data.length-1].lat,data[data.length-1].lng)
+      mapRef.value.map.setCenter(midPoint);
+    },500);
   }
 
   const searchClick= searchInfo=> {
@@ -939,6 +941,19 @@
       places= info
       searchLocation(places)
     }
+  }
+
+  function closeSchedule(){
+    if(showPlan.value && !showSchedule.value){
+      showPlan.value= !showPlan.value;
+      showSchedule.value= !showSchedule.value;
+    }else{
+      planOff.hide();
+    }
+  }
+
+  function passIataCode(iata){
+    emit('passIataCode',iata);
   }
 
   </script>

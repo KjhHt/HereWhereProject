@@ -66,7 +66,7 @@
     */
     </script>
     
-    <style>
+    <style scoped>
     .panolens-page {
     position: fixed;
     top: 0;

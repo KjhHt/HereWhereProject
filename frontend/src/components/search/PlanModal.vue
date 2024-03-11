@@ -10,12 +10,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="closeBtn"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="schedule-card" v-for="(schedule,index) in props.scheduleList" :key="index" @click="addPlan(index)">
+                    <div class="schedule-card" v-for="(schedule,index) in props.scheduleList" :key="index" @click="addPlan(schedule)">
                         <div class="card-body d-flex justify-content-between">
                             <!-- Card Info -->
                             <div class="card-info">
                                 <div class="card-info-head">
-                                    <p class="mb-0">{{ schedule.title }}</p>
+                                    <p class="mb-0"><strong>{{ schedule.schedule_title }}</strong></p>
                                 </div>
                                 <br/>
                                 <div class="card-info-body">
@@ -23,20 +23,16 @@
                                         <div class="d-flex flex-column align-items-center">
                                             <label for="departure">여행 시작</label>
                                             <br>
-                                            <input :value="schedule.departure" id="departure" name="departure" type="date" :min="today" readonly>
+                                            <input :value="formattedDate(schedule.schedule_startdate)" id="departure" name="departure" type="date" :min="today" readonly>
                                         </div>
                                         <span>~</span>
                                         <div class="d-flex flex-column align-items-center">
                                             <label for="arrival">여행 끝</label>
                                             <br>
-                                            <input :value="schedule.departure" id="arrival" name="arrival" type="date" :min="today" readonly>
+                                            <input :value="formattedDate(schedule.schedule_enddate)" id="arrival" name="arrival" type="date" :min="today" readonly>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-image">
-                                <img v-if="schedule.plans.length !==0" :src="setPhotoUrl_(schedule.plans[0].photos)" alt="일정 여행지사진" />
-                                <img v-else :src="setPhotoUrl_(null)" alt="일정 여행지사진" />
                             </div>
                         </div>
                     </div>
@@ -47,35 +43,62 @@
 </template>
 
 <script setup>
-import { defineProps,ref,defineEmits,watch } from 'vue';
-import { setPhotoUrl_ } from '@/composable/custom';
+import { defineProps,ref,defineEmits } from 'vue';
+import { formattedDate } from '@/composable/custom';
+import axios from 'axios';
 
 const closeBtn= ref(null);
-let scheduleList= [];
-
-const emit= defineEmits(['']);
+let plansList= ref([]);
 
 const props= defineProps({
     scheduleList: Array,
     places: Object
 })
 
-watch(()=>props.scheduleList, ()=>{
-    scheduleList= props.scheduleList
-},{deep:true})
+const emit= defineEmits(['addPlan']);
 
-const addPlan=(index)=>{
-    console.log('머임',scheduleList)
-    scheduleList[index].plans.push(props.places)
-    emit('addPlan',scheduleList)
-    closeBtn.value.click()
+function getPlanList(schedule){
+    axios.get(process.env.VUE_APP_API_URL+'/getPlan',{
+      params:{schedule_no: schedule.schedule_no}
+    }).then(response=>{
+      plansList.value= response.data;
+    });
+}
+
+const addPlan= schedule=>{
+    getPlanList(schedule)
+    plansList.value.forEach(plan=>{
+        if(plan.place_id===props.places.place_id) return
+    });
+    axios.post(process.env.VUE_APP_API_URL+'/addPlan',{
+        plan_name: props.places.name,
+        plan_img: props.places.photos[0].getUrl(),
+        plan_placeid: props.places.place_id,
+        schedule_no: schedule.schedule_no
+    }).then(()=>{
+        getPlanList(schedule);
+        closeBtn.value.click();
+        emit('addPlan',schedule);
+    }).catch(error=>{
+        console.log('플랜추가 실패',error)
+        closeBtn.value.click();
+    })
 }
 </script>
 
 <style scoped>
+.modal-content{
+  width: 474px;
+}
+.modal-body {
+  max-height: calc(100vh - 250px);
+  width:472px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
 .schedule-card {
   border: 1px solid #ddd;
-  width: 467px;
+  width: 420px;
   height: 150px;
   cursor: pointer;
   margin-bottom: 8px;

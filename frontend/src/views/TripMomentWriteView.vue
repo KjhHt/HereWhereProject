@@ -26,8 +26,21 @@ import TripMomentLocation from '@/components/TripMoment/TripMomentLocation.vue'
 import TripMomentHashtag from '@/components/TripMoment/TripMomentHashtag.vue'
 import TripMomentAddtag from '@/components/TripMoment/TripMomentAddtag.vue'
 
-import { ref,defineEmits } from 'vue';
+import { ref,defineEmits,onMounted } from 'vue';
 import axios from 'axios';
+import Papa from 'papaparse'
+
+const csvData=ref([]);
+
+onMounted(()=>{
+  Papa.parse('airports.csv', {
+    download: true,
+    header: true,
+    complete: (results) => {
+      csvData.value = results.data;
+    }
+  })
+})
 
 const emit = defineEmits(['selectPage']);
 // 값 종합 =>들어가는부분!
@@ -36,12 +49,50 @@ const title = ref('');
 const content = ref('');
 const tags = ref('');
 const location = ref({});
-//insert하고 반환된 게시판데이터 프로필,이미지 base64처리 후 보내주자
-// const boardInsertReturnData = ref({});
 
 
 //이미지 객체 감지 후 추천태그 추가 변수
 const newTags = ref([]);
+
+const searchAirports = (lat, lng) => {
+  return new Promise((resolve, reject) => {
+    const distance = 500;  // 검색 반경 (킬로미터 단위)
+    let airports=[];
+    csvData.value.forEach(row => {
+        try{
+        if(row.name && row.type.toLowerCase().includes("large_airport") && row.scheduled_service==="yes"){
+            const radLat = lat * Math.PI / 180;  // radians
+            const radLng = lng * Math.PI / 180;  // radians
+            const radLatAirport = parseFloat(row.latitude_deg) * Math.PI / 180;  // radians
+            const radLngAirport = parseFloat(row.longitude_deg) * Math.PI / 180;  // radians
+            const a = Math.pow(Math.sin((radLat - radLatAirport) / 2), 2)
+            + Math.cos(radLat) * Math.cos(radLatAirport) * Math.pow(Math.sin((radLng - radLngAirport) / 2), 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = 6371 * c;  // 지구의 반지름 (킬로미터 단위)
+            if (d <= distance) {
+            airports.push({...row, distance: d});  // 거리 정보를 추가하여 객체를 배열에 넣음
+            }
+        }
+        }catch(error){
+        reject(error);  // 에러가 발생하면 reject
+        }
+    });
+    // 거리에 따라 배열을 정렬
+    airports.sort((a, b) => a.distance - b.distance);
+    if(airports.length > 0) {
+        resolve(airports[0]);  // 가장 가까운 공항을 resolve
+    } else {
+        reject('No airport found');  // 공항을 찾지 못하면 reject
+    }
+  });
+};
+
+
+
+
+
+
+
 //이미지 파일들
 const updateImages = (newImages) => {
   images.value = newImages;
@@ -62,10 +113,6 @@ const updateLocation = (newLocation) => {
 const updateTags = (newTags) => {
   tags.value = newTags;
 };
-// //태그 추가
-// const updateTag = (data) => {
-
-// };
 
 //이미지 객체감지 추천태그 추가
 const updateLabels = (tags) => {
@@ -84,7 +131,7 @@ const deleteTag = (tag) => {
   newTags.value = newTags.value.filter(value => value !== tag);
 }
 // 서버에 데이타 입력하는부분
-const insertData = () => {
+const insertData = async () => {
   if (!images.value.length) { // images가 비어 있음 
     alert('이미지를 등록해주세요 !');
     return;
@@ -113,8 +160,15 @@ const insertData = () => {
   images.value.forEach((image) => {
       formData.append('boardImages', image.file);
   });
+
+  console.log('location.value searchAirports : ',location.value.location_lat);
+  let airportLocation = await searchAirports( location.value.location_lat , location.value.location_lng );
+  console.log(airportLocation);
+  console.log('공항코드 : ',airportLocation['iata_code']);
+  location.value['location_iatacode']=airportLocation['iata_code'];
+
   formData.append('dto', JSON.stringify(location.value));
-  axios.post('/user/boardInsert', formData, {
+  await axios.post('/user/boardInsert', formData, {
       headers: {
           'Content-Type': 'multipart/form-data'
       }

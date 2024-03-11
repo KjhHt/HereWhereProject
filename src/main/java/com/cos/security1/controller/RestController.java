@@ -50,6 +50,8 @@ public class RestController {
 	@Autowired
 	private PlanService planService;
 	
+	@Autowired
+	private PlanService planService;
 	@GetMapping("/user/test")
 	public String userTest() {
 		// 문자 메세지~~
@@ -199,6 +201,13 @@ public class RestController {
     	return dto;
     }
     
+    @GetMapping("/myBoard")
+    public List<BoardDto> myBoard(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	
+    	List<BoardDto> dto = service.myBoard(id,request);
+    			
+    	return dto;
+    }
     //프로필 이미지불러오기
     @GetMapping("/profile/{imageName}")
     public ResponseEntity<String> getImage(@PathVariable String imageName,HttpServletRequest req) throws IOException {
@@ -240,6 +249,7 @@ public class RestController {
     	
         ObjectMapper objectMapper = new ObjectMapper();
         LocationDto locationdto = objectMapper.readValue(dtoJson, LocationDto.class);
+        
 	    dto.setId(id);
 	    dto.setBoard_writer(name);
 	    dto.setBoard_title(title);
@@ -292,9 +302,7 @@ public class RestController {
 	    }
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
-    	
 	    commentDto.setId(id);
-    	
     	service.commentInsert(commentDto);
     }
     
@@ -438,11 +446,6 @@ public class RestController {
     	return "fail";
     }
     
-    @PostMapping("/insertReservation")
-    public void insertReservation(@RequestBody ReservationDto reservationDto) {
-    	service.insertReservation(reservationDto);
-    }
-    
     @PostMapping("/getIsFollowList")
     public List<FollowDto> getIsFollowList(HttpServletRequest req) {
     	// 비회원일때 처리해야함.
@@ -464,6 +467,16 @@ public class RestController {
 	    return dto;
     }
     
+    @PostMapping("/insertReservation")
+    public void insertReservation(@RequestBody ReservationDto reservationDto) {
+    	service.insertReservation(reservationDto);
+    }
+    
+    @PostMapping("/insertFlightReservation")
+    public void insertFlightReservation(@RequestBody ReservationDto reservationDto) {
+    	service.insertFlightReservation(reservationDto);
+    }
+    
     @GetMapping("/reservation")
     public List<ReservationDto> getReservation(@RequestParam String userId) {
         if (userId == null) {
@@ -475,14 +488,37 @@ public class RestController {
         return reservations;
     }
     
+    @GetMapping("/flightReservation")
+    public List<ReservationDto> getFlightReservation(@RequestParam String userId) {
+        if (userId == null) {
+            // 예외 처리 또는 다른 로직 추가
+            return null;
+        }
+        List<ReservationDto> flightReservations = service.findFlightReservationsByUserId(userId);
+        
+        return flightReservations;
+    }
+    
+    @GetMapping("/getMypageHeader")
+    public UserDto getMypageHeader(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	UserDto header = service.getMypageHeader(id,request);
+    	return header;
+    }
+    
+    @GetMapping("/getMyFollowList")
+    public List<FollowDto> getMyFollowList(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	List<FollowDto> list = service.getMyFollowList(id,request);
+    	return list;
+    }
+    
     @PostMapping("/addSchedule")
     public void insertSchedule(@RequestBody ScheduleDto scheduleDto) {
-    	System.out.println("스케쥴"+scheduleDto);
-    	//planService.addSchedule(scheduleDto);
+    	planService.addSchedule(scheduleDto);
     }
     
     @PostMapping("/addPlan")
     public void insertPlan(@RequestBody PlanDto planDto) {
+    	System.out.println(planDto);
     	planService.addPlan(planDto);
     }
     
@@ -491,9 +527,14 @@ public class RestController {
     	return planService.findSchedules(id);
     }
     
+    @GetMapping("/getScheduleByNo")
+    public ScheduleDto findScheduleByNo(@RequestParam String schedule_no) {
+    	return planService.findScheduleByNo(schedule_no);
+    }
+    
     @GetMapping("/getPlan")
-    public List<PlanDto> findPlan(@RequestParam Long scheduleId){
-    	return planService.findPlans(scheduleId);
+    public List<PlanDto> findPlan(@RequestParam Long schedule_no){
+    	return planService.findPlans(schedule_no);
     }
     
     
