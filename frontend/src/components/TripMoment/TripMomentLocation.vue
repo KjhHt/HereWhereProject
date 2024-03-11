@@ -18,7 +18,7 @@
                     </svg>  
                 </i>
                 <GoogleAddressAutocomplete 
-                    apiKey="AIzaSyA16otojrK96bOUH8jhs4Fp4gC3Glt2xrY"
+                    apiKey="AIzaSyB_xHRmY9pPWr9b6Big-8EmQLeGofecec0"
                     v-model="value"
                     @callback="callbackFunction" 
                     class="css-class-here"
@@ -39,14 +39,20 @@ const value = ref('');
 const emit = defineEmits('[updateLocation]');
 const callbackFunction = (e) => {
     console.log(e);
+    console.log('위도 : ',e.geometry.location.lat());
+    console.log('경도 : ',e.geometry.location.lng());
     const photoUrl = e.photos[0].getUrl({maxWidth: 400}); //이미지 url임~
     const name = e.name; //이름 (검색한단어와 name이 다르면 데이타지우기)
     const address = e.formatted_address; //주소
     const rating = e.rating; //별점
     const placeid = e.place_id; //placeid
+    const lat = e.geometry.location.lat();
+    const lng = e.geometry.location.lng();
     locationData.value['location_name']=name;
     locationData.value['location_address']=address;
     locationData.value['location_imageurl']=photoUrl;
+    locationData.value['location_lat']=lat;
+    locationData.value['location_lng']=lng;
     //별점은 없을때가있어서, 없으면 0으로 처리
     if(rating)
         locationData.value['location_rating']=rating;

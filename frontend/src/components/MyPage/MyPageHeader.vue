@@ -2,22 +2,21 @@
 <div class="PersonalHomeStyle__HeaderContainer-sc-17u1tdw-3">
   <div class="header-wrap">
     <div class="avatar_container">
-      <img :src="avatarUrl" class="head" style="object-fit: cover;">
+      <img :src="headerData.profileimage" class="head" style="object-fit: cover;">
     </div>
     <div class="infor">
       <div class="name-container">
-        <h1 class="name">{{ name }}</h1>
+        <h1 class="name">{{ props.headerData.name }}</h1>
       </div>
-      <p class="address">{{ address }}</p>
 
       <div class="info-wrap">
         <div class="info-item">
-          <span class="info-num">{{ postNum }}</span>
+          <span class="info-num">{{ headerData.boardcount }}</span>
           <span class="info-name">게시물</span>
         </div>
         <div class="info-divider"></div>
         <div class="info-item" data-tabindex="0" @click="openModal">
-          <span class="info-num">{{ followerNum }}</span>
+          <span class="info-num">{{ headerData.followcount }}</span>
           <span class="info-name">팔로워</span>
         </div>
         
@@ -32,25 +31,47 @@
 </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref,defineProps,onMounted } from 'vue';
 import FollowModal from '@/components/BoxRight/FollowModal.vue';
-
-
-const avatarUrl = ref("https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces");
-const name = ref("janedoe_");
-const address = ref("이집트");
-const postNum = ref(4);
-
+import axios from 'axios';
 
 const showModal = ref(false);
+const likers = ref([]);
 
-const likers = ref([
-    { name: '카운트D', image: 'https://ak-d.tripcdn.com/images/a20r0n000000e0k5e2AF2_W_100_0_R5_Q90.jpg' },
-    { name: '용혜작가', image: 'https://ak-d.tripcdn.com/images/0a21v2234dg97ktjkE6C4_W_100_0_R5_Q90.jpg' },
-    { name: '_tx***r1', image: 'https://ak-d.tripcdn.com/images/Z8010v000000jy23y696A_W_100_0_R5_Q90.jpg' },
+onMounted( () => {
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const id = vuexStore.loginStore.userInfo.id;
+
+   axios.get(`${process.env.VUE_APP_API_URL}/getMyFollowList`,{
+    params : {
+      id:id
+    }
+  })
+  .then(res => {
     
-]);
-const followerNum = ref(likers.value.length);
+    res.data.forEach(item => {
+      if(item.profileImage === '0') {
+        item.profileImage = require('@/assets/dino.jpg');
+      }
+      else if(item.profileImage && !item.profileImage.startsWith("http")) {
+        item.profileImage = `data:${res.headers['content-type']};base64,${item.profileImage}`;
+      }
+    });
+
+    likers.value = res.data.map(liker => ({
+      name: liker.name,
+      profileimage: liker.profileImage
+    }));
+
+
+    console.log(likers.value);
+  })
+  .catch(err=>console.log(err))
+})
+
+const props = defineProps({
+  headerData : Object,
+})
 
 const openModal = () => {
   showModal.value = true;

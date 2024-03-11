@@ -69,7 +69,6 @@ public class NotificationApiController {
             // 사용자의 푸시 토큰을 데이터베이스에서 불러옵니다.
             String token = service.findTokenByUserId(request.getId());
             System.out.println("메세지 보낼때");
-            System.out.println("토큰값 : "+token);
             // 푸시 알림을 보내기 위한 정보를 설정합니다.
             request.setToken(token);
             // 푸시 알림을 보냅니다.

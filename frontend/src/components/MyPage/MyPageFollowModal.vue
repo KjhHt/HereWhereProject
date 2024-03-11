@@ -16,7 +16,7 @@
                         <div class="header-friend-item" v-for="liker in likers" :key="liker.name">
                             <div class="avatar">
                                 <div class="lazyload-wrapper ">
-                                    <img alt="avatar" :src="liker.image" style="object-fit: cover; background-image: url(&quot;https://ak-d.tripcdn.com/images/0551112000ct8bu4hAEDF.png&quot;); background-size: contain; background-repeat: no-repeat; background-position: center center;">
+                                    <img alt="avatar" :src="liker.image" style="object-fit: cover;">
                                 </div>
                             </div>
                             <div class="infor">

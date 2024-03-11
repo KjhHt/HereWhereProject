@@ -3,42 +3,35 @@
     <div class="card-body">
       <div class="card-info">
         <div class="card-info-head">
-          <p>{{ props.plan.name }}</p>
+          <p>{{ props.plan.plan_name }}</p>
         </div>
         <div class="card-info-body">
-          <p> {{ props.plan.formatted_address }}</p>
+          <p> 추가일자 {{ formattedDate(props.plan.plan_registrationdate) }}</p>
         </div>
         <div class="card-info-bottom">
-          <a href="#" class="btn btn-primary" @click="passArrival">경로</a>
-          <!--<p>편의시설: {{ props.hotel.convenience }}</p>-->
+          <!--<a href="#" class="btn btn-primary" @click="passArrival">경로</a>-->
         </div>
       </div>
       <div class="card-img">
-        <img :src="photoUrl" alt="맛집 이미지" />
+        <img :src="props.plan.plan_img" alt="맛집 이미지" />
       </div> 
     </div>
   </div>
 </template>
   
 <script setup>
-  import { defineProps, watchEffect, defineEmits, ref } from 'vue';
-  import { setPhotoUrl } from '@/composable/custom';
-
-  const photoUrl= ref();
+  import { defineProps } from 'vue';
+  import { formattedDate } from '@/composable/custom';
 
   const props=defineProps({
     plan: Object
   })
 
-  watchEffect(()=>{
-    setPhotoUrl(props.plan.photos, photoUrl)
-  });
-
-  const emit= defineEmits(['passArrival'])
-
+  //const emit= defineEmits(['passArrival'])
+  /*
   const passArrival=()=>{
     emit('passArrival', props.plan)
-  }
+  }*/
 
 </script>
   

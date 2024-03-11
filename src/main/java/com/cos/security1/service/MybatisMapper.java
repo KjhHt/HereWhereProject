@@ -12,7 +12,9 @@ import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LikeDto;
 import com.cos.security1.service.dto.LocationDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.PlanDto;
 import com.cos.security1.service.dto.ReservationDto;
+import com.cos.security1.service.dto.ScheduleDto;
 import com.cos.security1.service.dto.UserDto;
 
 @Mapper
@@ -59,7 +61,6 @@ public interface MybatisMapper {
 	int checkFollowRequest(FollowDto followRequest);
 	void insertFollow(FollowDto followRequest);
 	void successFollow(String notice_no);
-	
 	void FailFollow(String notice_no);
 	//채팅
 	ChatDto getDmNo(String id, String rid);
@@ -77,6 +78,17 @@ public interface MybatisMapper {
 	void insertReservation(ReservationDto reservationDto);
 	List<FollowDto> getIsFollowList(String id);
 	List<ReservationDto> findReservationsByUserId(String id);
+	void insertFlightReservation(ReservationDto reservationDto);
+	List<ReservationDto> findFlightReservationsByUserId(String id);
+	UserDto getMypageHeader(String id);
+	List<BoardDto> myBoard(String id);
+	List<FollowDto> getMyFollowList(String id);
 
+	//일정
+	void insertSchedule(ScheduleDto scheduleDto);
+	void insertPlan(PlanDto planDto);
+	List<ScheduleDto> getSchedules(String id);
+	List<PlanDto> getPlans(Long scheduleId);
+	ScheduleDto getScheduleByNo(String schedule_no);		
 	
 }

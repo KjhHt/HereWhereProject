@@ -72,9 +72,6 @@
         <div class="card-content">
           <p><i class="bi bi-clock-fill"></i> {{ getTodayOperatingTime }}</p>
         </div>
-        <div class="card-footer">
-          <button class="btn btn-fill"><i class="bi bi-calendar-plus-fill"></i> Here Where <br/>일정표에 추가하기</button>
-        </div>
       </div>
     </div>
   </div>
@@ -118,7 +115,7 @@ const getTodayOperatingTime = computed(() => {
 });
 
 function imgError(event){
-  event.target.src = require("@/assets/logo.png");
+  event.target.src = require("@/assets/place_default.png");
 }
 </script>
 

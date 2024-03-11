@@ -71,28 +71,21 @@ const searchHotel = () => {
   let lat, lng;
   //메인 사진 눌렀을때,검색했을때
   if (Object.keys(props.places).length > 0) {
-    console.log('1111111')
-    console.log('props.places',props.places)
     lat = props.places.geometry.location.lat();
     lng = props.places.geometry.location.lng();
   } 
   //이미지 지도에서 검색
   else if (props.imgplaces) {
-    console.log('222222')
-    console.log('props.imgplaces',props.imgplaces)
     lat = props.imgplaces.geometry.location.lat;
     lng = props.imgplaces.geometry.location.lng;
   } 
   //이미지 예측, 헤드위치검색 눌렀을때
   else if (props.latNumber && props.lngNumber) {
-    console.log('3333333')
-    console.log('props.latNumber',props.latNumber)
     lat = props.latNumber;
     lng = props.lngNumber;
   } 
 
   else {
-    console.log('444444')
     lat = 0;
     lng = 0;
   }

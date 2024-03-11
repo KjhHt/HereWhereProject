@@ -68,6 +68,13 @@
 	     	) bt
 	</select>
 	
+	<select id="myBoard" parameterType="String" resultType="BoardDto">
+		select bt.* , (SELECT COUNT(*) FROM like_table lt WHERE bt.board_no = lt.board_no) as like_count , m.profileimage
+		from board_table bt JOIN member m ON bt.id = m.id
+		where bt.id = #{id}
+		order by board_createtime desc
+	</select>
+	
 	<select id="getLocationData" parameterType="String" resultType="LocationDto">
 		SELECT * FROM board_location WHERE board_no = #{board_no}
 	</select>
@@ -126,7 +133,7 @@
 	
 	
 	<insert id="commentInsert" parameterType="CommentDto">
-		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no},#{id})
+		INSERT INTO board_comment VALUES(SEQ_BOARD_COMMENT.NEXTVAL,#{comment_writer},#{comment_content},sysdate,#{board_no},#{id},#{comment_result},#{comment_probability},#{comment_sentiment})
 	</insert>
 
 	<select id="islike" parameterType="String" resultType="int">
@@ -186,6 +193,17 @@
 		    END
 		WHERE (f.follow_senderid = #{id} OR f.follow_recipientid = #{id}) 
 		AND f.follow_is = 'Y'
+	</select>
+	
+	<select id="getMyFollowList" parameterType="String" resultType="FollowDto">
+		SELECT m.id,m.profileimage,m.name
+		FROM follow_table f
+		JOIN member m ON m.id = 
+		    CASE
+		        WHEN f.follow_senderid = #{id} THEN f.follow_recipientid
+		        WHEN f.follow_recipientid = #{id} THEN f.follow_senderid
+		    END
+		WHERE (f.follow_senderid = #{id} OR f.follow_recipientid = #{id})
 	</select>
 	
 	<select id="getIsFollowList" parameterType="String" resultType="FollowDto">
@@ -254,17 +272,73 @@
 	</delete>
 
 	<insert id="insertBoardLocation" parameterType="LocationDto">
-		INSERT INTO board_location VALUES(SEQ_BOARD_LOCATION.nextval,#{location_name},#{location_address},#{location_imageurl},#{location_rating},#{location_placeid},#{board_no})
+		INSERT INTO board_location VALUES(SEQ_BOARD_LOCATION.nextval,#{location_name},#{location_address},#{location_imageurl},#{location_rating},#{location_placeid},#{board_no},#{location_iatacode})
 	</insert>
 	
 	<!-- 예약 -->
 	<insert id="insertReservation" parameterType="ReservationDto">
 		INSERT INTO reservation_table VALUES(SEQ_RESERVATION_TABLE.nextval,#{reservation_lat},#{reservation_lng},#{reservation_pricename},#{reservation_price},sysdate,#{reservation_receipturl},#{id})
 	</insert>
+	<insert id="insertFlightReservation" parameterType="ReservationDto">
+		INSERT INTO flightreservation_table VALUES
+			(SEQ_FLIGHTRESERVATION_TABLE.nextval,
+				#{flight_productname},
+				#{flight_depcode},
+				#{flight_arrivalairportcode},
+				#{flight_departuredate},
+				#{flight_duration},
+				#{flight_seattype},
+				#{flight_seatnumber},
+				#{flight_price},
+				sysdate,
+				#{flight_receipt},
+				#{id})
+	</insert>
 	
 	<select id="findReservationsByUserId" resultType="ReservationDto" parameterType="String">
     	SELECT * FROM reservation_table WHERE id = #{id}
 	</select>
 	
-
+	<select id="findFlightReservationsByUserId" resultType="ReservationDto" parameterType="String">
+    	SELECT * FROM flightreservation_table WHERE id = #{id}
+	</select>
+	
+	<select id="getMypageHeader" resultType="UserDto" parameterType="String">
+	    SELECT name, profileimage,
+	    (
+	        SELECT COUNT(*)
+	        FROM board_table
+	        WHERE id = #{id}
+	    ) AS boardcount,
+	    (
+	        SELECT COUNT(*)
+	        FROM follow_table
+	        WHERE (follow_senderid = #{id} OR follow_recipientid = #{id})
+	        AND follow_is = 'Y'
+	    ) AS followcount
+	    FROM MEMBER
+	    WHERE id = #{id}
+	</select>
+	
+	<!-- 일정 -->
+	<insert id="insertSchedule" parameterType="ScheduleDto">
+		INSERT INTO schedule_table VALUES(SEQ_SCHEDULE_TABLE.nextval,#{schedule_title},#{schedule_startdate},#{schedule_enddate},#{id})
+	</insert>
+	
+	<insert id="insertPlan" parameterType="PlanDto">
+		INSERT INTO plan_table VALUES(SEQ_PLAN_TABLE.nextval,#{plan_name},#{plan_img},#{plan_placeid},sysdate,#{schedule_no})
+	</insert>
+	
+	<select id="getSchedules" parameterType="String" resultType="ScheduleDto">
+		SELECT * FROM schedule_table WHERE id=#{id}
+	</select>
+	
+	<select id="getPlans" parameterType="Long" resultType="PlanDto">
+		SELECT * FROM plan_table WHERE schedule_no=#{schedule_no}
+	</select>
+	
+	<select id="getScheduleByNo" parameterType="Long" resultType="ScheduleDto">
+		SELECT * FROM schedule_table WHERE schedule_no=#{schedule_no}
+	</select>	
+	
 </mapper>
