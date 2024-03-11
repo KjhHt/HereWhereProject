@@ -70,7 +70,7 @@ function initGSAP() {
     elem.style.transform = `translate(${x}px, ${y}px)`;
     elem.style.opacity = "0";
     gsap.fromTo(elem, { x: x, y: y, autoAlpha: 0 }, {
-      duration: 1.25,
+      duration: 0.01,
       x: 0,
       y: 0,
       autoAlpha: 1,
@@ -88,8 +88,8 @@ function initGSAP() {
     ScrollTrigger.create({
       trigger: elem,
       markers: false,
-      onEnter: () => { animateFrom(elem, 0, 100) },
-      onEnterBack: () => { animateFrom(elem, 0, -100) },
+      onEnter: () => { animateFrom(elem) },
+      onEnterBack: () => { animateFrom(elem) },
       onLeave: () => { hide(elem) } // assure that the element is hidden when scrolled into view
     });
   });
@@ -105,9 +105,9 @@ body {
 
 
 .cInnerContent {
-  max-width: 1240px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 100%;
+
+  
 }
 
 img {
@@ -117,14 +117,31 @@ img {
 .header-section {
   margin: 0px auto;
   padding: 50px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
-  background-image: url('@/assets/female_travel.WEBP'); /* 이미지 경로 설정 (상대 경로 또는 모듈 경로 사용) */
+  background-image: url('@/assets/backgroundimage_bottom.png');
   background-size: cover; /* 배경 이미지 크기를 커버로 설정 */
-  background-position: center; /* 배경 이미지 위치를 가운데로 설정 */
+  background-position: top; /* 배경 이미지 위치를 가운데로 설정 */
   position: relative; /* 배경 이미지를 포함한 상대적인 위치 설정 */
   color: #ffffff;
   margin-bottom: 40px;
-  max-height: 567px; /* Maximum height for the header section */
+  height: 743px; /* Maximum height for the header section */
   overflow: hidden; /* Hide overflowing content */
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: top;
+}
+
+@media screen and (max-width: 1961px) {
+  .header-section {
+    background-size: 100% 100%; /* 배경 이미지가 창 안에 딱 맞게 보이도록 함 */
+    background-position: top; /* 배경 이미지의 위치 설정 */
+  }
+}
+@media screen and (max-width: 1444px) {
+  .header-section {
+    background-size: 100% 100%; /* 배경 이미지가 창 안에 딱 맞게 보이도록 함 */
+    background-position: top; /* 배경 이미지의 위치 설정 */
+  }
 }
 
 .gs_reveal {
@@ -139,9 +156,10 @@ img {
 
 
 .menu {
+  margin: auto;
   display: flex;
   justify-content: space-between;
-  
+  max-width: 1240px;
 
 }
 
@@ -173,6 +191,5 @@ img {
 .menu-item.active {
   border-bottom: 2px solid black;
 }
-
 
 </style>

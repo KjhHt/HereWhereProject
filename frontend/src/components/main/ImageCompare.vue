@@ -12,7 +12,7 @@
           <div v-if="!previewImage" class="placeholder-text">
             <p><i class="fa fa-cloud-upload" aria-hidden="true"></i> 이미지를 올려주세요</p>
           </div>
-          <img :src="previewImage" v-else alt="File Preview" style="width: 80%; height: 200px;">
+          <img :src="previewImage" v-else alt="File Preview" style="width: 398.47px; height: 398.47px; object-fit: cover; border-radius: 5px;">
           <input type="file" multiple="multiple" ref="fileInput" @change="handleImageChange" style="display: none;" />
         </div>
         <footer>
@@ -32,7 +32,7 @@
           <div v-if="!previewImage" class="placeholder-text">
           </div>
           <LoadingOverlay :loading="loadingdetail"/>
-          <img :src="`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${analysisResult.photos[0].photo_reference}&key=${apiKey}`" v-if="analysisResult" alt="File Preview" style="width: 80%; height: 200px;">
+          <img :src="`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${analysisResult.photos[0].photo_reference}&key=${apiKey}`" v-if="analysisResult" alt="File Preview" style="width: 398.47px; height: 398.47px; object-fit: cover; border-radius: 5px;">
           <input type="file" multiple="multiple" ref="fileInput" @change="handleImageChange" style="display: none;" />
         </div>
         <footer>
@@ -108,7 +108,7 @@ const emitSearchImgLocation = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px; /* 이미지의 높이와 동일하게 설정 */
+  height: 398.47px; /* 이미지의 높이와 동일하게 설정 */
   border: 2px dashed #ccc;
   border-radius: 5px;
   width: 80%;
@@ -144,9 +144,11 @@ const emitSearchImgLocation = () => {
     transform: translateY(20px);
     opacity: 0;
 }
-
+.upload{
+  margin-right: 60px;
+}
 .upload-files header {
-    background: #9893EA;
+    background: #000080;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     text-align: center;
@@ -246,7 +248,7 @@ const emitSearchImgLocation = () => {
 }
 
 .importar {
-    background-color: #9893EA;
+    background-color: #000080;
     color: white;
     border: none;
     border-radius: 5px;
@@ -280,7 +282,7 @@ const emitSearchImgLocation = () => {
 .container {
   display: flex;
   justify-content: space-between;
-  width: 70%;
+  width: 90%;
 }
 
 .upload,

@@ -1,95 +1,99 @@
 <template>
-  <header class="header">
-    <div class="container">
-      <div class="header-content d-flex flex-wrap align-items-center justify-content-between">
-        <div class="logo-container">
+  <header class="header" :class="{ 'main-page-header': isMainPage }">
+    <div class="container" >
+      <div class="header-content d-flex flex-wrap align-items-center ">
+        <div class="logo-container" >
           <a @click="$emit('selectPage','main')" class="logo-link">
             <!-- <div class="header-text">HERE WHERE</div> -->
+            
             <img
-            class="logo-image"
-            src="@/assets/HereWhereLogo.png"
-            alt="Logo"
-            />
+      class="logo-image"
+      :src="isMainPage ? require('@/assets/Here.where_Dark.png') : require('@/assets/Here.where_Light.png')"
+      alt="Logo"
+    />
           </a>
         </div>
         <nav class="nav">
           <!-- 채팅 페이지 -->
-          <a @click="$emit('selectPage','test')" class="nav-item" @mouseover="showTooltip('채팅')" @mouseout="hideTooltip">
-            <div class="tooltip-wrapper">
-              <img src="@/assets/chatting.png" alt="Location Icon" class="nav-icon" />
-              <span v-if="tooltip === '채팅'" class="tooltip">채팅</span>
-            </div>
+          <a @click="$emit('selectPage','test')" class="nav-item" >
+            채팅
           </a>
           <!-- 채팅 페이지 -->
-          <a @click="$emit('selectPage','location')" class="nav-item" @mouseover="showTooltip('위치검색')" @mouseout="hideTooltip">
+          <a @click="$emit('selectPage','location')" class="nav-item">
+            위치검색
+          </a>
+          <a @click="$emit('selectPageFlight','flightreserve','Y')" class="nav-item" >
+            항공권검색
+          </a>
+
+          <!--
+          <a @click="$emit('selectPage','admin')" class="nav-item" @mouseover="showTooltip('관리자')" @mouseout="hideTooltip">
             <div class="tooltip-wrapper">
-              <img src="@/assets/location.png" alt="Location Icon" class="nav-icon" />
-              <span v-if="tooltip === '위치검색'" class="tooltip">위치검색</span>
+              <img src="@/assets/admin.png" alt="Admin Icon" class="nav-icon" />
+              <span v-if="tooltip === '관리자'" class="tooltip">관리자</span>
             </div>
           </a>
-          <a @click="$emit('selectPageFlight','flightreserve','Y')" class="nav-item" @mouseover="showTooltip('항공권검색')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/board.png" alt="Board Icon" class="nav-icon" />
-          <span v-if="tooltip === '항공권검색'" class="tooltip">항공권검색</span>
-        </div>
-      </a>
 
-      <!--
-      <a @click="$emit('selectPage','admin')" class="nav-item" @mouseover="showTooltip('관리자')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/admin.png" alt="Admin Icon" class="nav-icon" />
-          <span v-if="tooltip === '관리자'" class="tooltip">관리자</span>
-        </div>
-      </a>
+          <a @click="$emit('selectPage','mycalendar')" class="nav-item" @mouseover="showTooltip('캘린더')" @mouseout="hideTooltip">
+            <div class="tooltip-wrapper">
+              <img src="@/assets/calendar.png" alt="Calendar Icon" class="nav-icon" />
+              <span v-if="tooltip === '캘린더'" class="tooltip">캘린더</span>
+            </div>
+          </a>
+          -->
 
-      <a @click="$emit('selectPage','mycalendar')" class="nav-item" @mouseover="showTooltip('캘린더')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/calendar.png" alt="Calendar Icon" class="nav-icon" />
-          <span v-if="tooltip === '캘린더'" class="tooltip">캘린더</span>
-        </div>
-      </a>
-      -->
+          <a @click="$emit('selectMyPage','mypage')" class="nav-item"  >
+            마이페이지
+          </a>
 
-      <a @click="$emit('selectPage','mypage')" class="nav-item" @mouseover="showTooltip('마이페이지')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/mypage.png" alt="MyPage Icon" class="nav-icon" />
-          <span v-if="tooltip === '마이페이지'" class="tooltip">마이페이지</span>
-        </div>
-      </a>
+          <!--
+          <a @click="$emit('selectPage','join')" class="nav-item" @mouseover="showTooltip('회원가입')" @mouseout="hideTooltip">
+            <div class="tooltip-wrapper">
+              <img src="@/assets/join.png" alt="Join Icon" class="nav-icon" />
+              <span v-if="tooltip === '회원가입'" class="tooltip">회원가입</span>
+            </div>
+          </a>
+          -->
+          
+          <a @click="$emit('selectPage','trip-moment')" class="nav-item">
+            트립모먼트
+          </a>
 
-      <!--
-      <a @click="$emit('selectPage','join')" class="nav-item" @mouseover="showTooltip('회원가입')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/join.png" alt="Join Icon" class="nav-icon" />
-          <span v-if="tooltip === '회원가입'" class="tooltip">회원가입</span>
-        </div>
-      </a>
-      -->
-      
-      <a @click="$emit('selectPage','trip-moment')" class="nav-item" @mouseover="showTooltip('트립모먼트')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/trip-moment.png" alt="Trip-moment Icon" class="nav-icon" />
-          <span v-if="tooltip === '트립모먼트'" class="tooltip">트립모먼트</span>
-        </div>
-      </a>
+          <a @click="$emit('selectPage','translation')" class="nav-item">
+            번역
+          </a>
 
-      <a @click="$emit('selectPage','translation')" class="nav-item" @mouseover="showTooltip('번역')" @mouseout="hideTooltip">
-        <div class="tooltip-wrapper">
-          <img src="@/assets/trip-moment.png" alt="Trip-moment Icon" class="nav-icon" />
-          <span v-if="tooltip === '번역'" class="tooltip">번역</span>
-        </div>
-      </a>
-      
-          <div class="text-end">
+          <a @click="$emit('selectPage','mbti')" class="nav-item">
+            MBTI검사
+          </a>
+
+        </nav>
+          <div class="text-end ">
+
+
+
+
+            
+
+
+
+
             <!-- 로그인 전 상태: -->
               <div v-if="!isLoggedIn">
                 <button class="btn btn-outline-light me-2" @click="openLoginModal">로그인</button>
               </div>
 
               <!-- 로그인 후 상태: -->
-              <div v-else>
+              <div v-else class="afterlogin">
                 <div class="profile-dropdown" id="notification">
-                <img src="@/assets/notice_on.png" alt="Notice" class="cat-image" @click="toggleNoticeDropdown" />
+                  <div class="test1">
+                    <a class="test2">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="--color: #1c1e21;" alt="Notice" class="test3" @click="toggleNoticeDropdown">
+                        <path d="M3 9.5a9 9 0 1 1 18 0v2.927c0 1.69.475 3.345 1.37 4.778a1.5 1.5 0 0 1-1.272 2.295h-4.625a4.5 4.5 0 0 1-8.946 0H2.902a1.5 1.5 0 0 1-1.272-2.295A9.01 9.01 0 0 0 3 12.43V9.5zm6.55 10a2.5 2.5 0 0 0 4.9 0h-4.9z">
+                        </path>
+                       </svg>
+                     </a>
+                  </div>
                 <div id="count" v-if="noticeCountData > 0">{{ noticeCountData }}</div>
                 <!-- 드롭다운 메뉴 -->
                   <div v-if="isNoticeDropdownOpen" class="dropdown-menu" style="width: 360px;">
@@ -107,16 +111,20 @@
                         </div>
                         <div class="content">
                           <div class="text-content">
-                            <span><strong>{{ notice.follow_senderid }}</strong>{{ notice.notice_content }}</span>
+                            <div class="follow-request">
+                              <span><strong>{{ notice.follow_senderid }}</strong>님이 {{ notice.notice_content }}</span>
+                            </div>
+                            <div class="timer" v-if="!followStatus[notice.notice_no]">{{ formatTimeAgo(notice.notice_createtime) }}</div>
+                          </div>                          
+                          <div class="chose-button" v-if="!followStatus[notice.notice_no]">
+                            <button type="button" class="btn btn-dark" id="btnSuccess" @click="followSuccess(notice.notice_no)">확인</button>
+                            <button type="button" class="btn btn-dark" id="btnFail" @click="followFail(notice.notice_no)">거절</button>
                           </div>
-                          <div class="timer" v-if="!followStatus[notice.notice_no]">{{ formatTimeAgo(notice.notice_createtime) }}</div>
+                          <div class="chose-button" v-if="followStatus[notice.notice_no]">
+                            <div v-if="followStatus[notice.notice_no] === 'accepted'">팔로우 추가 완료했습니다.</div>
+                            <div v-if="followStatus[notice.notice_no] === 'rejected'">거절하셨습니다.</div>  
+                          </div>
                         </div>
-                        <div class="chose-button" v-if="!followStatus[notice.notice_no]">
-                          <button type="button" class="btn btn-dark" id="btnSuccess" @click="followSuccess(notice.notice_no)">확인</button>
-                          <button type="button" class="btn btn-dark" id="btnFail" @click="followFail(notice.notice_no)">거절</button>
-                        </div>
-                        <div v-if="followStatus[notice.notice_no] === 'accepted'">팔로우 추가 완료했습니다.</div>
-                        <div v-if="followStatus[notice.notice_no] === 'rejected'">거절하셨습니다.</div>
                       </div>
                     </div>
                   </div>
@@ -134,7 +142,7 @@
                 </div>
               </div>
           </div> 
-        </nav>
+
       </div>
     </div>
     <LoginModal :showModal="loginModalVisible"
@@ -145,6 +153,11 @@
 </template>
 
 <script>
+
+
+
+
+
 import LoginModal from '@/views/LoginModal.vue';
 import axios from 'axios';
 //import loginStore from '../store/index'
@@ -155,7 +168,11 @@ export default {
   },
   props: {
     noticeListData : Array,
-    noticeCountData : Object
+    noticeCountData : Object,
+    isMainPage: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -310,6 +327,293 @@ export default {
   align-items: center;
   font-size: 14px;
 }
+
+#notification {
+    position: relative;
+    display: inline-block;
+  }
+  #count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+  }
+
+
+
+/* 알림창 커스텀 */
+/*0302 여기서부터*/
+.cover{
+padding-top: 0px;
+min-width: 0px;
+margin-top: 0px;
+margin-bottom: 0px;
+border-bottom-width: 0px;
+border-bottom-style: solid;
+min-height: 44px;
+padding-bottom: 0px;
+padding-left: 8px;
+border-right-style: solid;
+flex-shrink: 1;
+border-left-width: 0px;
+border-right-width: 0px;
+box-sizing: border-box;
+border-top-width: 0px;
+display: flex;
+align-items: center;
+border-left-style: solid;
+padding-right: 8px;
+justify-content: space-between;
+flex-direction: row;
+position: relative;
+margin-left: 0px;
+z-index: 0;
+flex-grow: 1;
+border-top-style: solid;
+margin-right: 0px;
+}
+
+.profile-image{
+  margin-top: 8px;
+margin-bottom: 8px;
+margin-right: 12px;
+flex-direction: column;
+display: flex;
+position: relative;
+align-self: flex-start;
+}
+
+.profile-image img{
+vertical-align: bottom;
+display: inline-block;
+position: relative;
+z-index: 0;
+height: 56px;
+width: 56px;
+border-radius: 50%;
+}
+
+.content{
+padding-top: 12px;
+padding-bottom: 12px;
+min-width: 0px;
+margin-top: 0px;
+margin-bottom: 0px;
+min-height: 0px;
+border-bottom-width: 0px;
+border-bottom-style: solid;
+border-right-style: solid;
+flex-shrink: 1;
+border-left-width: 0px;
+padding-left: 0px;
+flex-direction: column;
+border-right-width: 0px;
+box-sizing: border-box;
+border-top-width: 0px;
+display: flex;
+padding-right: 0px;
+border-left-style: solid;
+justify-content: space-between;
+align-items: stretch;
+position: relative;
+margin-left: 0px;
+z-index: 0;
+flex-grow: 1;
+border-top-style: solid;
+margin-right: 0px;
+flex-basis: 0px;
+}
+
+.text-content{
+flex-direction: column;
+display: flex;
+margin-bottom: -5px;
+margin-top: -5px;
+}
+.follow-request{
+margin-bottom: 5px;
+margin-top: 5px;
+min-width: 0px;
+max-width: 100%;
+color: #050505;
+text-align: left;
+overflow-wrap: break-word;
+display: block;
+word-break: break-word;
+line-height: 1.3333;
+font-weight: 400;
+font-size: 0.9375rem;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 3;
+display: -webkit-box;
+overflow-x: hidden;
+overflow-y: hidden;
+position: relative;
+}
+.chose-button{
+margin-top: 10px;
+box-sizing: border-box;
+display: flex;
+flex-shrink: 0;
+align-items: stretch;
+flex-direction: row;
+position: relative;
+z-index: 0;
+flex-wrap: nowrap;
+}
+#btnSuccess {
+  width: 50%;
+  background-color: #0866FF;
+  color: white;
+  border-radius: 5px;
+  margin-right: 5px;
+  border-color:white;
+}
+
+#btnFail {
+  width: 50%;
+  background-color: #e4e6eb;
+  color: black !important; 
+  border-radius: 5px;
+  margin-left: 5px;
+  border-color:white;
+}
+/*0302 여기까지*/ 
+.test1{
+    background-color: #E4E6EB;
+    border-radius: 100px;
+}
+.test2{
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 40px;
+    border-bottom-style: none;
+    border-bottom-width: 0;
+    padding-bottom: 0;
+    width: 40px;
+    border-bottom-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border-left-width: 0;
+    justify-content: center;
+    padding-left: 0;
+    touch-action: manipulation;
+    border-right-style: none;
+    border-right-width: 0;
+    box-sizing: border-box;
+    border-top-width: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 0;
+    cursor: pointer;
+    background-color: var(--secondary-button-background);
+    position: relative;
+    margin-left: 0;
+    -webkit-tap-highlight-color: transparent;
+    border-top-style: none;
+    border-bottom-right-radius: 50%;
+    border-left-style: none;
+    border-top-left-radius: 50%;
+    margin-right: 0;
+    text-decoration: none;
+    outline: none;
+}
+.test3{
+    display: block;
+    color: var(--color, revert);
+    transition-property: color, fill, stroke;
+    transition-timing-function: var(--fds-soft);
+}
+svg{
+    color: #1c1e21;
+    direction: ltr;
+    line-height: 1.34;
+}
+.afterlogin{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+.bi-bell-fill{
+  width: 40px;
+  height: 40px;
+}
+
+.alarm{
+margin-top: 4px;
+margin-left: 150px;
+  position: absolute;
+}
+.chose{
+  position: absolute;
+  margin-top: 10px;
+  margin-left:200px ;
+}
+.cont{
+  background-color: #74BCF7;
+  position: center;
+  height: 40px;
+  margin-top: -10px;
+  font-size: 25px;
+  color: #fff;
+  text-align: center;
+}
+.mes{
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid gainsboro;
+}
+.request{
+  font-weight: bold;
+  /* border: 1px solid red; */
+  height: 29px;
+  margin-top: 0px;
+  background-color: rgb(255, 255, 255);
+}
+.timer{
+  margin-top:5px;
+  margin-bottom:5px;
+  min-width:0px;
+  max-width: 100%;
+  text-align: left;
+  overflow-wrap: break-word;
+  display: block;
+  word-break: break-word;
+  line-height: 1.2308;
+  font-size: 0.8125rem;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  position: relative;
+  padding-bottom: 1px;
+
+  color: #0866FF;
+
+  font-weight: 600;
+
+}
+/* 알림창 커스텀 끝*/
+
 
 
 
@@ -568,7 +872,7 @@ margin-left: 150px;
   
   
   position: relative;
-  z-index: 9998;
+  z-index: 9999;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -597,7 +901,7 @@ margin-left: 150px;
 
 .nav {
   justify-content: space-between;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0);;
   display: flex;
   gap: 20px;
   margin: auto 0;
@@ -606,9 +910,35 @@ margin-left: 150px;
 }
 
 .nav-item {
+  position: relative;
   display: flex;
-  align-items: center; /* 이미지를 수직 가운데 정렬 */
+  text-decoration: none;
+  color:black;
 }
+
+.nav-item::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: black;
+  transition: width 0.3s;
+}
+
+.nav-item:hover::before {
+  width: 100%;
+}
+
+.nav-item.active::before {
+  width: 100%;
+}
+
+
+
+
+
 
 
 
@@ -631,6 +961,7 @@ margin-left: 150px;
   width: 100%;
   color: #000; /* 텍스트 색상을 검은색으로 설정 */
   border-color: #000; /* 테두리 색상을 검은색으로 설정 */
+  
 }
 
 .logo-container {
@@ -639,11 +970,10 @@ margin-left: 150px;
 }
 
 .logo-image {
-  width: 200px;
-  height: 40px;
+  width: 8.7rem;
+  height: 1.5rem;
   flex-shrink: 0;
-  margin-right: 20px;
-  border-radius: 100px;
+  margin-right: 32px;
 }
 
 .tooltip-wrapper {
@@ -672,4 +1002,56 @@ margin-left: 150px;
   opacity: 1;
 }
 
+.text-end {
+  margin-left: auto;
+
+}
+
+.btn.btn-outline-light:hover {
+  color: inherit; /* 호버 시 글씨 색을 상속하여 유지 */
+  border-color: inherit; /* 호버 시 테두리 색을 상속하여 유지 */
+}
+
+.main-page-header {
+  background-image: url('@/assets/backgroundimage_top.png');
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  display: flex;
+  position: relative;
+  z-index: 9997;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.main-page-header .nav-item {
+  position: relative;
+  display: flex;
+  text-decoration: none;
+  color: white;
+}
+
+.main-page-header .nav-item::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s;
+}
+
+.main-page-header .nav-item:hover::before {
+  width: 100%; /* 마우스가 요소 위에 있을 때 너비를 100%로 설정 */
+}
+.main-page-header .btn.btn-outline-light {
+  color: white; 
+  border-color: white; 
+}
+.main-page-header .btn.btn-outline-light:hover {
+  color: inherit; /* 호버 시 글씨 색을 상속하여 유지 */
+  border-color: inherit; /* 호버 시 테두리 색을 상속하여 유지 */
+}
 </style>

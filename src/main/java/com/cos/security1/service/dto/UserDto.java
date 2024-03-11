@@ -37,5 +37,8 @@ public class UserDto {
 	
 	private String phonenumber;
 	
+	private String boardcount;
+	private String followcount;
+	
 	
 }

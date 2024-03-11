@@ -44,22 +44,34 @@ const updateComment = (event) => {
     newComment.value = event.target.innerText;
 };
 
-const addComment = () => {
+const addComment = async () => {
    const userComment = newComment.value;
    const vuexStore = JSON.parse(localStorage.getItem('vuex'));
    const name = vuexStore.loginStore.userInfo.name;
-   const data = {
-    board_no : board_no.value,
-    comment_content : userComment,
-    comment_writer : name
-  }
-   axios.post(`${process.env.VUE_APP_API_URL}/user/commentInsert`,data)
-   .then( res => {
-      if(res.status === 200){
+   const text = {"sentence": userComment};
+   
+   try {
+      const sentimentAnalysisResponse = await axios.post(`${process.env.VUE_APP_PYTHON_API_URL}/sentiment_analysis`,text);
+      console.log('확인 : ',sentimentAnalysisResponse);
+
+
+      const data = {
+         board_no : board_no.value,
+         comment_content : userComment,
+         comment_writer : name,
+         comment_result : sentimentAnalysisResponse.data.result,
+         comment_probability : sentimentAnalysisResponse.data.probability,
+         comment_sentiment : sentimentAnalysisResponse.data.sentiment,
+      }
+      const commentInsertResponse = await axios.post(`${process.env.VUE_APP_API_URL}/user/commentInsert`,data);
+      
+      if(commentInsertResponse.status === 200){
          emit('updateComment',Date.now());
       }
-   })
-   .catch(err => console.log(err))
+   } catch (error) {
+      console.log(error);
+   }
+
    document.getElementById('textarea2').innerText = '';
 }
 

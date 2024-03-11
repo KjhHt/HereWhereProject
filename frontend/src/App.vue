@@ -14,6 +14,7 @@ import TripMomentWriteView from './views/TripMomentWriteView.vue';
 import TripMomentDetailView from './views/TripMomentDetailView.vue';
 import TranslationView from './views/TranslationView.vue';
 import FlightReserveView from './views/FlightReserveView.vue';
+import MbtiView from './views/MbtiView.vue';
 import ChatBot from './components/ChatBot.vue';
 import axios from 'axios';
 
@@ -26,7 +27,10 @@ const noticeListData = ref([]);
 const noticeCountData = ref(0);
 const locationValue = ref('');
 const locationLatLng = ref([]);
+const predictimg = ref(null);
 const initialSearchParameters=ref({});
+let placeId= ref('');
+let iataCode= ref({});
 
 watch(() => [route.query.origin, route.query.destination, route.query.adults], ([origin, destination, adults]) => {
   if (origin && destination && adults) {
@@ -41,39 +45,51 @@ watch(() => [route.query.origin, route.query.destination, route.query.adults], (
   deep: true
 });
 
-
-onMounted(() => {
+onMounted(async () => {
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;
   if (userInfo != null && userInfo.id != null) {
-    stompClient.value = getStompClient();  // 웹소켓 연결을 가져옵니다.
+    stompClient.value = getStompClient();
     stompClient.value.connect({}, () => {
-      stompClient.value.subscribe(`/user/${userInfo.id}/queue/notification`, function(notification) {
-        // 알림 메시지를 받으면 실행할 코드...
+      stompClient.value.subscribe(`/user/${userInfo.id}/queue/notification`, async function(notification) {
         noticeCountData.value++;
         const data = JSON.parse(notification.body);
-        console.log('제발와라 : ',data) //이따
-        if(data.follow_isRequest == 'ok'){//팔로우 첫 요청일때
-          const currentTime = new Date().toLocaleString();
+        if(data.follow_isRequest == 'ok'){
+          const currentTime = new Date();
+          const profileImagePath = await processProfileImagePath(data.profileImage);
           noticeListData.value.splice(0, 0, {
             follow_senderid : data.follow_senderid,
             notice_content : '팔로우 요청을 보냈습니다',
             notice_createtime : currentTime,
             notice_no : data.notice_no,
+            profileimage : profileImagePath
           });
-          console.log(noticeListData.value);
-        
         }
         console.log(data);
-        console.log(data.follow_senderid);//보낸사람
-        console.log(data.follow_requesttime);//시간
-        console.log('요청여부 : ',data.follow_isRequest); //요청여부
+        console.log(data.follow_senderid);
+        console.log(data.follow_requesttime);
+        console.log('요청여부 : ',data.follow_isRequest);
       });
     });
-    //console.log("웹소켓 연결 및 구독 성공!");
     noticeList(userInfo.id);
   }
 });
+
+const processProfileImagePath = async (profileimage) => {
+  if(profileimage === '0') {
+    return require('@/assets/dino.jpg');
+  }
+  else if(profileimage.startsWith("D:") || profileimage.startsWith("E:")) {
+    const pathSegments = profileimage.split('\\');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/profile/${lastSegment}`);
+    return `data:${res.headers['content-type']};base64,${res.data}`;
+  }
+  else{
+    return profileimage;
+  }
+};
+
 
 function noticeList(){
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
@@ -88,16 +104,15 @@ function noticeList(){
         else if(!item.profileimage.startsWith('http')){
           item.profileimage = `data:${res.headers['content-type']};base64,${item.profileimage}`;
         }
-        return item; // 이 부분이 추가되었습니다.
+        return item; 
       });
-      console.log('5시46분 : ',res.data);
     })
     .catch(err=>console.log(err))
   }
 }
  
 const page_=ref('main')
-
+const panolens = ref(true);
 //메인페이지에서 지도 페이지로 값 넘기기
 const handleImgClick = (value) =>{
   locationValue.value = value;
@@ -108,13 +123,16 @@ const handleItemClick = (value) =>{
   page_.value = 'location';
 }
 const handleSearchImgLocation = (value) =>{
+  const predict = value;
   const latLngArray = [value.geometry.location.lat, value.geometry.location.lng];
+  predictimg.value = predict;
   locationLatLng.value = latLngArray;
   page_.value = 'location';
 }
 const disconnectLocation= ()=> {
   locationValue.value= '',
   locationLatLng.value = [];
+  placeId.value= '';
 } 
 
 computed(showHeader)
@@ -122,9 +140,12 @@ computed(showHeader)
     return this.$route.meta.showHeader !== false;
   }
 
+
+
 function selectPage(page){
   if(page === 'main'){
     window.history.pushState({}, '', '/');
+    panolens.value = false;
   }
   page_.value=page
 }
@@ -144,25 +165,42 @@ const resetCount = () => {
 }
 
 function moveLocationViewHandler(place_id){
-  console.log('app.vue에서 place_id : ',place_id);
+  placeId.value= place_id;
+  page_.value= 'location';
+}
+
+const mypageIdData = ref('');
+const selectMyPage = (page)=> {
+  const vuexStore = JSON.parse(localStorage.getItem('vuex'));
+  const userInfo = vuexStore.loginStore.userInfo;
+  if (userInfo != null && userInfo.id != null) {
+    const id = userInfo.id;
+    mypageIdData.value = id;
+  }
+  page_.value=page;
+}
+const setIata= iata=>{
+  iataCode.value= iata;
+  page_.value= 'flightreserve'
 }
 </script>
 <template>
-  <PanolensPage/>    
-    <Header @resetCount="resetCount" @selectPage="selectPage" @selectPageFlight="selectPageFlight" :noticeListData="noticeListData" :noticeCountData="noticeCountData"/>
+  <PanolensPage v-if="panolens" />
+    <Header @resetCount="resetCount" @selectPage="selectPage" @selectMyPage="selectMyPage" @selectPageFlight="selectPageFlight" :noticeListData="noticeListData" :noticeCountData="noticeCountData" :isMainPage="page_=== 'main'"/>
     <MainPage v-if="page_=='main'" @imgClick="handleImgClick" @searchImgLocation="handleSearchImgLocation"/>
-    <Join v-if="page_=='join'"/>
+    <Join v-if="page_=='join'" @selectPage="selectPage"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
-    <Location v-if="page_=='location'" :locationValue="locationValue" :locationLatLng="locationLatLng" @disconnect="disconnectLocation"/>
-    <MyPageView v-if="page_=='mypage'" @handleItem="handleItemClick"/>
+    <Location v-if="page_=='location'" @passIataCode="setIata" :appPlaceId="placeId" :locationValue="locationValue" :locationLatLng="locationLatLng" :predictimg="predictimg" @disconnect="disconnectLocation"/>
+    <ChatBot v-else/>
+    <MyPageView v-if="page_=='mypage'" @selectPageData="selectPageData" :mypageIdData="mypageIdData" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
-    <ChatBot/>
     <TestView v-if="page_=='test'"/>
     <TripMoment @selectPage="selectPage" @selectPageData="selectPageData" v-if="page_=='trip-moment'"/>
     <TripMomentWriteView @selectPage="selectPage" v-if="page_=='TripMomentWriteView'"/>
     <TripMomentDetailView @moveLocationViewHandler="moveLocationViewHandler" :stompClient="stompClient" :tripmonetData="data_" v-if="page_=='TripMomentDetailView'"/>
     <TranslationView v-if="page_=='translation'"/>
-    <FlightReserveView v-if="page_=='flightreserve'" @updateIsHeaderData="updateIsHeaderData" :isHeader="isHeader" :initialSearchParameters="initialSearchParameters"/>
+    <FlightReserveView v-if="page_=='flightreserve'" @updateIsHeaderData="updateIsHeaderData" :isHeader="isHeader" :initialSearchParameters="initialSearchParameters" :iataCode="iataCode"/>
+    <MbtiView v-if="page_=='mbti'"/>
 </template>
 
 <style>
@@ -174,6 +212,6 @@ function moveLocationViewHandler(place_id){
   color: #2c3e50;
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 90vh;
 }
 </style>

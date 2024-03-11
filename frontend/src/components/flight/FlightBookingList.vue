@@ -69,6 +69,7 @@
 import { ref,defineProps, watch } from 'vue';
 import { gsap } from 'gsap';
 import { Bootpay } from '@bootpay/client-js'
+import axios from 'axios';
 
 import LoadingModal from '@/components/search/LoadingModal.vue';
 // eslint-disable-next-line no-unused-vars
@@ -134,12 +135,6 @@ function generateRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// 결제 함수 
-const paycheck = (data) => {
-  alert('결제가 완료되었습니다.')
-  console.log('paycheck : ', data);
-};
-
 async function payment(data){
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userInfo = vuexStore.loginStore.userInfo;
@@ -150,10 +145,11 @@ async function payment(data){
   const seatNumber = generateRandomSeat();
   const order_name = getCountryByIata(data.destinationAirport) + '( ' + seat + '[좌석번호 : ' + seatNumber + '] )';
   const order_id = '0000'+generateRandomNumber(1111,9999);
+  const price = data.price;
   try{
     await Bootpay.requestPayment({
       "application_id": process.env.VUE_APP_BOOTPAY_API_SECRET,
-      "price": data.price,               
+      "price": price,               
       "order_name": order_name,   
       "order_id": order_id, 
       "tax_free": 0,
@@ -167,7 +163,7 @@ async function payment(data){
           "id": order_id,
           "name": order_name,
           "qty": 1,
-          "price": data.price
+          "price": price
         }
       ],
       "extra": {
@@ -176,12 +172,38 @@ async function payment(data){
         "escrow": false
       }
     })
-    .then(response => {
-      paycheck(response);
-    })
+    .then(async response => {
+      const departureDateTime = data.arrivalTime; // '2024-03-07T11:35:00' 
+      const departureDate = departureDateTime.split('T')[0]; // '2024-03-07'
+      const insertData = {
+        flight_depcode: data.departureAirport,
+        flight_arrivalairportcode: data.destinationAirport,
+        flight_departuredate: departureDate,
+        flight_productname: getCountryByIata(data.destinationAirport),
+        flight_duration: formatTime(data.arrivalTime)+'->'+formatTime(data.departureTime),
+        flight_seattype: seat,
+        flight_seatnumber: seatNumber,
+        flight_price: price,
+        flight_receipt: response.data.receipt_url,
+        id: id,
+      };
+      try {
+        const insertResponse = await axios.post(process.env.VUE_APP_API_URL+'/insertFlightReservation', insertData);
+        if (insertResponse.status === 200) {
+          console.log(insertResponse.data);
+          alert('결제가 완료되었습니다.');
+        } 
+        else {
+          console.log('서버 요청 실패: ' + insertResponse.status);
+        }
+      } catch (error) {
+        console.log('서버 요청 실패');
+        console.error(error);
+      }
+    });
   }
   catch(err){
-    console.log('결제에러 : ',err);
+    console.log('결제 에러 : ', err);
   }
 }
 </script>

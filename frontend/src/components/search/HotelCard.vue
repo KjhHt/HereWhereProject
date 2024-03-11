@@ -71,7 +71,6 @@
           <p>{{ selectedHotel.price }}</p>
         </div>
         <div class="card-footer">
-          <button class="btn btn-line"><i class="bi bi-cart-plus-fill"></i> 장바구니에 담기</button>
           <button class="btn btn-fill" @click="payHandler()"><i class="bi bi-calendar-plus-fill"></i> 예약하러 가기</button>
         </div>
       </div>

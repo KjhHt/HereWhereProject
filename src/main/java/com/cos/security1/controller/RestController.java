@@ -1,7 +1,6 @@
 package com.cos.security1.controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -23,13 +22,16 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cos.security1.service.MemberService;
+import com.cos.security1.service.PlanService;
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LocationDto;
 import com.cos.security1.service.dto.NoticeDto;
+import com.cos.security1.service.dto.PlanDto;
 import com.cos.security1.service.dto.ReservationDto;
+import com.cos.security1.service.dto.ScheduleDto;
 import com.cos.security1.service.dto.UserDto;
 import com.cos.security1.util.FileUtils;
 import com.cos.security1.util.JWTTokens;
@@ -46,6 +48,8 @@ public class RestController {
 	@Autowired
 	private MemberService service;	
 	
+	@Autowired
+	private PlanService planService;
 	@GetMapping("/user/test")
 	public String userTest() {
 		// 문자 메세지~~
@@ -195,6 +199,13 @@ public class RestController {
     	return dto;
     }
     
+    @GetMapping("/myBoard")
+    public List<BoardDto> myBoard(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	
+    	List<BoardDto> dto = service.myBoard(id,request);
+    			
+    	return dto;
+    }
     //프로필 이미지불러오기
     @GetMapping("/profile/{imageName}")
     public ResponseEntity<String> getImage(@PathVariable String imageName,HttpServletRequest req) throws IOException {
@@ -236,6 +247,7 @@ public class RestController {
     	
         ObjectMapper objectMapper = new ObjectMapper();
         LocationDto locationdto = objectMapper.readValue(dtoJson, LocationDto.class);
+        
 	    dto.setId(id);
 	    dto.setBoard_writer(name);
 	    dto.setBoard_title(title);
@@ -288,9 +300,7 @@ public class RestController {
 	    }
 	    Map username = JWTTokens.getTokenPayloads(token);
 	    String id = (String)username.get("username");
-    	
 	    commentDto.setId(id);
-    	
     	service.commentInsert(commentDto);
     }
     
@@ -434,11 +444,6 @@ public class RestController {
     	return "fail";
     }
     
-    @PostMapping("/insertReservation")
-    public void insertReservation(@RequestBody ReservationDto reservationDto) {
-    	service.insertReservation(reservationDto);
-    }
-    
     @PostMapping("/getIsFollowList")
     public List<FollowDto> getIsFollowList(HttpServletRequest req) {
     	// 비회원일때 처리해야함.
@@ -460,6 +465,16 @@ public class RestController {
 	    return dto;
     }
     
+    @PostMapping("/insertReservation")
+    public void insertReservation(@RequestBody ReservationDto reservationDto) {
+    	service.insertReservation(reservationDto);
+    }
+    
+    @PostMapping("/insertFlightReservation")
+    public void insertFlightReservation(@RequestBody ReservationDto reservationDto) {
+    	service.insertFlightReservation(reservationDto);
+    }
+    
     @GetMapping("/reservation")
     public List<ReservationDto> getReservation(@RequestParam String userId) {
         if (userId == null) {
@@ -471,7 +486,54 @@ public class RestController {
         return reservations;
     }
     
+    @GetMapping("/flightReservation")
+    public List<ReservationDto> getFlightReservation(@RequestParam String userId) {
+        if (userId == null) {
+            // 예외 처리 또는 다른 로직 추가
+            return null;
+        }
+        List<ReservationDto> flightReservations = service.findFlightReservationsByUserId(userId);
+        
+        return flightReservations;
+    }
     
+    @GetMapping("/getMypageHeader")
+    public UserDto getMypageHeader(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	UserDto header = service.getMypageHeader(id,request);
+    	return header;
+    }
+    
+    @GetMapping("/getMyFollowList")
+    public List<FollowDto> getMyFollowList(@RequestParam String id,HttpServletRequest request) throws IOException {
+    	List<FollowDto> list = service.getMyFollowList(id,request);
+    	return list;
+    }
+    
+    @PostMapping("/addSchedule")
+    public void insertSchedule(@RequestBody ScheduleDto scheduleDto) {
+    	planService.addSchedule(scheduleDto);
+    }
+    
+    @PostMapping("/addPlan")
+    public void insertPlan(@RequestBody PlanDto planDto) {
+    	System.out.println(planDto);
+    	planService.addPlan(planDto);
+    }
+    
+    @GetMapping("/getSchedule")
+    public List<ScheduleDto> findSchedule(@RequestParam String id){
+    	return planService.findSchedules(id);
+    }
+    
+    @GetMapping("/getScheduleByNo")
+    public ScheduleDto findScheduleByNo(@RequestParam String schedule_no) {
+    	return planService.findScheduleByNo(schedule_no);
+    }
+    
+    @GetMapping("/getPlan")
+    public List<PlanDto> findPlan(@RequestParam Long schedule_no){
+    	return planService.findPlans(schedule_no);
+    }
     
     
 }

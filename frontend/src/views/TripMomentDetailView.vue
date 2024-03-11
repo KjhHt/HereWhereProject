@@ -17,6 +17,7 @@
                                 <div class="image-gallery-thumbnails-wrapper bottom image-gallery-overview">
                                     <BoxLeftThumnail :images="images" :currentIndex="currentIndex" :displayIndex="displayIndex" @selectImage="handleSelectImage"/>
                                 </div>
+                                <BoxLeftPlace/>
                             </div>
                         </div>
                     </div>
@@ -52,7 +53,7 @@ import BoxLeftButton from '@/components/BoxLeft/BoxLeftButton.vue'
 import BoxLeftImageslide from '@/components/BoxLeft/BoxLeftImageslide.vue';
 import BoxLeftGalleryIndex from '@/components/BoxLeft/BoxLeftGalleryIndex.vue'
 import BoxLeftThumnail from '@/components/BoxLeft/BoxLeftThumnail.vue';
-
+import BoxLeftPlace from '@/components/BoxLeft/BoxLeftPlace.vue';
 
 import BoxRightProfile from '@/components/BoxRight/BoxRightProfile.vue';
 import BoxRightTitle from '@/components/BoxRight/BoxRightTitle.vue';
@@ -185,7 +186,7 @@ span{
     margin-top: 8px;
     display: flex;
     flex-direction: row;
-    margin-bottom: 64px;
+   
 }
 .hwNqPL .gl-cpt_imagallery {
     position: relative;
@@ -193,7 +194,7 @@ span{
     left: 0px;
     margin-left: 0px;
     margin-top: 0px;
-    height: auto;
+    height: 604.58px;
     margin-bottom: 0px;
     padding-bottom: 0px;
     width: 650px;
@@ -275,6 +276,20 @@ span{
 }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*우측 css */
 .photo-post-container {
     position: relative;
@@ -287,7 +302,7 @@ span{
 .scroll_contentouter{
     position: relative;
     overflow: hidden;
-    max-height: 707px;
+    max-height: 604.58px;
 }
 
 .photo-post-container .scroll_content {
@@ -297,7 +312,7 @@ span{
     
 }
 .scroll_content{
-    max-height: 627px; 
+    max-height: 524.58px; 
     overflow-y: auto;
 }
 .userContainer {
@@ -326,5 +341,8 @@ h1{
     padding-left: 32px;
     padding-right: 32px;
 }
+
+
+
 
 </style>

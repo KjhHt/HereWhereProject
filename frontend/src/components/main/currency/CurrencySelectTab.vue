@@ -8,10 +8,15 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, defineProps ,watch} from 'vue';
 
 
 const emits = defineEmits(['selectTab']);
+
+const props = defineProps({
+  dataType:String
+})
+
 
 // 탭 데이터 정의
 const tabs = [
@@ -25,6 +30,9 @@ const tabs = [
 // 선택된 탭
 const selectedTab = ref('day');
 
+watch(()=>props.dataType,newDataType=>{
+  selectedTab.value=newDataType;
+})
 // 탭 선택 핸들러
 function selectTab(tabId) {
   selectedTab.value = tabId;

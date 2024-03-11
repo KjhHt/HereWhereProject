@@ -111,7 +111,7 @@ const moveLocationView = (place_id) => {
     width: 120px; 
     border-radius: 4px; 
     overflow: hidden; 
-    position: absolute;
+    /* position: absolute; */
 }
 .content {
     flex: 1;

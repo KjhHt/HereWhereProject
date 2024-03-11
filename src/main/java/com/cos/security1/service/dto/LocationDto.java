@@ -24,6 +24,9 @@ public class LocationDto {
 	//컨트롤러에서 받을 시 데이터를 추가했는지 안했는지 여부 DB에 저장은 안할거임.
 	private String isLocation;
 
-	
+	//위치
+	private String location_lat;
+	private String location_lng;
+	private String location_iatacode;
 	
 }
