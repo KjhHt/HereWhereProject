@@ -63,12 +63,53 @@
           </div>
 </template>
 <script setup>
-import { ref,defineEmits } from 'vue';
+import { ref,defineEmits, watch,defineProps } from 'vue';
 import axios from 'axios';
 
 let images = ref([]);
 
 const emit = defineEmits(['updateImages','updateLabels'])
+
+const props = defineProps({
+  generateBase64Image: Object,
+});
+
+watch(() => props.generateBase64Image, (newVal) => {
+  if (newVal) {
+    const createFile = convertBase64ToFile(props.generateBase64Image,'createImage.jpg');
+    console.log(createFile);
+    addImagePlus(createFile);
+  }
+}, {
+  deep: true 
+});
+
+function convertBase64ToFile(base64, filename) {
+    // Base64 인코딩된 문자열에서 데이터 부분만 분리합니다.
+    const base64Data = base64.split(',')[1];
+    // Base64 데이터를 byte 배열로 변환합니다.
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    // Blob 객체를 생성합니다. MIME 타입은 상황에 맞게 조정할 수 있습니다.
+    const blob = new Blob([byteArray], {type: 'image/jpeg'});
+    // Blob 객체를 File 객체로 변환합니다.
+    const file = new File([blob], filename, {type: 'image/jpeg'});
+    
+    return file;
+}
+
+const addImagePlus = (file) => {
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    images.value.push({ url: e.target.result, file });
+    emit('updateImages', images.value);  // 이벤트 발생
+  };
+  reader.readAsDataURL(file);  // 이 부분을 onload 이벤트 핸들러 바깥으로 이동
+}
 
 const deleteImage = (index) => {
   images.value.splice(index, 1);

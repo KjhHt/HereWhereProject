@@ -7,6 +7,7 @@
         <TripMomentTitle @moveJoinView="$emit('selectPage', 'TripMomentWriteView')"/>
         <TripCard 
             :loadingModal="loadingModal"
+            :averageProbabilities="averageProbabilities" 
             :boardList="boardList" 
             :no_BoardList="no_BoardList"
             @requestMoreData="loadMoreData"
@@ -34,34 +35,40 @@ const boardList = ref([]);
 const no_BoardList = ref(false);
 const keyword = ref('');
 const loadingModal = ref(false);
-
+const averageProbabilities = ref('');
 const emit = defineEmits(['selectPageData'])
 
 const handleMoveDetailView = (data) => {
     emit('selectPageData','TripMomentDetailView',data);
 }
 
+// 이전과 같이 전역 변수로 commentProbabilitiesList를 선언합니다.
+let commentProbabilitiesList = []; // 전역 또는 상태 관리 스토어에 저장하는 것을 추천
+
+// getBoardList 함수 정의
 const getBoardList = (keyword) => {
-    //게시판 데이터 호출
-    axios.get(process.env.VUE_APP_API_URL+'/board',{
-        params : {
-            num : num.value,
-            keyword : keyword,
+    // 게시판 데이터 호출
+    axios.get(process.env.VUE_APP_API_URL+'/board', {
+        params: {
+            num: num.value, // num 변수가 정의되어 있어야 합니다.
+            keyword: keyword,
         }
     })
-    .then(res=>{
+    .then(res => {
         const newBoardList = res.data.map(item => {
-            //프로필이 0일때와 base64문자열을 헤더붙여주기
+            // 프로필 이미지 처리
             if(item.profileimage === '0')
                 item.profileimage = require('@/assets/dino.jpg');
             else if(!item.profileimage.startsWith('http')){
                 item.profileimage = `data:${res.headers['content-type']};base64,${item.profileimage}`;
             }
-            //게시판 이미지들도 배열로 가져오니 위와 동일
+
+            // 게시판 이미지들 처리
             item.base64BoardImages = item.base64BoardImages.map(value => {
                 return `data:${res.headers['content-type']};base64,${value}`;
             });
-            //좋아요 리스트 프로필이미지도 위와 동일하니 똑같이 해주자
+
+            // 좋아요 리스트 프로필 이미지 처리
             if(item.likeList && item.likeList.length > 0){
                 item.likeList = item.likeList.map(likeItem => {
                     if(likeItem.profileimage === '0')
@@ -74,16 +81,46 @@ const getBoardList = (keyword) => {
             }
             return item;
         });
-        boardList.value = [...boardList.value, ...newBoardList];
-        console.log(boardList.value);
-        // 응답받은 데이터가 없으면 observer를 해제합니다.
-        if(newBoardList.length === 0) {
-            no_BoardList.value = true;
+
+        // 새로운 게시물에 대한 comment_probability 리스트 업데이트
+        const newCommentProbabilities = newBoardList.map(post => {
+            return post.commentList.map(comment => {
+                // '부정'인 경우, 100에서 comment_probability 값을 빼서 반환
+                if(comment.comment_sentiment === '부정') {
+                    return (100 - comment.comment_probability).toFixed(2);
+                }
+                // 그 외의 경우, comment_probability 값을 그대로 반환
+                return comment.comment_probability;
+            });
+        });
+        // 기존 리스트에 새로운 게시물의 comment_probability 리스트를 추가
+        commentProbabilitiesList = [...commentProbabilitiesList, ...newCommentProbabilities];
+
+        // 각 게시물의 comment_probability 평균 계산 함수
+        const calculateAverageCommentProbability = () => {
+            const averages = commentProbabilitiesList.map(commentProbabilities => {
+                const sum = commentProbabilities.reduce((acc, probability) => acc + parseFloat(probability), 0);
+                const average = sum / commentProbabilities.length;
+                return average.toFixed(2);
+            });
+            return averages;
         }
-        loadingModal.value = false;
+
+        // 각 게시물의 comment_probability 평균 계산
+        averageProbabilities.value = calculateAverageCommentProbability();
+
+        // 기존 게시물 리스트 업데이트
+        boardList.value = [...boardList.value, ...newBoardList];
+        if(newBoardList.length === 0) {
+            no_BoardList.value = true; // 더 이상 추가할 게시물이 없을 경우
+        }
+
+        loadingModal.value = false; // 로딩 모달 해제
     })
-    .catch(err=>console.log(err))
+    .catch(err => console.log(err));
 }
+
+
 
 const loadMoreData = () => {
     num.value += 8;

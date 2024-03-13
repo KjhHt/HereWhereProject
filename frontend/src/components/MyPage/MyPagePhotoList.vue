@@ -1,7 +1,7 @@
 <template>
     <div class="index_trip_moment_con">
     <div class="card-container">
-        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="photo in props.boardData" :key="photo.board_no" v-show="props.boardData.length">
+        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="(photo,index) in props.boardData" :key="photo.board_no" v-show="props.boardData.length">
             <div class="sub_con" @click="$emit('moveDetailView',photo)">
                 <div class="layer_con"></div>
                 <div class="tag_con">
@@ -10,6 +10,13 @@
                 <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
                     <div class="img">
                         <img :src="photo.base64BoardImages[0]" />
+                    </div>
+                    <div class="average-probability" style="position: absolute; top: 0; right: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;">
+                        <span style="font-weight: bold;">긍정지수 </span><span style="font-weight: bold; color: #DC143C">{{ isNaN(averageCommentProbabilitiesByBoard[index]) ? '0°C' : averageCommentProbabilitiesByBoard[index]  + '°C' }}</span>
+                        <!-- Bootstrap Progress Bar -->
+                        <div class="progress thermometer" style="height: 15px; border-radius: 10px; overflow: hidden;">
+                            <div class="progress-bar" role="progressbar" :style="{ width: isNaN(averageCommentProbabilitiesByBoard[index]) ? 0 + '%' : averageCommentProbabilitiesByBoard[index] + '%', backgroundColor: '#DC143C', borderRadius: '10px 0 0 10px' }" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="bottom_con">
@@ -35,14 +42,38 @@
 </div>
   </template>
   
-<script setup>
-import { defineProps } from 'vue';
+  <script setup>
+  import { defineProps } from 'vue';
   
-const props = defineProps({
-    boardData : Array,
-})
+  const props = defineProps({
+      boardData: Array,
+  });
   
+  // 함수 정의: 배열의 평균 계산
+  function calculateAverage(arr) {
+    const sum = arr.reduce((acc, val) => acc + val, 0);
+    const avg = sum / arr.length;
+    return parseFloat(avg.toFixed(2)); // 평균값을 소수점 둘째 자리까지 제한하여 반환하며, NaN이면 0 반환
+}
+
+function getAverageCommentProbability(boardData) {
+    return boardData.map(board => {
+        const commentProbabilities = board.commentList.map(comment => {
+            // comment_sentiment가 '부정'인 경우 100 - comment_probability 반환
+            if (comment.comment_sentiment === '부정') {
+                return 100 - parseFloat(comment.comment_probability);
+            } else {
+                return parseFloat(comment.comment_probability);
+            }
+        });
+        return calculateAverage(commentProbabilities);
+    });
+}
+  
+  // 각 게시물별 댓글 comment_probability의 평균 계산
+  const averageCommentProbabilitiesByBoard = getAverageCommentProbability(props.boardData);
   </script>
+  
   
   <style scoped>
   .empty-container {

@@ -231,6 +231,14 @@ public class RestController {
             @RequestPart("dto") String dtoJson,
             HttpServletRequest req
     		) throws IOException, ServletException {
+    	
+        for (MultipartFile file : boardImages) {
+            System.out.println("파일 이름: " + file.getOriginalFilename());
+            System.out.println("파일 크기: " + file.getSize());
+            System.out.println("파일 타입: " + file.getContentType());
+        }
+    	
+    	
     	BoardDto dto = new BoardDto();
 		String token = null;
 		Cookie[] cookies = req.getCookies();

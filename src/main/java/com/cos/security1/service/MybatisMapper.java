@@ -90,5 +90,6 @@ public interface MybatisMapper {
 	List<ScheduleDto> getSchedules(String id);
 	List<PlanDto> getPlans(Long scheduleId);
 	ScheduleDto getScheduleByNo(String schedule_no);		
-	
+	//감정도
+	List<CommentDto> getSensitive(String board_no);
 }

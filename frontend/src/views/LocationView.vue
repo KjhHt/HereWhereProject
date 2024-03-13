@@ -439,10 +439,10 @@
     showSchedule.value= false;
   }
  
-  async function getYoutubeData(address){
-    const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
-    youtubeData.value=response.data
-  }
+  // async function getYoutubeData(address){
+  //   const response= await axios.get(process.env.VUE_APP_PYTHON_API_URL+'/youtube',{params:{address}})
+  //   youtubeData.value=response.data
+  // }
 
   async function getNearbyHotels(lat, lng, number, check_in, check_out) {
     try {
@@ -457,10 +457,10 @@
     }
   }
 
-  async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
-      const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
-      hotelsInfo.value = response.data;
-  }
+  // async function getNearbyHotelsdetail(lat, lng, number, check_in, check_out) {
+  //     const response = await axios.get(process.env.VUE_APP_PYTHON_API_URL + '/booking', { params: { lat, lng, number, check_in, check_out } });
+  //     hotelsInfo.value = response.data;
+  // }
 
   async function getNearbyRestaurants(lat, lng) {
     try {
@@ -503,10 +503,10 @@
   function searchImgLocation(imgplaces){
     imgsearchplaces.value = imgplaces
     let location= imgplaces.geometry.location;
-    getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
-    getYoutubeData(imgplaces.name)
+    // getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    // getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
+    // getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
+    // getYoutubeData(imgplaces.name)
     getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
     moveToPosition(location)
@@ -518,7 +518,7 @@
     getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
     getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
-    getYoutubeData(places.name)
+    // getYoutubeData(places.name)
     getWeather(places.geometry.location.lat(),places.geometry.location.lng())
     getNews(places.geometry.location.lat(),places.geometry.location.lng())
     moveToPosition(location)
@@ -810,9 +810,9 @@
         lng: lngNumber.value,
       };
       map.setCenter(dataLatLng);
-      getNearbyRestaurants(latNumber.value, lngNumber.value);
-      getNearbyAttractions(latNumber.value, lngNumber.value);
-      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+      // getNearbyRestaurants(latNumber.value, lngNumber.value);
+      // getNearbyAttractions(latNumber.value, lngNumber.value);
+      // getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -824,9 +824,9 @@
         lng: lngNumber.value,
       };
       map.setCenter(dataLatLng);
-      getNearbyRestaurants(latNumber.value, lngNumber.value);
-      getNearbyAttractions(latNumber.value, lngNumber.value);
-      getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
+      // getNearbyRestaurants(latNumber.value, lngNumber.value);
+      // getNearbyAttractions(latNumber.value, lngNumber.value);
+      // getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
     }
@@ -921,14 +921,14 @@
   }
 
   //21일 추가 호텔 검색 로딩
-  const handleSearchEvent = (searchData) => {
-    loadingdetail.value = true;
-    hotelsInfo.value = []; 
-    getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
-    .then(() => {
-      loadingdetail.value = false;
-    });
-  };
+  // const handleSearchEvent = (searchData) => {
+  //   loadingdetail.value = true;
+  //   hotelsInfo.value = []; 
+  //   getNearbyHotelsdetail(searchData.lat, searchData.lng, searchData.guests, searchData.checkInDate, searchData.checkOutDate)
+  //   .then(() => {
+  //     loadingdetail.value = false;
+  //   });
+  // };
 
   function clickCustomMarker(info){
     if("attraction" in info || "restaurant" in info || "hotel" in info){

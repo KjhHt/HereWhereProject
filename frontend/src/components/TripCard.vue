@@ -24,13 +24,21 @@
                 <div class="tag_con">
                     <div v-for="(tag,index) in item.boardTags" :key="index" class="tag" style="margin-left: 16px">{{tag}}</div>
                 </div>
-                <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
-                <div class="img">
-                    <img :src="item.base64BoardImages[0]" />
+                <div style="padding-bottom:106%; position: relative;" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
+                    <div class="img">
+                        <img :src="item.base64BoardImages[0]" />
+                    </div>
+                    <!-- 이미지 위에 평균 확률 값을 표시 -->
+                    <div class="average-probability" style="position: absolute; top: 0; right: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;">
+                        <span style="font-weight: bold;">긍정지수 </span><span style="font-weight: bold; color: #DC143C">{{ isNaN(averageProbabilities[index]) ? '0°C' : averageProbabilities[index]  + '°C' }}</span>
+                        <!-- Bootstrap Progress Bar -->
+                        <div class="progress thermometer" style="height: 15px; border-radius: 10px; overflow: hidden;">
+                            <div class="progress-bar" role="progressbar" :style="{ width: isNaN(averageProbabilities[index]) ? 0 + '%' : averageProbabilities[index] + '%', backgroundColor: '#DC143C', borderRadius: '10px 0 0 10px' }" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="bottom_con">
-                <div class="bottom_desc" style="-webkit-box-orient: vertical; text-align: left;">{{ item.board_content }}</div>
+                <div class="bottom_con">
+                    <div class="bottom_desc" style="-webkit-box-orient: vertical; text-align: left;">{{ item.board_content }}</div>
                     <div class="bottom_user_con">
                         <div class="bottom_user_left">
                             <img class="user_avatar" :src="item.profileimage" />
@@ -41,12 +49,11 @@
                             <span style="margin-left: 2px;">{{ item.like_count }}</span>
                         </div>
                     </div>      
-            </div>
+                </div>
             </div>   
         </div>
             
     </div>
-
 </template>
 <script setup>
 import { ref, defineProps , watch, defineEmits } from 'vue'
@@ -56,6 +63,7 @@ const props = defineProps({
   boardList: Array,
   no_BoardList:Object,
   loadingModal:Object,
+  averageProbabilities:Object
 });
 
 const lastItem = ref(null);
@@ -99,7 +107,6 @@ watch(() => props.no_BoardList, () => {
         stopObserving();
     }
 }, { deep: true });
-
 
 </script>
 

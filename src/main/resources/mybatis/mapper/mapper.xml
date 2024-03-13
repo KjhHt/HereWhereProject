@@ -68,6 +68,10 @@
 	     	) bt
 	</select>
 	
+	<select id="getSensitive" parameterType="String" resultType="CommentDto">
+	    SELECT * FROM board_comment WHERE board_no = #{board_no}
+	</select>
+	
 	<select id="myBoard" parameterType="String" resultType="BoardDto">
 		select bt.* , (SELECT COUNT(*) FROM like_table lt WHERE bt.board_no = lt.board_no) as like_count , m.profileimage
 		from board_table bt JOIN member m ON bt.id = m.id

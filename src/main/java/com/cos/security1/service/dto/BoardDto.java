@@ -48,6 +48,8 @@ public class BoardDto {
 	
 	//게시판 위치정보
 	private LocationDto locationList;
+	//감정 리스트
+	private List<CommentDto> commentList;
 	
 	
 }
