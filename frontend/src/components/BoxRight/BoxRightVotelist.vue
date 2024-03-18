@@ -41,11 +41,7 @@ watchEffect(() => {
                 const matchedUser = likeList.value.splice(index, 1)[0]; // 일치하는 회원 제거
                 likeList.value.unshift(matchedUser); // 제거한 회원을 배열의 맨 앞에 추가
             }
-            console.log(likeList.value);
         }
-
-        
-
     }
 });
 

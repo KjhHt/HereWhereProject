@@ -13,9 +13,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -516,7 +518,7 @@ public class RestController {
     
     @PostMapping("/addPlan")
     public void insertPlan(@RequestBody PlanDto planDto) {
-    	System.out.println(planDto);
+    	System.out.println("planDto:"+planDto);
     	planService.addPlan(planDto);
     }
     
@@ -526,13 +528,29 @@ public class RestController {
     }
     
     @GetMapping("/getScheduleByNo")
-    public ScheduleDto findScheduleByNo(@RequestParam String schedule_no) {
+    public ScheduleDto findScheduleByNo(@RequestParam Long schedule_no) {
     	return planService.findScheduleByNo(schedule_no);
     }
     
     @GetMapping("/getPlan")
     public List<PlanDto> findPlan(@RequestParam Long schedule_no){
     	return planService.findPlans(schedule_no);
+    }
+    
+    @PutMapping("/setSchedule")
+    public void setSchedule(@RequestBody ScheduleDto scheduleDto) {
+    	System.out.println("스케쥴:"+scheduleDto);
+    	planService.updateSchedule(scheduleDto);
+    }
+    
+    @DeleteMapping("/delSchedule")
+    public void deleteSchedule(@RequestParam Long schedule_no) {
+    	planService.deleteSchedule(schedule_no);
+    }
+    
+    @DeleteMapping("/delPlan")
+    public void deletePlan(@RequestParam Long plan_no) {
+    	planService.deletePlan(plan_no);
     }
     
     

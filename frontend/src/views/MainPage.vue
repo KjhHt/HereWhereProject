@@ -27,13 +27,17 @@
         </div>
       </div>
     </div>
-      <div class="features">
-        <CarouselComponent 
-          :current-index="currentIndex"
-          @update:currentIndex="currentIndex = $event"
-          @imgClick="handleImgClick"
-          />
+    <div class="features">
+      <transition name="slide">
+      <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="8640000" ref="carouselRef">
+        <div class="carousel-inner">
+          <div class="carousel-item" v-for="(component, index) in components" :key="index" :class="{ active: index === currentIndex }">
+            <component :is="component" @imgClick="handleImgClick" />
+          </div>
+        </div>
       </div>
+      </transition>
+    </div>
     
   </div>
 </template>
@@ -42,7 +46,9 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ref,onMounted,defineEmits } from 'vue';
-import CarouselComponent from '@/components/CarouselComponent.vue';
+import TravelPage from '../views/TravelView.vue';
+import AirTicketPage from '../views/AirTicketTemp.vue';
+import ExchangePage from '../views/CurrencyView.vue';
 import ImageCompare from "@/components/main/ImageCompare.vue";
 
 const emit = defineEmits(['imgClick','searchImgLocation']);
@@ -56,9 +62,17 @@ const handleImgClick = (value) => {
 }
 
 let currentIndex = ref(0);
+const components = [TravelPage, AirTicketPage, ExchangePage];
+const carouselRef = ref(null);
 
 const changeComponent = (index) => {
+  const prevIndex = currentIndex.value;
   currentIndex.value = index;
+  
+  animateSlide(prevIndex, index);
+
+  const carousel = carouselRef.value;
+  carousel && carousel.to(index);
 };
 
 gsap.registerPlugin(ScrollTrigger);
@@ -93,8 +107,25 @@ function initGSAP() {
       onLeave: () => { hide(elem) } // assure that the element is hidden when scrolled into view
     });
   });
+}
+
+function animateSlide(prevIndex, currentIndex) {
+  const carouselItems = document.querySelectorAll(".carousel-item");
 
 
+  gsap.set(carouselItems, { x: "100%" });
+
+  gsap.to(carouselItems[prevIndex], { // 이전 아이템을 왼쪽으로 이동하여 사라지게 함
+    x: 0,
+    duration: 0.01,
+    ease: "linear",
+  });
+
+  gsap.to(carouselItems[currentIndex], { // 현재 아이템을 오른쪽에서 중앙으로 이동하여 나타나게 함
+    x: 0,
+    duration: 0.01,
+    ease: "linear",
+  });
 }
 </script>
 
@@ -117,7 +148,7 @@ img {
 .header-section {
   margin: 0px auto;
   padding: 50px; /* 추가로 내용과의 간격을 주기 위한 패딩 설정 (원하는 값으로 조절) */
-  background-image: url('@/assets/backgroundimage_bottom.png');
+  background-image: url('@/assets/sea_bottom_4.webp');
   background-size: cover; /* 배경 이미지 크기를 커버로 설정 */
   background-position: top; /* 배경 이미지 위치를 가운데로 설정 */
   position: relative; /* 배경 이미지를 포함한 상대적인 위치 설정 */
@@ -131,7 +162,7 @@ img {
   align-items: top;
 }
 
-@media screen and (max-width: 1961px) {
+@media screen and (max-width: 3000px) {
   .header-section {
     background-size: 100% 100%; /* 배경 이미지가 창 안에 딱 맞게 보이도록 함 */
     background-position: top; /* 배경 이미지의 위치 설정 */
@@ -192,4 +223,11 @@ img {
   border-bottom: 2px solid black;
 }
 
+
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.5s;
+}
+.slide-enter, .slide-leave-to {
+  transform: translateX(100%);
+}
 </style>

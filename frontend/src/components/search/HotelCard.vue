@@ -221,9 +221,6 @@ const payListInsert = async () => {
   width: calc(100% - 40px); /* 내용과 이미지 사이의 비율을 조절 */
   padding: 10px; /* 내용 주변에 여백 추가 */
   text-align: left;
-  overflow: hidden; /* 텍스트가 넘칠 경우 자르기 */
-  white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 설정 */
-  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 마침표로 표시 */
 }
 .card-hotel-name{
   font-weight: bold;
@@ -309,7 +306,7 @@ li {
   font-weight: bold;
 }
 .card-img{
-  width: 40%; /* 내용과 이미지 사이의 비율을 조절 */
+  width: 50%; /* 내용과 이미지 사이의 비율을 조절 */
 }
 
 .card-img img{

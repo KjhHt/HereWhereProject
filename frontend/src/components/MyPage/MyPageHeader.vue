@@ -190,6 +190,7 @@ const closeModal = () => {
     font-size: 16px;
     color: rgb(255, 255, 255);
     line-height: 20px;
-    margin-top: 35px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 </style>

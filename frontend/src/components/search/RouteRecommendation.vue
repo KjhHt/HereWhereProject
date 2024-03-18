@@ -48,25 +48,27 @@
     </div>
     <div class="View_route">
         <ul>
-            <li v-if="activeMode === 'bus_btn'">
-                <div id="bus-div" class="card w-100 mb-3">
+            <li  v-if="activeMode === 'bus_btn'">
+                <div id="bus-div" class="card w-100">
                     <div class="card-body" id="transit-card-body" v-for="(transitInfo,index) in transitList" :key="index" @click="clickTransit(transitInfo)">
                         <div class="transit-card-info" data-bs-toggle="collapse" :data-bs-target="'#transitInfo'+index" aria-expanded="false" :aria-controls="'transitInfo'+index">
                             <div id="index-circle"> {{ index+1 }} </div>
                             <span v-for="(step,index) in transitInfo.legs[0].steps" :key="index">
                                 <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && step.transit.line.vehicle.type.includes('BUS')">
                                     <img :src="require('@/assets/icon-bus.png')"/>
-                                    <span>{{ step.transit.line.short_name.replace(/\D/g, '') }}</span>                              
+                                    <span v-if="step.transit.line.short_name">{{ step.transit.line.short_name.replace(/\D/g, '') }}</span>                              
+                                    <span v-else>{{ step.transit.line.name }}</span>
                                 </span>
-                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL'))">
+                                <span class="transit-space" v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL') || step.transit.line.vehicle.type.includes('TRAIN'))">
                                     <img :src="require('@/assets/icon-subway.png')"/>
-                                    <span>{{ step.transit.line.short_name }}</span>
+                                    <span v-if="step.transit.line.short_name">{{ step.transit.line.short_name }}</span>
+                                    <span v-else>{{ step.transit.line.name }}</span>
                                 </span>
                             </span>
                             <div class="card-info-head" id="transit-card-info-head">
                                 <span><strong>{{ transitInfo.legs[0].duration.text }}</strong></span>
                                 <span><small>{{ transitInfo.legs[0].distance.text }}</small></span>
-                                <ul class="drive-ul">
+                                <ul class="drive-ul" v-if="transitInfo.legs[0].departure_time">
                                     <li>{{ transitInfo.legs[0].departure_time.text }} ~ {{ transitInfo.legs[0].arrival_time.text }}</li>
                                 </ul>
                             </div>
@@ -79,9 +81,12 @@
                                             <div class="row">
                                                 <div class="col-4">
                                                     <img v-if="step.travel_mode==='TRANSIT' && step.transit.line.vehicle.type.includes('BUS')" :src="require('@/assets/icon-bus.png')" />
-                                                    <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL'))" :src="require('@/assets/icon-subway.png')" />
+                                                    <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL') || step.transit.line.vehicle.type.includes('TRAIN'))" :src="require('@/assets/icon-subway.png')" />
                                                     <img v-if="step.travel_mode === 'WALKING'" :src="require('@/assets/icon-walking.png')" />  
-                                                    <span id="transitName" v-if="step.travel_mode==='TRANSIT'">{{ step.transit.line.short_name }}</span>
+                                                    <div v-if="step.travel_mode==='TRANSIT'">
+                                                        <span id="transitName" v-if="step.transit.line.short_name">{{ step.transit.line.short_name }}</span>
+                                                        <span id="transitName" v-else>{{ step.transit.line.name }}</span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-8">
                                                     <div class="transit-card-info-body">
@@ -107,7 +112,7 @@
             </li>
             <li v-else-if="activeMode === 'car_btn'">
                 <div class="routes-card" v-for="(driveInfo,index) in driveList" :key="index">
-                    <div class="card-body" @click="clickDrive(driveInfo)">
+                    <div class="card-body" v-if="!('legs' in driveInfo)" @click="clickDrive(driveInfo)">
                         <div class="card-info">
                             <div id="index-circle">{{ index+1 }}</div>
                             <div class="card-info-head">
@@ -117,6 +122,15 @@
                                 <li>택시비{{ driveInfo.summary.fare.taxi }}원</li>
                                 <li>{{ driveInfo.summary.fare.toll }}</li>
                             </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" v-else @click="clickDrive(driveInfo)">
+                        <div class="card-info">
+                            <div id="index-circle">{{ index+1 }}</div>
+                            <div class="card-info-head">
+                            <span><strong>{{ driveInfo.legs[0].duration.text }}</strong></span>
+                            <span><small>{{ driveInfo.legs[0].distance.text }}</small></span>
                             </div>
                         </div>
                     </div>
@@ -132,7 +146,10 @@
                             </div>
                         </div>
                     </div>
-                </div>               
+                </div>
+                <div v-if="iswalkZero">
+                    경로를 찾지 못했습니다.
+                </div>          
             </li>
             <li v-else-if="activeMode === 'searchArea'">
                 <div class="search-card" v-for="searchInfo in searchList" :key="searchInfo.place_id" @click="searchClick(searchInfo)">
@@ -150,7 +167,7 @@
                 </div>
             </li>
             <li v-if="Object.keys(flightInfo).length > 0 && Object.keys(departuresPath).length > 0 && Object.keys(arrivalsPath).length > 0 && activeMode !== 'searchArea'">
-                <div id="bus-div"  class="card w-100 mb-3" v-show="showFlightCard">
+                <div id="flight-div"  class="card w-100 mb-3" v-show="showFlightCard">
                     <div class="card-body">
                         <div class="row" >
                             <div class="col">
@@ -166,8 +183,8 @@
                                                 <div class="flight-card-info-body d-flex justify-content-between mb-2">
                                                     <a class="btn btn-primary" @click="searchAirplane(flightInfo.itineraries[0].segments[0].departure.iataCode, flightInfo.itineraries[0].segments[flightInfo.itineraries[0].segments.length-1].arrival.iataCode)">자세히</a>
                                                     <ul class="flight-ul">
-                                                        <li>{{ getAirport(flightInfo.itineraries[0].segments[0].departure.iataCode).name }}</li>
-                                                        <li>{{ getAirport(flightInfo.itineraries[0].segments[flightInfo.itineraries[0].segments.length-1].arrival.iataCode).name }}</li>
+                                                        <li><input type="text" readonly :value="getAirport(flightInfo.itineraries[0].segments[0].departure.iataCode).name"/></li>
+                                                        <li><input type="text" readonly :value="getAirport(flightInfo.itineraries[0].segments[flightInfo.itineraries[0].segments.length-1].arrival.iataCode).name"/></li>
                                                     </ul>               
                                                 </div>
                                             </div>
@@ -179,9 +196,12 @@
                                         <div class="row">
                                             <div class="col-4">
                                                 <img v-if="step.travel_mode==='TRANSIT' && step.transit.line.vehicle.type.includes('BUS')" :src="require('@/assets/icon-bus.png')" />
-                                                <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL'))" :src="require('@/assets/icon-subway.png')" />
+                                                <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL') || step.transit.line.vehicle.type.includes('TRAIN'))" :src="require('@/assets/icon-subway.png')" />
                                                 <img v-if="step.travel_mode === 'WALKING'" :src="require('@/assets/icon-walking.png')" />  
-                                                <span id="transitName" v-if="step.travel_mode==='TRANSIT'">{{ step.transit.line.short_name }}</span>
+                                                <div v-if="step.travel_mode==='TRANSIT'">
+                                                    <span id="transitName" v-if="step.transit.line.short_name">{{ step.transit.line.short_name }}</span>
+                                                    <span id="transitName" v-else>{{ step.transit.line.name }}</span>
+                                                </div>
                                             </div>
                                             <div class="col-8">
                                                 <div class="flight-card-info-body">
@@ -219,9 +239,12 @@
                                         <div class="row">
                                             <div class="col-4">
                                                 <img v-if="step.travel_mode==='TRANSIT' && step.transit.line.vehicle.type.includes('BUS')" :src="require('@/assets/icon-bus.png')" />
-                                                <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL'))" :src="require('@/assets/icon-subway.png')" />
+                                                <img v-if="step.travel_mode==='TRANSIT' && (step.transit.line.vehicle.type.includes('SUBWAY') || step.transit.line.vehicle.type.includes('HEAVY_RAIL') || step.transit.line.vehicle.type.includes('TRAIN'))" :src="require('@/assets/icon-subway.png')" />
                                                 <img v-if="step.travel_mode === 'WALKING'" :src="require('@/assets/icon-walking.png')" />  
-                                                <span id="transitName" v-if="step.travel_mode==='TRANSIT'">{{ step.transit.line.short_name }}</span>
+                                                <div v-if="step.travel_mode==='TRANSIT'">
+                                                    <span id="transitName" v-if="step.transit.line.short_name">{{ step.transit.line.short_name }}</span>
+                                                    <span id="transitName" v-else>{{ step.transit.line.name }}</span>
+                                                </div>
                                             </div>
                                             <div class="col-8">
                                                 <div class="flight-card-info-body">
@@ -293,9 +316,11 @@ let searchTarget;
 let transitResponse;
 let driveResponse;
 let walkResponse;
+let googleDrive;
 const csvData= ref([]);
 let flightInfo= ref({});
 let zeroResult= ref(false);
+let iswalkZero= ref(false);
 let departuresPath= ref({});
 let arrivalsPath= ref({});
 let flightList= ref({})
@@ -409,22 +434,71 @@ const searchObserve=()=>{
     }else arrivalsRef.value.placeholder= '도착지를 선택하세요'
 }
 
-const searchRoute=()=>{ //출발지 목적지 좌표 얻기
+const searchRoute=async()=>{ //출발지 목적지 좌표 얻기
     if(departuresRef.value.value.trim() === '' || departuresRef.value.value.trim()==='') return
-    routeLocation.value={}
-    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
-    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
-    placesService.value.textSearch({query:departuresRef.value.value}, (result,status)=>{
-        if(status === 'OK'){
-            routeLocation.value.departures={lat:result[0].geometry.location.lat(), lng:result[0].geometry.location.lng()}
-            placesService.value.textSearch({query:arrivalsRef.value.value}, (result,status)=>{
-                if(status === 'OK'){
-                    routeLocation.value.arrivals={lat:result[0].geometry.location.lat(), lng:result[0].geometry.location.lng()}
-                    findRoute(routeLocation.value)
-                }
-            })
-        }
-    })
+    routeLocation.value={};
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null);
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null);
+    let departuresSearch, arrivalsSearch;
+    if (!(findPlusCode(departuresRef.value.value) && findPlusCode(arrivalsRef.value.value))) {
+        // 출발지와 도착지 모두에서 플러스 코드를 찾지 못한 경우
+        [departuresSearch, arrivalsSearch] = await Promise.all([
+        textSearchPromise(departuresRef.value.value),
+        textSearchPromise(arrivalsRef.value.value)
+        ]);
+    } else if(findPlusCode(departuresRef.value.value) && !findPlusCode(arrivalsRef.value.value)) {
+        // 출발지에서는 플러스 코드를 찾았으나 도착지에서는 찾지 못한 경우
+        [departuresSearch, arrivalsSearch] = await Promise.all([
+        geocodeAsync(departuresRef.value.value),
+        textSearchPromise(arrivalsRef.value.value)
+        ]);
+    } else if (findPlusCode(departuresRef.value.value) && findPlusCode(arrivalsRef.value.value)) {
+        // 도착지에서는 플러스 코드를 찾았으나 출발지에서는 찾지 못한 경우
+        [departuresSearch, arrivalsSearch] = await Promise.all([
+        textSearchPromise(departuresRef.value.value),
+        geocodeAsync(arrivalsRef.value.value)
+        ]);
+    } else {
+        // 출발지와 도착지 모두에서 플러스 코드를 찾은 경우
+        [departuresSearch, arrivalsSearch] = await Promise.all([
+            geocodeAsync(departuresRef.value.value),
+            geocodeAsync(arrivalsRef.value.value)
+        ]);
+    }
+    if (departuresSearch) routeLocation.value.departures = departuresSearch;
+    if (arrivalsSearch) routeLocation.value.arrivals = arrivalsSearch;
+    findRoute(routeLocation.value);
+}
+
+async function geocodeAsync(address) {
+  return new Promise((resolve, reject) => {    
+    geocoder.value.geocode({'address': address}, (results, status) => {
+      if (status === 'OK') {
+        resolve({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+      } else {
+        reject('Geocode was not successful:'+ status);
+      }
+    });
+  });
+}
+
+async function textSearchPromise(query) {
+  return new Promise((resolve, reject) => {
+    placesService.value.textSearch({ query: query }, (result, status) => {
+      if (status === 'OK') {
+        resolve({ lat: result[0].geometry.location.lat(), lng: result[0].geometry.location.lng() });
+      } else {
+        reject('textSearch failed with status:' + status);
+      }
+    });
+  });
+}
+
+// 주소에 플러스코드가 있으면 추출
+function findPlusCode(address) {
+  const plusCodeRegex = /^[A-Z0-9]{4}\+[A-Z0-9]{2,3}\s?.*$/;
+  const match = address.match(plusCodeRegex);
+  return match ? match[0] : null;
 }
 
 // 거리 표시 함수
@@ -452,57 +526,74 @@ function formatDateTime(datetimeStr) {
 
 const findRoute= async(route)=> { //경로 찾기 이벤트
     flightInfo.value= {};
-    zeroResult.value= false;
-    activeMode.value= null
+    zeroResult.value= iswalkZero= showFlightCard.value= false;
+    driveList.value= transitList.value= walkInfo.value= [];
+    activeMode.value= driveResponse= transitResponse= walkResponse= googleDrive= null;
+    showRoading.value= true;
     document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
         if(button.classList.contains('active')) button.classList.remove('active')
     });
+    setDraw(null);
     try{
-        showFlightCard.value= false
-        driveList.value= [];
-        transitList.value= [];
-        walkInfo.value= [];
-        driveResponse= null;
-        transitResponse= null;
-        walkResponse= null;
-        showRoading.value= true;
-        [driveResponse, transitResponse, walkResponse]= await Promise.all([
-            getDriveRoute(route),
-            getTransitRoute(route),
-            getWalkRoute(route)
-        ]);     
-        if(driveResponse){
-            if(driveResponse.data.routes[0].summary){
-                driveResponse.data.routes.forEach(routes=>{
-                    routes.summary.distance = displayDistance(routes.summary.distance);
-                    routes.summary.duration = displayDuration(routes.summary.duration);
-                    if(routes.summary.fare.toll===0) delete routes.summary.fare.toll;
-                    else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'; 
-                })
-                driveList.value= driveResponse.data.routes
+        if(isInKorea(route.departures) && isInKorea(route.arrivals)){
+            [driveResponse, transitResponse, walkResponse]= await Promise.all([
+                getDriveRoute(route),
+                getTransitRoute(route),
+                getWalkRoute(route)
+            ]);     
+            if(driveResponse){
+                if(driveResponse.data.routes[0].summary){
+                    driveResponse.data.routes.forEach(routes=>{
+                        routes.summary.distance = displayDistance(routes.summary.distance);
+                        routes.summary.duration = displayDuration(routes.summary.duration);
+                        if(routes.summary.fare.toll===0) delete routes.summary.fare.toll;
+                        else routes.summary.fare.toll= '통행료'+routes.summary.fare.toll+'원'; 
+                    })
+                    driveList.value= driveResponse.data.routes
+                }
             }
-        }
-        if(transitResponse) transitList.value= transitResponse.routes
-        if(walkResponse.data) {
-            walkInfo.value= walkResponse.data
-            let properties= walkInfo.value.features[0].properties
-            properties.totalDistance= displayDistance(properties.totalDistance)
-            properties.totalTime= displayDuration(properties.totalTime)
-        }
-        showRoading.value= false;
-        document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
-            if(button.classList.contains('active')) button.classList.remove('active')
-        });
-        document.querySelector('.bus_btn').click();
-    }catch(error){
-        if(error==='ZERO_RESULTS'){
-            getFlightPath(route)
+            if(transitResponse) transitList.value= transitResponse.routes;
+            if(walkResponse) {
+                walkInfo.value= walkResponse.data
+                let properties= walkInfo.value.features[0].properties
+                properties.totalDistance= displayDistance(properties.totalDistance)
+                properties.totalTime= displayDuration(properties.totalTime)
+            }
+            showRoading.value= false;
+            document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
+                if(button.classList.contains('active')) button.classList.remove('active')
+            });
+            document.querySelector('.bus_btn').click();
         }else{
-            console.log('error',error)
-            showRoading.value= true;
+            [googleDrive,transitResponse]= await Promise.all([
+                toPromise(getGoogleDriveRoute(route)),
+                toPromise(getTransitRoute(route))
+            ])
+            if(transitResponse.success) transitList.value= transitResponse.data.routes;
+            if(googleDrive.success) {
+                driveList.value= googleDrive.data.routes;
+            }
+            document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
+                if(button.classList.contains('active')) button.classList.remove('active')
+            });
+            document.querySelector('.bus_btn').click();
+            if(!(googleDrive.success && transitResponse.success)){
+                document.querySelectorAll('.bus_btn, .car_btn, .walk_btn').forEach(button => {
+                    if(button.classList.contains('active')) button.classList.remove('active')
+                });
+                await getFlightPath(route);
+            } 
+            showRoading.value= false;
         }
+    }catch(error){
+        console.log(error);
     }
   }
+
+  const toPromise = (promise) =>
+    promise
+        .then(data => ({ success: true, data }))
+        .catch(error => ({ success: false, error }));
 
   const data = qs.stringify({
     'grant_type': 'client_credentials',
@@ -519,33 +610,49 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
     data : data
   };
 
+  function isInKorea(route) {
+    // 한국의 대략적인 위도와 경도 경계
+    const minLat = 33.7;
+    const maxLat = 38;
+    const minLon = 125;
+    const maxLon = 129.8;
+
+    // 좌표가 한국 내에 있는지 확인
+    return route.lat >= minLat && route.lat <= maxLat && route.lng >= minLon && route.lng <= maxLon;
+  }
+
   async function getFlightPath(route){
     try{
-        directionsRenderer.value.setMap(null);
-        directionsRenderer_.value.setMap(null);
-        let [departuresAirport, arrivalsAirport] = await Promise.all([
-            searchAirports(route.departures.lat, route.departures.lng), // 출발지 근처 공항 찾기
-            searchAirports(route.arrivals.lat, route.arrivals.lng) // 목적지 근처 공항 찾기
-        ]);
+        let departuresAirport, arrivalsAirport;
+        if(isInKorea(route.departures)){
+            for(let row of csvData.value){
+                if(row.name.includes('Incheon International Airport')){
+                    departuresAirport= row;
+                    break;
+                }
+            }
+            arrivalsAirport= await searchAirports(route.arrivals.lat, route.arrivals.lng);
+        }else if(isInKorea(route.arrivals)){
+            for(let row of csvData.value){
+                if(row.name.includes('Incheon International Airport')){
+                    arrivalsAirport= row;
+                    break;
+                }
+            }
+            departuresAirport= await searchAirports(route.departures.lat, route.departures.lng);
+        }else{
+            [departuresAirport, arrivalsAirport] = await Promise.all([
+                searchAirports(route.departures.lat, route.departures.lng), // 출발지 근처 공항 찾기
+                searchAirports(route.arrivals.lat, route.arrivals.lng) // 목적지 근처 공항 찾기
+            ]);
+        }
         let departuresAirportRoute= {departures:{lng:route.departures.lng, lat:route.departures.lat}, //출발지와 공항 좌표
                             arrivals:{lng:parseFloat(departuresAirport.longitude_deg), lat:parseFloat(departuresAirport.latitude_deg)}}
         let arrivalsAirportRoute= {departures:{lng:parseFloat(arrivalsAirport.longitude_deg), lat:parseFloat(arrivalsAirport.latitude_deg)}, //목적지와 공항 좌표
                             arrivals:{lng:route.arrivals.lng, lat:route.arrivals.lat}}
         let credential= await axios(config); //아마데우스 토큰 생성
-        flightList.value= await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers',{ //아마데우스 비행경로 찾기
-            params:{
-                originLocationCode: departuresAirport.iata_code,
-                destinationLocationCode: arrivalsAirport.iata_code,
-                departureDate: nextSevenDay(),
-                adults: 1,
-                max: 1,
-                currencyCode: 'KRW'
-            },
-            headers: {
-                'Authorization': `Bearer ${credential.data.access_token}`
-            }
-        });
-        [departuresPath.value, arrivalsPath.value]= await Promise.all([ //대중교통 경로 찾기
+        [flightList.value,departuresPath.value, arrivalsPath.value]= await Promise.all([ //비행,대중교통 경로 찾기
+            getFlightAxios(departuresAirport,arrivalsAirport,credential),
             getTransitRoute(departuresAirportRoute),
             getTransitRoute(arrivalsAirportRoute)
         ]);
@@ -565,15 +672,52 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
         setDraw(flightPath);
         showRoading.value= false;
         showFlightCard.value= true;
-        console.log(flightList.value);
-        console.log('departuresPath',departuresPath.value);
-        console.log('arrivalsPath',arrivalsPath.value);
         flightInfo.value= flightList.value.data.data[0];
     }catch(error){
         if(error==='ZERO_RESULTS') zeroResult.value= true;
         showRoading.value= false;
     }
-}
+  }
+
+  async function getGoogleDriveRoute(route){ //구글 대중교통 경로 API
+    let request= {
+        origin: route.departures,
+        destination: route.arrivals,
+        travelMode: 'DRIVING',
+        provideRouteAlternatives: true
+    }
+    return new Promise((resolve,reject)=> {
+        directionsService.value.route(request, (response,status)=>{
+            if(status === 'OK'){
+                resolve(response);
+            }else{
+                reject(status);
+            }
+        })
+    })
+  }
+
+  async function getFlightAxios(departuresAirport, arrivalsAirport, credential, ){
+    return new Promise((resolve, reject)=> {
+        axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers',{ //아마데우스 비행경로 찾기
+            params:{
+                originLocationCode: departuresAirport.iata_code,
+                destinationLocationCode: arrivalsAirport.iata_code,
+                departureDate: nextSevenDay(),
+                adults: 1,
+                max: 1,
+                currencyCode: 'KRW'
+            },
+            headers: {
+                'Authorization': `Bearer ${credential.data.access_token}`
+            }
+        }).then(response => {
+            resolve(response);
+        }).catch(error => {
+            reject(error);
+        });
+    });
+  }
 
   async function getDriveRoute(route){ //카카오 운전 경로 API
     return new Promise((resolve, reject) => {
@@ -621,7 +765,10 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
 
   async function getWalkRoute(route) { // TMAP 도보 경로 API
     if(getDistanceInKm(route.departures.lat, route.departures.lng,  //출발지와 목적지의 직선거리가 30km이하일때만 도보경로 얻기
-        route.arrivals.lat, route.arrivals.lng) > 30) return;
+        route.arrivals.lat, route.arrivals.lng) > 30) {
+            iswalkZero.value= true;
+            return;
+        }
     let headers = { appKey: process.env.VUE_APP_TMAP_API_KEY }
     let request = {
         startX: route.departures.lng,
@@ -642,6 +789,7 @@ const findRoute= async(route)=> { //경로 찾기 이벤트
             .catch(error => {
                 console.log('T맵에러',error);
                 showRoading.value = false;
+                iswalkZero.value= true;
                 reject(error);
             });
     });
@@ -654,20 +802,28 @@ const setDraw=drivePath=>{
 }
 
 const clickDrive=(driveInfo)=>{
-    let roads= driveInfo.sections[0].roads
-    let drivePath=[]
-    for (let i=0; i<roads.length; i++){
-        let vertexes= roads[i].vertexes;
-        for (let k = 0; k < vertexes.length; k += 2) {
-            drivePath.push({
-              lng: vertexes[k],
-              lat: vertexes[k + 1]
-            })
+    if(directionsRenderer.value) directionsRenderer.value.setMap(null);
+    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null);
+    setDraw(null);
+    console.log('드라이브인포',driveInfo);
+    if(!('legs' in driveInfo)){
+        let drivePath=[]
+        let roads= driveInfo.sections[0].roads
+        for (let i=0; i<roads.length; i++){
+            let vertexes= roads[i].vertexes;
+            for (let k = 0; k < vertexes.length; k += 2) {
+                drivePath.push({
+                lng: vertexes[k],
+                lat: vertexes[k + 1]
+                })
+            }
         }
+        setDraw(drivePath);
+    }else{
+        googleDrive.data.routes= [driveInfo];
+        directionsRenderer.value.setMap(props.map.map);
+        directionsRenderer.value.setDirections(googleDrive.data);
     }
-    if(directionsRenderer.value) directionsRenderer.value.setMap(null)
-    if(directionsRenderer_.value) directionsRenderer_.value.setMap(null)
-    setDraw(drivePath)
 }
 
 const clickWalk=(walkInfo)=>{
@@ -695,10 +851,16 @@ const clickWalk=(walkInfo)=>{
 }
 
 const clickTransit=(transitInfo)=>{
-    transitResponse.routes= [transitInfo]
-    setDraw(null)
-    directionsRenderer.value.setMap(props.map.map)
-    directionsRenderer.value.setDirections(transitResponse)
+    setDraw(null);
+    directionsRenderer.value.setMap(props.map.map);
+    console.log('트랜짓인포',transitInfo);
+    if('data' in transitResponse){
+        transitResponse.data.routes= [transitInfo];
+        directionsRenderer.value.setDirections(transitResponse.data);
+    }else{
+        transitResponse.routes= [transitInfo];
+        directionsRenderer.value.setDirections(transitResponse);
+    }
 }
 
 //근처공항 찾기
@@ -901,6 +1063,9 @@ button> span{
 .View_route> ul> li{
     margin-top: 0;
 }
+.View_route li{
+    margin: 0;
+}
 .routes-card,
 .search-card {
     border: 1px solid #ddd;
@@ -1046,7 +1211,8 @@ button> span{
     font-weight: bold;
 }
 #transitName{
-    margin-left: 5px;
+    margin-left: 1px;
+    font-size: 14px;
 }
 .transit-info> .card-info
 .card{
@@ -1064,6 +1230,9 @@ button> span{
 .flight-ul> li,
 .transit-ul> li{
     margin: 0;
+}
+.flight-ul input{
+    width: 250px;
 }
 .transit-ul input{
     border: none;
@@ -1187,6 +1356,23 @@ animation-fill-mode: forwards;
 #bus-div{
     border: none;
 }
+#flight-div{
+    border: none;
+}
+#flight-div> .card-body{
+    padding-left:0;
+}
+#flight-div .card-info{
+    width: 335px;
+}
+#flight-div input{
+    text-align: left;
+    padding:0;
+    width: 180px;
+}
+#flight-div a{
+    height: 37px;
+}
 .flight-info> .card-info{
     padding-left: 25px;
 }
@@ -1194,7 +1380,6 @@ animation-fill-mode: forwards;
     padding-right: 15px;
 }
 #bestRoute{
-    margin-bottom: 50px;
     border-radius: 8px;
     height: 100px;
 }

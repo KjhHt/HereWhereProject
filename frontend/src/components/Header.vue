@@ -2,7 +2,7 @@
   <header class="header" :class="{ 'main-page-header': isMainPage }">
     <div class="container" >
       <div class="header-content d-flex flex-wrap align-items-center ">
-        <div class="logo-container" >
+        <div class="logo-container" @click="handleLogoClick">
           <a @click="$emit('selectPage','main')" class="logo-link">
             <!-- <div class="header-text">HERE WHERE</div> -->
             
@@ -14,15 +14,12 @@
           </a>
         </div>
         <nav class="nav">
+          
           <!-- 채팅 페이지 -->
-          <a @click="$emit('selectPage','test')" class="nav-item" >
-            채팅
-          </a>
-          <!-- 채팅 페이지 -->
-          <a @click="$emit('selectPage','location')" class="nav-item">
+          <a @click="$emit('selectPage','location'),handleNavigationClick('location')" class="nav-item" >
             위치검색
           </a>
-          <a @click="$emit('selectPageFlight','flightreserve','Y')" class="nav-item" >
+          <a @click="$emit('selectPageFlight','flightreserve','Y'),handleNavigationClick('flightreserve')" class="nav-item" >
             항공권검색
           </a>
 
@@ -42,9 +39,7 @@
           </a>
           -->
 
-          <a @click="$emit('selectMyPage','mypage')" class="nav-item"  >
-            마이페이지
-          </a>
+          
 
           <!--
           <a @click="$emit('selectPage','join')" class="nav-item" @mouseover="showTooltip('회원가입')" @mouseout="hideTooltip">
@@ -55,15 +50,15 @@
           </a>
           -->
           
-          <a @click="$emit('selectPage','trip-moment')" class="nav-item">
+          <a @click="$emit('selectPage','trip-moment'),handleNavigationClick('trip-moment')" class="nav-item">
             트립모먼트
           </a>
 
-          <a @click="$emit('selectPage','translation')" class="nav-item">
+          <a @click="$emit('selectPage','translation'),handleNavigationClick('translation')" class="nav-item">
             번역
           </a>
 
-          <a @click="$emit('selectPage','mbti')" class="nav-item">
+          <a @click="$emit('selectPage','mbti'),handleNavigationClick('mbti')" class="nav-item">
             MBTI검사
           </a>
 
@@ -136,7 +131,8 @@
                 <img :src="src" alt="Login" class="cat-image" @click="toggleDropdown" />
                 <!-- 드롭다운 메뉴 -->
                   <div v-if="isDropdownOpen" class="dropdown-menu">
-                    <router-link to="/mypage" class="dropdown-item">마이페이지</router-link>
+                    <a @click="$emit('selectPage','test'),handleNavigationClick('test')" class="dropdown-item" >채팅</a>
+                    <a @click="$emit('selectMyPage','mypage'),handleNavigationClick('mypage')" class="dropdown-item"  >마이페이지</a>
                     <button class="dropdown-item" @click="logoutAndNavigateToMain">로그아웃</button>
                   </div>
                 </div>
@@ -292,18 +288,37 @@ export default {
       this.loginModalVisible = false;
     },
     toggleDropdown() {
-      // 드롭다운 메뉴 열고 닫기 전환
       this.isDropdownOpen = !this.isDropdownOpen;
+      if (this.isNoticeDropdownOpen && this.isNoticeDropdownOpen) {
+        this.isNoticeDropdownOpen = false;
+      }
     },
     toggleNoticeDropdown() {
       this.$emit('resetCount');
       // 드롭다운 메뉴 열고 닫기 전환
       this.isNoticeDropdownOpen = !this.isNoticeDropdownOpen;
+      if (this.isNoticeDropdownOpen && this.isDropdownOpen) {
+    this.isDropdownOpen = false;
+  }
     },
     logoutAndNavigateToMain() {
       this.$store.dispatch('logout')
     },
-    
+    handleNavigationClick(page) {
+      this.$emit('selectPage', page);
+      this.closeDropdowns();
+    },
+
+    handleLogoClick() {
+      this.$emit('selectPage', 'main');
+      this.closeDropdowns();
+    },
+    closeDropdowns() {
+      this.isDropdownOpen = false;
+      if (this.isNoticeDropdownOpen) {
+        this.isNoticeDropdownOpen = false;
+      }
+    },
   },
 };
 </script>
@@ -1013,7 +1028,7 @@ margin-left: 150px;
 }
 
 .main-page-header {
-  background-image: url('@/assets/backgroundimage_top.png');
+  background-image: url('@/assets/sea_top_4.webp');
   background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;

@@ -68,6 +68,21 @@
 	     	) bt
 	</select>
 	
+	<select id="getCount" resultType="CountDto">
+		SELECT * FROM count_table
+	</select>
+	<update id="increaseCount">
+		UPDATE count_table SET count = count + 1
+	</update>
+	<update id="decreaseCount">
+		UPDATE count_table SET count = count - 1
+	</update>
+	
+	
+	<select id="getSensitive" parameterType="String" resultType="CommentDto">
+		SELECT * FROM board_comment WHERE board_no = #{board_no}
+	</select>
+	
 	<select id="myBoard" parameterType="String" resultType="BoardDto">
 		select bt.* , (SELECT COUNT(*) FROM like_table lt WHERE bt.board_no = lt.board_no) as like_count , m.profileimage
 		from board_table bt JOIN member m ON bt.id = m.id
@@ -326,19 +341,32 @@
 	</insert>
 	
 	<insert id="insertPlan" parameterType="PlanDto">
-		INSERT INTO plan_table VALUES(SEQ_PLAN_TABLE.nextval,#{plan_name},#{plan_img},#{plan_placeid},sysdate,#{schedule_no})
+		INSERT INTO plan_table VALUES(SEQ_PLAN_TABLE.nextval,#{plan_name},#{plan_img},#{plan_placeid},sysdate,#{schedule_no},#{plan_latitude},#{plan_longitude})
 	</insert>
 	
 	<select id="getSchedules" parameterType="String" resultType="ScheduleDto">
-		SELECT * FROM schedule_table WHERE id=#{id}
+		SELECT * FROM schedule_table WHERE id=#{id} ORDER BY schedule_startdate, schedule_no
 	</select>
 	
 	<select id="getPlans" parameterType="Long" resultType="PlanDto">
-		SELECT * FROM plan_table WHERE schedule_no=#{schedule_no}
+		SELECT * FROM plan_table WHERE schedule_no=#{schedule_no} ORDER BY plan_no
 	</select>
 	
 	<select id="getScheduleByNo" parameterType="Long" resultType="ScheduleDto">
 		SELECT * FROM schedule_table WHERE schedule_no=#{schedule_no}
 	</select>	
+	
+	<update id="updateSchedule" parameterType="ScheduleDto">
+		UPDATE schedule_table SET schedule_title=#{schedule_title}, schedule_startdate=#{schedule_startdate},
+			schedule_enddate=#{schedule_enddate} WHERE schedule_no=#{schedule_no}
+	</update>
+	
+	<delete id="deleteScheduleByNo" parameterType="Long">
+		DELETE schedule_table WHERE schedule_no=#{schedule_no}
+	</delete>
+	
+	<delete id="deletePlanByNo" parameterType="Long">
+		DELETE plan_table WHERE plan_no=#{plan_no}
+	</delete>	
 	
 </mapper>

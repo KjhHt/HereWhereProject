@@ -18,6 +18,7 @@
 .PersonalHomeStyle__MainContainer-sc-17u1tdw-6 {
     flex: 1 1 0%;
     margin-left: 0px;
+    
 }
 .PersonalHomeStyle__MainContainer-sc-17u1tdw-6 .tablist-items {
     display: flex;
@@ -27,6 +28,8 @@
     padding-left: 20px;
     height: 62px;
     background: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 .PersonalHomeStyle__MainContainer-sc-17u1tdw-6 .tablist-items .tripmoments-person-home-tabs-item-active {
     font-size: 20px;

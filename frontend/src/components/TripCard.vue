@@ -18,19 +18,26 @@
             :key="item.board_no"
             :ref="index === boardList.length - 1 ? setLastItem : undefined"
         >
-            <!-- 카드의 내용을 표현하는 코드를 여기에 추가 -->
-            <div class="sub_con" @click="$emit('moveDetailView',item)">
+            <!-- 카드의 내용을 표현하는 코드를 여기에 추가   -->
+            <div class="sub_con" @click="initBoardList(item)">
                 <div class="layer_con"></div>
                 <div class="tag_con">
                     <div v-for="(tag,index) in item.boardTags" :key="index" class="tag" style="margin-left: 16px">{{tag}}</div>
                 </div>
-                <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
-                <div class="img">
-                    <img :src="item.base64BoardImages[0]" />
+                <div style="padding-bottom:106%; position: relative;" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
+                    <div class="img">
+                        <img :src="item.base64BoardImages[0]" />
+                    </div>
+                    <!-- 이미지 위에 평균 확률 값을 표시 -->
+                    <div class="average-probability" style="position: absolute; top: 0; right: 0; background-color: #454545; padding: 2px; min-width: 114.6px;">
+                        <span style="font-weight: bold; color: aliceblue; font-size: 14px" >긍정지수 </span><span :style="{ fontWeight: 'bold', color: getProbabilityColor(averageProbabilities[index]), fontSize: '14px' }">{{ isNaN(averageProbabilities[index]) ? '0°C' : averageProbabilities[index]  + '°C' }}</span>
+                        <div class="progress thermometer" style="height: 15px; border-radius: 12px; overflow: hidden; padding: 2px; background-color: #454545; border: 1.5px solid white;">
+                            <div class="progress-bar" role="progressbar" :style="{ width: isNaN(averageProbabilities[index]) ? 0 + '%' : averageProbabilities[index] + '%', backgroundColor: getProbabilityColor(averageProbabilities[index]), borderRadius: '9px' }" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="bottom_con">
-                <div class="bottom_desc" style="-webkit-box-orient: vertical; text-align: left;">{{ item.board_content }}</div>
+                <div class="bottom_con">
+                    <div class="bottom_desc" style="-webkit-box-orient: vertical; text-align: left;">{{ item.board_content }}</div>
                     <div class="bottom_user_con">
                         <div class="bottom_user_left">
                             <img class="user_avatar" :src="item.profileimage" />
@@ -41,12 +48,11 @@
                             <span style="margin-left: 2px;">{{ item.like_count }}</span>
                         </div>
                     </div>      
-            </div>
+                </div>
             </div>   
         </div>
             
     </div>
-
 </template>
 <script setup>
 import { ref, defineProps , watch, defineEmits } from 'vue'
@@ -56,11 +62,16 @@ const props = defineProps({
   boardList: Array,
   no_BoardList:Object,
   loadingModal:Object,
+  averageProbabilities:Object
 });
 
 const lastItem = ref(null);
 
 const emit = defineEmits(['requestMoreData']);
+
+const initBoardList = (item) => {
+    emit('moveDetailView',item)
+}
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -88,6 +99,23 @@ const stopObserving = () => {
     observer.disconnect();
 };
 
+function getProbabilityColor(probability) {
+    if (isNaN(probability) || probability === 0) {
+        return '#B8E1F2';
+    } else if (probability <= 20) {
+        return '#B8E1F2';
+    } else if (probability <= 40) {
+        return '#249AA7';
+    } else if (probability <= 60) {
+        return '#ABD25E';
+    } else if (probability <= 80) {
+        return '#F8C830';
+    } else {
+        return '#FF0000';
+    }
+}	
+
+
 watch(() => props.boardList, () => {
     if (lastItem.value && !props.no_BoardList) {
         observer.observe(lastItem.value);
@@ -99,7 +127,6 @@ watch(() => props.no_BoardList, () => {
         stopObserving();
     }
 }, { deep: true });
-
 
 </script>
 

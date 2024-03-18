@@ -1388,7 +1388,7 @@ left: -245px;
 }
 
 /* dimmed */
-
+#exampleModal,
 .modal-wrap {
   position: fixed;
   left: 0;

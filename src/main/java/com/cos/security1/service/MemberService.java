@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.CountDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LikeDto;
 import com.cos.security1.service.dto.LocationDto;
@@ -122,6 +123,10 @@ public class MemberService {
 		    // 음.. 지역정보가 있는 테이블인지도 넣어주자!
 		    LocationDto locationDto = mapper.getLocationData(value.getBoard_no());
 		    value.setLocationList(locationDto);
+		    
+		    //감정도 가져가보자
+		    List<CommentDto> commentlist = mapper.getSensitive(value.getBoard_no());
+		    value.setCommentList(commentlist);
 		}
 		return list;
 	}
@@ -154,6 +159,10 @@ public class MemberService {
 		    // 음.. 지역정보가 있는 테이블인지도 넣어주자!
 		    LocationDto locationDto = mapper.getLocationData(value.getBoard_no());
 		    value.setLocationList(locationDto);
+		    
+		    //감정도 가져가보자
+		    List<CommentDto> commentlist = mapper.getSensitive(value.getBoard_no());
+		    value.setCommentList(commentlist);
 		}
 		
 		return list;
@@ -427,6 +436,19 @@ public class MemberService {
 		}
 		return list;
 	}
+
+	public CountDto getCount() {
+		return mapper.getCount();
+	}
+
+	public void increaseCount() {
+		mapper.increaseCount();
+	}
+
+	public void decreaseCount() {
+		mapper.decreaseCount();
+	}
+
 
 
 

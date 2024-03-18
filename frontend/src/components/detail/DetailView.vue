@@ -39,7 +39,6 @@ const props = defineProps({
 
 function Detailclose(){
   emit('Detailclose',false);
-  console.log('Detailclose');
 }
 
 const imageList=ref([])

@@ -26,7 +26,7 @@
             <button type="button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
-            <SearchImage @searchImgLocation="searchImgLocation" @clearPlaces="clearPlaces"/>
+            <SearchImage @searchImgLocation="searchImgLocation" @clearPlaces="clearPlaces" @loadingState="isLoading = $event" />
           </div>
           <div class="px-2">
             <h5 style="font-weight: bold; text-align: left;" class="my-3 pl-3">위치 정보</h5>
@@ -88,15 +88,31 @@
             <div style="width: same-as-button;"></div>
           </div>
       <div class="offcanvas-body">
-        <ScheduleCard v-show="showSchedule" v-for="(schedule,index) in scheduleList" :key="index" :schedule="schedule" @click="getPlanList(schedule)"/>
-        <div v-show="!showSchedule">{{ planTitle }}</div>
-        <PlanCard v-show="!showSchedule" v-for="(plan,index) in plansList" :key="index" :plan="plan" @passArrival="arrivalRoute"/>
-        <div class="noplan-div" v-show="scheduleList.length === 0">
+        <div class="noplan-div" v-show="!scheduleList.length">
           <strong>여행일정이 없습니다.</strong>
           <a href="#" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#scheduleDateModal">여행일정 만들기</a>
         </div>
-        <div class="" v-if="scheduleList.length > 0 && showSchedule">
+        <div v-if="scheduleList.length">
           <a href="#" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#scheduleDateModal">여행일정 만들기</a>
+        </div>
+        <ul v-if="scheduleList.length" class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="nextSchedule" data-bs-toggle="tab" data-bs-target="#nextSchedule-pane" type="button" role="tab" aria-controls="nextSchedule-pane" aria-selected="true">현재일정</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="lastSchedule" data-bs-toggle="tab" data-bs-target="#lastSchedule-pane" type="button" role="tab" aria-controls="lastSchedule-pane" aria-selected="false">지난일정</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="nextSchedule-pane" role="tabpanel" aria-labelledby="nextSchedule" tabindex="0">
+            <ScheduleCard v-for="(schedule,index) in nextScheduleList" :key="index" :schedule="schedule" :index="index" @clickSchedule="setActiveIndex"
+                      :status="planStatus" @setSchedule="setSchedule" @delSchedule="delSchedule" @plansMarker="setPlanMarker" :isActive="index===activeIndex"/>
+          </div>                        
+        
+          <div class="tab-pane fade" id="lastSchedule-pane" role="tabpanel" aria-labelledby="lastSchedule" tabindex="0">
+            <ScheduleCard v-for="(schedule,index) in lastScheduleList" :key="index" :schedule="schedule" @plansMarker="setPlanMarker"
+                      @setSchedule="setSchedule" @delSchedule="delSchedule"/>
+          </div>
         </div>
       </div>
     </div>
@@ -221,20 +237,24 @@
               </div>
             </div>
         </InfoWindow>
-        <ScheduleDate @addSchedule="addSchedule"/>
-        <PlanModal @addPlan="setPlan" :scheduleList="scheduleList" :places="places"/>
-        <MarkerCluster :plansList="plansList" :hotelsInfo="hotelsInfo" :stopOver="stopOver"
+        <ScheduleDate @addSchedule="addSchedule" @updateSchedule="updateSchedule"
+                        @initialize="scheduleDateInfo={}" :schedule="scheduleDateInfo"/>
+        <PlanModal @addPlan="setPlan" :scheduleList="nextScheduleList" :places="places"/>
+        <MarkerCluster :plansMarker="plansMarker" :hotelsInfo="hotelsInfo" :stopOver="stopOver"
                           :restaurantsInfo="restaurantsInfo" :attractionsInfo="attractionsInfo" 
-                            :locationLatLng = "locationLatLng" :placeLatLng="placeLatLng" :status="markerStatus"
-                              @clickMarker="(info)=>clickCustomMarker(info)"/>
+                             :status="markerStatus" :places="places" @clickMarker="(info)=>clickCustomMarker(info)"
+                                @clickPlanMarker="clickPlanMarker"/>
       </GoogleMap>
     <Recommend :places="places" :imgsearchplaces="imgsearchplaces" :predict="predict" :style="{right:streetViewRight}" @imgClick = "recommendsearch"/>
     <StreetView :map="mapRef" :style="{right:streetViewRight}"/>
+    <div class="loadingbox">
+      <MypageLoadingModal v-if="isLoading" />
+    </div>
   </div>
 </div>
 </template>
     
-  <script setup>
+<script setup>
   import {
       GoogleMap,
       //Marker as MapMarker,
@@ -257,7 +277,6 @@
   import RouteRecommendation from "@/components/search/RouteRecommendation.vue";
   import DrawDirection from "@/components/search/DrawDirection.vue"; //경로(polyline) 그리기
   import { createObserver,getDistanceInKm } from "@/composable/custom"; //검색기능의 AutoComplete CSS속성을 동적으로 구현 js, 경로검색 placeholder토글
-  import PlanCard from "@/components/search/PlanCard.vue";
   import HotelCard from '@/components/search/HotelCard.vue'
   import HotelDate from '@/components/search/HotelDate.vue';
   import SearchCard from '@/components/search/SearchCard.vue'
@@ -271,7 +290,9 @@
   import PlanModal from "@/components/search/PlanModal.vue";
   import Recommend from '@/components/search/RecommendTravel.vue';
   import { Offcanvas } from "bootstrap";
+  import MypageLoadingModal from '@/components/MyPage/MypageLoadingModal.vue';
   
+  const isLoading = ref(false);
   const streetViewRight=ref('20px')
   let showRoute= ref(false);
   const showPlan= ref(false);
@@ -282,14 +303,16 @@
   const weatherData=ref([]);
   const newsData=ref([]);
   let clickInfo= ref({});
-  let placeLatLng = ref(null);
   let stopOver= ref([]);
   let scheduleList= ref([]);
-  let showSchedule= ref(true);
+  let nextScheduleList= ref([]);
+  let lastScheduleList= ref([]);
   let showAddSchedule= ref(false);
-  let planTitle= ref('');
   let markerStatus= ref('');
   let planOff = null
+  let scheduleDateInfo= ref({});
+  let activeIndex= ref(-1);
+  let planStatus= ref(0);
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
 
   const locationInfo=ref({
@@ -321,6 +344,13 @@
   onUnmounted(()=>{
     disconnect()
   })
+
+  function setActiveIndex(index) {
+    if(activeIndex.value === index) {
+      activeIndex.value= -1;
+      setPlanMarker([]);
+    }else activeIndex.value = index;
+  }
 
   function getNextDay(date = new Date()) {
     if (!(date instanceof Date)) {
@@ -376,11 +406,11 @@
     }
   }
 
-  const hotelsInfo=ref([])
-  const restaurantsInfo=ref([])
-  const attractionsInfo=ref([])
-  const plansList= ref([])
-  const youtubeData=ref([])
+  const hotelsInfo=ref([]);
+  const restaurantsInfo=ref([]);
+  const attractionsInfo=ref([]);
+  let plansMarker= ref([]);
+  const youtubeData=ref([]);
   const loadinghotel = ref(false);
   const loadingrestaurant = ref(false);
   const loadingattraction = ref(false);
@@ -389,9 +419,7 @@
   //일정 함수
   function addSchedule(schedule){ //일정 추가 이벤트    
     axios.post(process.env.VUE_APP_API_URL+'/addSchedule', {
-      schedule_title: schedule.title,
-      schedule_startdate: schedule.departure,
-      schedule_enddate: schedule.arrival,
+      ...schedule,
       id: vuexStore.loginStore.userInfo.id
     }).then(()=>{
       getScheduleList();
@@ -401,18 +429,69 @@
     });
   }
 
-  function getScheduleList(){ //일정 가져오기
+  function getScheduleList(){ // id로 일정리스트 가져오기
     axios.get(process.env.VUE_APP_API_URL+'/getSchedule', {
       params:{id: vuexStore.loginStore.userInfo.id}
     }).then(response=>{
+      lastScheduleList.value= [];
+      nextScheduleList.value= [];
       scheduleList.value= response.data;
+      scheduleList.value.forEach(schedule=>{
+        const date1= new Date(schedule.schedule_enddate);
+        const date2= new Date();
+        const splitDate1= new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+        const splitDate2= new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+        if(splitDate1.getTime() < splitDate2.getTime()){
+          lastScheduleList.value.push(schedule);
+        }else{
+          nextScheduleList.value.push(schedule);
+        }
+      });
     }).catch(error=>{
-      console.log('일정가져오기 실패',error);
+      console.log('일정목록 가져오기 실패',error);
+    });
+  }
+
+  function getSchedule(schedule_no) { // no로 일정 가져오기(수정용)
+    axios.get(process.env.VUE_APP_API_URL+'/getScheduleByNo', {
+      params:{schedule_no}
+    }).then(response=>{
+      scheduleDateInfo.value= response.data;
+    }).catch(error=>{
+      console.log('일정 가져오기 실패',error);
+    });
+  }
+
+  function setSchedule(schedule_no){
+    getSchedule(schedule_no);
+    var addScheduleModal= new Modal(document.querySelector('#scheduleDateModal'),{});
+    addScheduleModal.show();
+  }
+
+  function updateSchedule(schedule){
+    axios.put(process.env.VUE_APP_API_URL+'/setSchedule', {
+      ...schedule,
+      id: vuexStore.loginStore.userInfo.id
+    }).then(()=>{
+      scheduleDateInfo.value= {};
+      getScheduleList();
+    }).catch(error=>{
+      scheduleDateInfo.value= {};
+      console.log('일정 수정 실패',error);
+    });
+  }
+
+  function delSchedule(schedule_no){
+    axios.delete(process.env.VUE_APP_API_URL+'/delSchedule', {
+      params:{schedule_no}
+    }).then(()=>{getScheduleList();
+    }).catch(error=>{
+      console.log('일정 삭제 실패',error);
     });
   }
 
   function addPlan(){
-    if(scheduleList.value.length===0){
+    if(nextScheduleList.value.length===0){
       var addScheduleModal= new Modal(document.querySelector('#scheduleDateModal'),{});
       addScheduleModal.show();
     }else{
@@ -421,22 +500,10 @@
     }
   }
 
-  function getPlanList(schedule){
-    axios.get(process.env.VUE_APP_API_URL+'/getPlan',{
-      params:{schedule_no: schedule.schedule_no}
-    }).then(response=>{
-      plansList.value= response.data;
-      showPlan.value= true;
-      showSchedule.value= false;
-    }).catch(error=>{
-      console.log('plan가져오기 실패',error);
-    });
-  }
-
-  function setPlan(schedule){
-    getPlanList(schedule);
+  function setPlan(){
+    getScheduleList();
     showPlan.value= true;
-    showSchedule.value= false;
+    planStatus.value++;
   }
  
   async function getYoutubeData(address){
@@ -501,28 +568,30 @@
   let imgsearchplaces = ref(null)
 
   function searchImgLocation(imgplaces){
-    imgsearchplaces.value = imgplaces
+    imgsearchplaces.value = imgplaces;
     let location= imgplaces.geometry.location;
-    getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay)
-    getYoutubeData(imgplaces.name)
-    getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng)
-    moveToPosition(location)
-    updateInfoWindow(imgplaces)
+    getNearbyRestaurants(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng);
+    getNearbyAttractions(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng);
+    getNearbyHotels(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng,2,nextDay,followingDay);
+    getYoutubeData(imgplaces.name);
+    getWeather(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng);
+    getNews(imgplaces.geometry.location.lat,imgplaces.geometry.location.lng);
+    moveToPosition(location);
+    updateInfoWindow(imgplaces);
+    searchList.value= [];
+    searchRef.value.value= '';
   }
   
   function searchLocation(places){
     let location= places.geometry.location;
-    getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng())
-    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay)
-    getYoutubeData(places.name)
-    getWeather(places.geometry.location.lat(),places.geometry.location.lng())
-    getNews(places.geometry.location.lat(),places.geometry.location.lng())
-    moveToPosition(location)
-    updateInfoWindow(places)
+    getNearbyRestaurants(places.geometry.location.lat(),places.geometry.location.lng());
+    getNearbyAttractions(places.geometry.location.lat(),places.geometry.location.lng());
+    getNearbyHotels(places.geometry.location.lat(),places.geometry.location.lng(),2,nextDay,followingDay);
+    getYoutubeData(places.name);
+    getWeather(places.geometry.location.lat(),places.geometry.location.lng());
+    getNews(places.geometry.location.lat(),places.geometry.location.lng());
+    moveToPosition(location);
+    updateInfoWindow(places);
   }
   const customMarkerRef=ref(null);
 
@@ -584,7 +653,7 @@
   
   const selectedMarkerIndex=ref(null);
     
-  let targetZoom = 18; // 최종적으로 도달하고자 하는 zoom 수준
+  let targetZoom = 16; // 최종적으로 도달하고자 하는 zoom 수준
   let savedPosition;//,startPosition,startTime=null;
    
   function animateMap() {
@@ -815,8 +884,15 @@
       getNearbyHotels(latNumber.value, lngNumber.value, 2, nextDay,followingDay);
       getWeather(latNumber.value, lngNumber.value);
       getNews(latNumber.value, lngNumber.value);
-    }
-    else {
+    }else if(props.appPlaceId){
+      placesService.value.getDetails({placeId: props.appPlaceId}, (place, status)=>{
+        if(status === 'OK'){
+          places= place
+          searchLocation(place)
+          return;
+        }
+      });
+    }else {
       latNumber.value = parseFloat(37.4923615);
       lngNumber.value = parseFloat(127.0292881);
       const dataLatLng = {
@@ -885,17 +961,19 @@
     leftOffButton.value.click();
     places= searchInfo.value;
     searchLocation(places);
+    searchList.value= [];
+    searchRef.value.value= '';
   }
 
   const clickHandler=(e)=>{
-    infoRef.value.close()
-    e.stop()
+    infoRef.value.close();
+    e.stop();
     if(showRoute.value===true) {
       geocoder.value.geocode({location:{lat:e.latLng.lat(), lng:e.latLng.lng()}})
       .then(result=>{
-        clickInfo.value= result.results[0]
+        clickInfo.value= result.results[0];
         return
-      })
+      });
     }
     if(e.placeId && !showRoute.value){
       let request= {
@@ -931,22 +1009,28 @@
   };
 
   function clickCustomMarker(info){
-    if("attraction" in info || "restaurant" in info || "hotel" in info){
-      geocoder.value.geocode({location:{lat:info.lat,lng:info.lng}})
-      .then(result=>{
-        places= result.results[0]
-        searchLocation(places)
+    if(!("attraction" in info || "restaurant" in info || "hotel" in info)){
+      places= info;
+      moveToPosition(places.geometry.location);
+      updateInfoWindow(places);
+    }else{
+      let text;
+      if('attraction' in info) text= `${info.address} ${info.attraction}`;
+      else if('restaurant' in info) text= `${info.address} ${info.restaurant}`;
+      else text= `${info.address} ${info.hotel}`;
+      placesService.value.textSearch({query:text}, (result,status)=>{
+        if(status==='OK'){
+          places= result[0];
+          moveToPosition(places.geometry.location);
+          updateInfoWindow(places);
+        }
       })
-    }else {
-      places= info
-      searchLocation(places)
     }
   }
 
   function closeSchedule(){
-    if(showPlan.value && !showSchedule.value){
+    if(showPlan.value){
       showPlan.value= !showPlan.value;
-      showSchedule.value= !showSchedule.value;
     }else{
       planOff.hide();
     }
@@ -956,7 +1040,22 @@
     emit('passIataCode',iata);
   }
 
-  </script>
+  function setPlanMarker(plansList){
+    plansMarker.value= plansList;
+  }
+
+  function clickPlanMarker(plan){
+    placesService.value.getDetails({placeId:plan.plan_placeid},(result,status)=>{
+      if(status==='OK'){
+        console.log(result);
+        places= result;
+        searchLocation(places);
+      }else{
+        console.log(status);
+      }
+    });
+  }
+</script>
 
   <style scoped>
   /********************************************************************경로 지정 */
@@ -1083,5 +1182,13 @@
   padding-bottom: 100px;
   color: #808080;
   align-content: center;
+}
+#myTab{
+  height:55px;
+  border:none;
+  margin-bottom: 4px;
+}
+.nav-link{
+  border-radius: 0;
 }
   </style> 

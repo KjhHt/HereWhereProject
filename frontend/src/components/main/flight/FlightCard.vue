@@ -1,7 +1,7 @@
 <!-- ContinentCard.vue -->
 <template>
   <div v-for="(flight,idx) in flights" :key="idx" class="image-item" @click="onFlightSearch(flight)">
-    <img class="rounded-img" :src="flight.img"/>
+    <img class="rounded-img" :src="flight.img" />
     <div class="image-info">
         <div class="info-top px-1">
             <span class="place-name">{{ flight.departure }}</span>

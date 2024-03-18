@@ -21,10 +21,12 @@
             <div class="corner2"></div>
             <div class="corner-fold"></div>
             <div class="page-text w-richtext">
-              <h3><strong>HereWhere Translation Service</strong></h3>
-              <p>번역하고 싶은 이미지를 올려보세요</p>
-              <p><input type="file" id="file-input" @change="onFileChange" />‍</p>
-              <button type="button" @click="submit">번역하기</button>
+              <h3><strong>Translation Note</strong></h3>
+              <div class="add">
+                <textarea class="textbox" placeholder="번역하고 싶은 글을 적어보세요" v-model="inputText"></textarea>
+              </div>
+              <button class="btn_button" type="button" @click="submit">번역하기</button>
+              <button class="btn_button" type="button" @click="swapText">반전</button>
             </div>
           </div>
         </div>
@@ -45,7 +47,18 @@
         <div class="layer-text right">
           <div class="page-right-2">
             <div class="page-text w-richtext">
-              <img :src="testImage" style="width:100%; height:100%"/>
+              <h3><strong>Translation Result</strong></h3>
+              <div class="typing-text" ref="typingTextContainer">
+                <select class="form-select form-select-lg mb-3" id="select_form" aria-label="Large select example" v-model="selectedLang" @change="changeLanguage">
+                  <option v-for="(lang, index) in languages" :key="index" :value="lang.code">{{ lang.name }}</option>
+                </select>
+                <textarea class="textbox1" ></textarea>
+                <div class="loading" v-if="loading" >
+                  <span></span>   <!--1. span은 하나의 원이다. -->
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -55,43 +68,222 @@
 </template>
 
 <script setup>
-  import { ref  } from 'vue';
+  import { ref } from 'vue';
   import axios from 'axios';
-  import testImageSrc from '@/assets/HereWhereLogoMini.png';
 
-  const selectedFile = ref(null);
-  const alflqhrl = ref('');
-  const testImage = ref(testImageSrc);
+  const inputText = ref('');  // 입력된 텍스트
+  const translatedText = ref('');  // 번역 결과
+  const selectedLang = ref('EN'); // 선택된 언어의 코드, 기본값은 'EN'
+  const loading = ref(false);
 
-  const onFileChange = (e) => {
-    selectedFile.value = e.target.files[0];
-    let reader2 = new FileReader();
-    reader2.readAsDataURL(selectedFile.value);
-    reader2.onloadend = function() {
-      console.log('오나 ?')
-      alflqhrl.value = reader2.result
+
+
+  const languages = [
+{ name: '영어', code: 'EN' },{ name: '일본어', code: 'JA' },{ name: '한국어', code: 'KO' },{ name: '아랍어', code: 'AR' },
+{ name: '중국어 (간체)', code: 'ZH' },{ name: '프랑스어', code: 'FR' },
+{ name: '독일어', code: 'DE' },{ name: '이탈리아어', code: 'IT' },{ name: '포르투갈어', code: 'PT' },{ name: '러시아어', code: 'RU' },
+{ name: '스페인어', code: 'ES' },{ name: '태국어', code: 'TH' },{ name: '터키어', code: 'TR' },{ name: '베트남어', code: 'VI' },
+{ name: '네덜란드어', code: 'NL' },{ name: '그리스어', code: 'EL' },{ name: '폴란드어', code: 'PL' },
+{ name: '스웨덴어', code: 'SV' },{ name: '체코어', code: 'CS' },{ name: '덴마크어', code: 'DA' },
+{ name: '핀란드어', code: 'FI' },{ name: '헝가리어', code: 'HU' },
+{ name: '슬로바키아어', code: 'SK' },{ name: '루마니아어', code: 'RO' },{ name: '인도네시아어', code: 'ID' },
+{ name: '우크라이나어', code: 'UK' },
+{ name: '슬로베니아어', code: 'SL' },{ name: '리투아니아어', code: 'LT' },
+];
+
+
+
+
+const changeLanguage = () => {
+  console.log('Selected Language:', selectedLang.value);
+};
+  
+
+const submit = async () => {
+  const textArea = document.querySelector('.typing-text textarea');
+  textArea.value = '';
+  loading.value = true;
+
+  try {
+    
+    let response = await axios.post(process.env.VUE_APP_PYTHON_API_URL+'/translate', {
+      text: inputText.value,
+      target_lang: selectedLang.value // 일본어로 번역하려는 경우
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('API 응답:', response); // 응답 전체 확인
+    console.log('API 응답 데이터:', response.data); // 응답 데이터 확인
+
+  if (response.status === 200) {
+    if (response) {
+      const translatedTextData = response.data;
+      translatedText.value =translatedTextData
+      
+      
+      typeWriterAnimation();
+      console.log('번역된 텍스트:', translatedText.value); // 번역된 텍스트 확인
+      // 타이핑 애니메이션 효과 적용
+      
+    } else {
+      console.error('API 응답에서 번역된 텍스트가 없습니다.');
+      translatedText.value = '번역된 텍스트가 없습니다.';
     }
-  };
+  } else {
+    console.error('API 요청이 실패하였습니다.');
+    translatedText.value = '번역에 실패했습니다.';
+  }
+} catch (error) {
+  console.error('API 요청이 실패하였습니다.', error);
+  translatedText.value = '번역에 실패했습니다.';
+}finally{
+    loading.value = false;
+  }
+};
+const swapText = () => {
+const temp = inputText.value;
+inputText.value = translatedText.value;
+translatedText.value = temp;
+typeWriterAnimation();
+};
+const typeWriterAnimation = () => {
+let i = 0;
+const typingSpeed = 100; // 타이핑 속도 (ms)
+const textArea = document.querySelector('.typing-text textarea');
 
-  const submit = () => {
-    let reader = new FileReader();
-    reader.readAsDataURL(selectedFile.value);
-    reader.onloadend = function() {
-      let base64Image = reader.result.split(",")[1];
-      axios.post(process.env.VUE_APP_PYTHON_API_URL+'/imageOcr', {
-        base64Encoded : base64Image
-      })
-      .then(response => {
-        testImage.value = reader.result.split(",")[0]+','+response.data;
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    };
-  };
+    textArea.value = translatedText.value.substring(0, i); // 번역된 텍스트 설정
+
+
+const typeWriterInterval = setInterval(() => {
+  if (i < translatedText.value.length) {
+    textArea.value += translatedText.value.charAt(i);
+    i++;
+  } else {
+    clearInterval(typeWriterInterval);
+  }
+}, typingSpeed);
+};
+
 </script>
 
 <style scoped>
+.loading{
+  margin-top: -290px;
+  margin-left: -190px;
+  z-index: 10;
+}
+
+.loading span {
+    display: inline-block; /* span 내부요소들을 한줄로 세우기 */
+    width: 7px;
+    height: 7px;
+    background-color: gray;
+    border-radius: 50%;    /* span을 동그랗게 */
+    animation: loading 1s 0s linear infinite;
+    /* 이벤트명  반복시간  딜레이시간  이벤트처리부드럽게  이벤트무한반복*/
+    margin-top: 0px;
+    display: inline-block;
+    margin-left: 10px;
+  }
+  
+  .loading span:nth-child(1) {  /*loading의 자식 중 첫번째 span*/
+    /*nth-child : 형제 사이에서의 순서*/
+    animation-delay: 0s;
+    background-color: rgb(63, 63, 63);
+  }
+  
+  .loading span:nth-child(2) {
+    animation-delay: 0.2s;
+    background-color: rgb(163, 163, 163);
+  }
+  
+  .loading span:nth-child(3) {
+    animation-delay: 0.4s;
+    background-color: rgb(114, 114, 114);
+  }
+@keyframes loading {        /*loading이라는 keyframe 애니메이션*/
+    0%,                      /* 0, 50, 100은 구간*/
+    100% {
+      opacity: 0;            /* 안보였다가 */
+      transform: scale(0.5); /*transform의 scale로 요소를 확대 또는 축소할 수 있음*/   
+    }
+    50% {
+      opacity: 1;             /* 보였다가 */
+      transform: scale(1.2); /* 1.2배 */
+    }
+  }
+
+div {
+  cursor: url('data:image/png;base64,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'),auto;
+}
+
+.btn_button{
+  margin-left: 10px;
+  border-radius: 5px;
+  margin-top: 30px;
+}
+
+.add {
+  height: 100%;
+}
+.textbox1{
+  position: relative;
+  width: 100%;
+  top: -80px;
+  min-height: 200px; /* 최소 높이 지정 */
+  max-height: 1500px; /* 최대 높이 지정 */
+  resize: none;
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+
+}
+.textbox {
+  position: relative;
+  width: 100%;
+
+  min-height: 200px; /* 최소 높이 지정 */
+  max-height: 1500px; /* 최대 높이 지정 */
+  resize: none;
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+
+}
+
+@media (max-width: 768px) {
+ 
+}
+
+
+.textbox.typing-animation {
+border: none;
+overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
+white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 설정 */
+animation: typing 2s steps(30, end); /* 타이핑 애니메이션 적용 */
+}
+
+@keyframes typing {
+from {
+  width: 0;
+}
+to {
+  width: 100%;
+}
+}
+
+#select_form{
+  position: relative;
+  display: block;
+  margin-left: 100%;
+  right: 117px;
+  margin-top: 25px;
+  bottom: 100px;
+  width: 150px;
+  z-index: 10;
+  border-color: #fff;
+  background-color: transparent;
+}
+
 .w-block {
   display: block;
 }

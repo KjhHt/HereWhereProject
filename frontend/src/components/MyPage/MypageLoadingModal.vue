@@ -34,7 +34,9 @@ $animation-duration: 10s;
 $jumper-animation-timing: cubic-bezier(0.52, -0.01, 0.14, 1);
 
 .loader {
-  margin-top: 10rem;
+  //margin-top: 10rem;
+  margin: auto;
+  margin-top: 200px;
   $component-class: &;
   position: relative;
   &__trampoline {

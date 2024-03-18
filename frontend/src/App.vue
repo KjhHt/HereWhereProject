@@ -15,7 +15,8 @@ import TripMomentDetailView from './views/TripMomentDetailView.vue';
 import TranslationView from './views/TranslationView.vue';
 import FlightReserveView from './views/FlightReserveView.vue';
 import MbtiView from './views/MbtiView.vue';
-import ChatBot from './components/ChatBot.vue';
+// import ChatBot from './components/ChatBot.vue';
+import HereRobot from './components/HereRobot.vue';
 import axios from 'axios';
 
 import { getStompClient } from '@/services/websocket.js'; 
@@ -30,7 +31,6 @@ const locationLatLng = ref([]);
 const predictimg = ref(null);
 const initialSearchParameters=ref({});
 let placeId= ref('');
-let iataCode= ref({});
 
 watch(() => [route.query.origin, route.query.destination, route.query.adults], ([origin, destination, adults]) => {
   if (origin && destination && adults) {
@@ -72,6 +72,8 @@ onMounted(async () => {
       });
     });
     noticeList(userInfo.id);
+
+    panolens.value = false;
   }
 });
 
@@ -180,7 +182,10 @@ const selectMyPage = (page)=> {
   page_.value=page;
 }
 const setIata= iata=>{
-  iataCode.value= iata;
+  initialSearchParameters.value={
+    ...iata,
+    adults: parseInt(1, 10)
+  }
   page_.value= 'flightreserve'
 }
 </script>
@@ -191,15 +196,15 @@ const setIata= iata=>{
     <Join v-if="page_=='join'" @selectPage="selectPage"/>
     <MyCalendar v-if="page_=='mycalendar'"/>
     <Location v-if="page_=='location'" @passIataCode="setIata" :appPlaceId="placeId" :locationValue="locationValue" :locationLatLng="locationLatLng" :predictimg="predictimg" @disconnect="disconnectLocation"/>
-    <ChatBot v-else/>
+    <HereRobot @moveToLocation="handleImgClick" @moveToFlight="setIata" @moveToLocationLatLng="handleItemClick"/>
     <MyPageView v-if="page_=='mypage'" @selectPageData="selectPageData" :mypageIdData="mypageIdData" @handleItem="handleItemClick"/>
     <BoardView v-if="page_=='board'" :stompClient="stompClient" />
     <TestView v-if="page_=='test'"/>
     <TripMoment @selectPage="selectPage" @selectPageData="selectPageData" v-if="page_=='trip-moment'"/>
     <TripMomentWriteView @selectPage="selectPage" v-if="page_=='TripMomentWriteView'"/>
-    <TripMomentDetailView @moveLocationViewHandler="moveLocationViewHandler" :stompClient="stompClient" :tripmonetData="data_" v-if="page_=='TripMomentDetailView'"/>
+    <TripMomentDetailView @selectPageStartFlight="setIata" @moveLocationViewHandler="moveLocationViewHandler" :stompClient="stompClient" :tripmonetData="data_" v-if="page_=='TripMomentDetailView'"/>
     <TranslationView v-if="page_=='translation'"/>
-    <FlightReserveView v-if="page_=='flightreserve'" @updateIsHeaderData="updateIsHeaderData" :isHeader="isHeader" :initialSearchParameters="initialSearchParameters" :iataCode="iataCode"/>
+    <FlightReserveView v-if="page_=='flightreserve'" @updateIsHeaderData="updateIsHeaderData" :isHeader="isHeader" :initialSearchParameters="initialSearchParameters"/>
     <MbtiView v-if="page_=='mbti'"/>
 </template>
 
@@ -213,5 +218,11 @@ const setIata= iata=>{
   margin: 0;
   padding: 0;
   height: 90vh;
+}
+.modal-backdrop{
+  background: none;
+}
+.modal-open{
+  padding-right: 0px !important
 }
 </style>

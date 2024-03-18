@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDj7oqT63Txt19o4BS4D6ao9SGFVYsZabk",
+    apiKey: process.env.VUE_APP_FIREBASE_API_URL,
     authDomain: "herewhere-b85b9.firebaseapp.com",
     projectId: "herewhere-b85b9",
     storageBucket: "herewhere-b85b9.appspot.com",

@@ -17,6 +17,8 @@ public class PlanDto {
 	private String plan_name;
 	private String plan_img;
 	private String plan_placeid;
+	private String plan_latitude;
+	private String plan_longitude;
 	private Date plan_registrationdate;
 	private Long schedule_no;
 	

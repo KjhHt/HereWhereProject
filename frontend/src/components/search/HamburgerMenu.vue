@@ -14,7 +14,7 @@
         data-bs-target="#offcanvasScrolling" 
         aria-controls="offcanvasScrolling" 
         class="search-button nav-icon" 
-        @click="closeMenu">
+        @click="closeMenu('')">
           <i class="bi bi-search" style="font-size: 27px;"></i>
           <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
         </a>
@@ -26,7 +26,8 @@
         data-bs-target="#offcanvasPlan" 
         aria-controls="offcanvasPlan"
         class="search-button nav-icon"
-        @click="closeMenu">
+        ref="planRef"
+        @click="closeMenu('')">
           <i class="bi bi-calendar-plus-fill" style="font-size: 27px;"></i>
           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
         </a>
@@ -81,11 +82,20 @@
 </template>
   
 <script setup>
-import { ref,defineEmits } from 'vue';
+import { ref,defineEmits,defineProps,watch } from 'vue';
 
 const menuOpened = ref(false);
+const planRef= ref(null);
 
 const emit= defineEmits(['setMarkerStatus','showRoute']);
+
+const props= defineProps({
+  showPlan: Boolean
+});
+
+watch(()=>props.showPlan, plan=>{
+  if(plan) planRef.value.click();
+});
 
 const toggleClass = () => {
   menuOpened.value = !menuOpened.value;

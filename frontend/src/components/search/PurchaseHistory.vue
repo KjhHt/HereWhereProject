@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!-- 모달 열기 버튼 -->
-    <button @click="fetchReservation" class="btn btn-primary">결제 내역</button>
+
     <!-- 모달 컨텐츠 -->
     <transition name="modal">
       <div v-if="showModal" class="modal" tabindex="-1" role="dialog" @click="closeModal">
@@ -86,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits,onMounted } from 'vue';
 import axios from 'axios';
 
 const showModal = ref(false);
@@ -106,7 +105,7 @@ const textClick = (value) => {
   emit('handleItemClick', value);
 }
 
-async function fetchReservation() {
+const fetchReservation = async () => {
   const vuexStore = JSON.parse(localStorage.getItem('vuex'));
   const userId = vuexStore.loginStore.userInfo.id;
   
@@ -138,6 +137,7 @@ async function fetchReservation() {
 const closeModal = () => {
   showModal.value = false; 
 };
+onMounted(fetchReservation);
 </script>
 
 <style scoped>

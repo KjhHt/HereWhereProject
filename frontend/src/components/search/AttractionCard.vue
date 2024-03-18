@@ -20,7 +20,8 @@
           </p>
         </div>
         <div class="card-img">
-          <img :src="props.attraction.image" @error="imgError" alt="Attraction Image">
+          <img v-if="props.attraction.image" :src="props.attraction.image" alt="attraction Image">
+          <img v-else src="@/assets/place_default.png" alt="Default Image">
         </div>
       </div>
     </div>
@@ -43,7 +44,8 @@
     <div class="offcanvas-body">
       <div class="card product-detail">
         <div class="product-img">
-          <img :src="props.attraction.image" @error="imgError" alt="Restaurant Image">
+          <img v-if="props.attraction.image" :src="props.attraction.image" alt="attraction Image">
+          <img v-else src="@/assets/place_default.png" alt="Default Image">
         </div>
         <div class="attraction-name">
           <h1>{{ selectedAttraction.attraction}}</h1>
@@ -111,10 +113,7 @@ const getTodayOperatingTime = computed(() => {
     return `운영 시간 정보가 없습니다.`;
   }
 });
-//이미지 대체 사진
-function imgError(event){
-  event.target.src = require("@/assets/place_default.png");
-}
+
 </script>
 
 <style scoped>
@@ -156,15 +155,12 @@ function imgError(event){
   width: calc(100% - 40px); /* 내용과 이미지 사이의 비율을 조절 */
   padding: 10px; /* 내용 주변에 여백 추가 */
   text-align: left;
-  overflow: hidden; /* 텍스트가 넘칠 경우 자르기 */
-  white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 설정 */
-  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 마침표로 표시 */
 }
 .card-attraction-name{
   font-weight: bold;
 }
 .card-img{
-  width: 40%; /* 내용과 이미지 사이의 비율을 조절 */
+  width: 50%; /* 내용과 이미지 사이의 비율을 조절 */
 }
 
 .card-img img{
