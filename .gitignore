@@ -21,4 +21,5 @@ pnpm-debug.log*
 # Ignore all files under the "properties" directory
 /src/main/resources/application.properties
 /frontend/node_modules
+/frontend/.env
 /target

@@ -74,7 +74,6 @@ function disconnect() {
 
 function onConnected() {
   // 서버에 메시지를 보낼 때
-  console.log('초기설정 : ',props.chatList[0].dm_chat_id)
   //stompClient.value.send("/app/chat.sendMessage",{},JSON.stringify({dm_content: '사용자와 채팅을 나눠보세요!'}));
   stompClient.value.subscribe(`/topic/${props.chatList[0].dm_chat_id}`, onMessageReceived)
   
@@ -96,27 +95,6 @@ function formatTime(dateString) {
 
     return ampm + ' ' + hours + ':' + minutes;
 }
-
-// function formatTimeAgo(time){
-// 	const currentTime = new Date();
-// 	const postedTime = new Date(time);
-// 	const timeDifference = currentTime - postedTime;
-
-// 	const seconds = Math.floor(timeDifference) / (1000);
-// 	const minutes = Math.floor(timeDifference / (1000 * 60));
-// 	const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-// 	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-	
-// 	if (seconds < 60) {
-// 		return `${seconds.toFixed(0)}초 전`;
-// 	} else if (minutes < 60) {
-// 		return `${minutes}분 전`;
-// 	} else if (hours <= 23) {
-// 		return `${hours}시간 전`;
-// 	} else {
-// 		return `${days}일 전`;
-// 	}
-// }
 
 function onMessageReceived(payload) {
 	const vuexStore = JSON.parse(localStorage.getItem('vuex'));

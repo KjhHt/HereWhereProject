@@ -1,8 +1,14 @@
 <template>
     <div class="Container-sc-1cqmift-0 comment-content">
-            <div class="comment_num">
-                {{ comments.length }} 댓글
-            </div>
+        <div class="comment_num">
+            <span class="comment_count">{{ comments.length }} 댓글</span>
+            <span class="temperature">
+                <svg :class="'super-happy'" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><path d="M12,17.5C14.33,17.5 16.3,16.04 17.11,14H6.89C7.69,16.04 9.67,17.5 12,17.5M8.5,11A1.5,1.5 0 0,0 10,9.5A1.5,1.5 0 0,0 8.5,8A1.5,1.5 0 0,0 7,9.5A1.5,1.5 0 0,0 8.5,11M15.5,11A1.5,1.5 0 0,0 17,9.5A1.5,1.5 0 0,0 15.5,8A1.5,1.5 0 0,0 14,9.5A1.5,1.5 0 0,0 15.5,11M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+                 : <span style="font-weight: bold; margin-right: 10px; color: #006DD9">{{ isNaN(computeTemperature()) ? '0%' : computeTemperature() + '%' }}</span>
+                <svg :class="'super-sad'" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><path d="M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M16.18,7.76L15.12,8.82L14.06,7.76L13,8.82L14.06,9.88L13,10.94L14.06,12L15.12,10.94L16.18,12L17.24,10.94L16.18,9.88L17.24,8.82L16.18,7.76M7.82,12L8.88,10.94L9.94,12L11,10.94L9.94,9.88L11,8.82L9.94,7.76L8.88,8.82L7.82,7.76L6.76,8.82L7.82,9.88L6.76,10.94L7.82,12M12,14C9.67,14 7.69,15.46 6.89,17.5H17.11C16.31,15.46 14.33,14 12,14Z" /></svg>
+                 : <span style="font-weight: bold; color: red;">{{ isNaN(computeTemperature()) ? '0%' : (100-computeTemperature()).toFixed(2) + '%' }}</span>
+            </span>
+        </div>
             <div class="scrollCardContent">
             <div class="Container-sc-10c2rpq-0 comment-body cell"  v-for="comment in comments" :key="comment.comment_writer">
                 <div class="user">
@@ -77,6 +83,18 @@ const commentListData = async (board_no) => {
         console.log(err)
     }
 }
+
+const computeTemperature = () => {
+    let total = 0;
+    comments.value.forEach(comment => {
+        if (comment.comment_sentiment === "부정") {
+            total += parseFloat(100 - comment.comment_probability);
+        } else {
+            total += parseFloat(comment.comment_probability);
+        }
+    });
+    return (total / comments.value.length).toFixed(2);
+};
 
 watch([() => props.detailData, () => props.lastUpdated], async ([newDetailData, newLastUpdated], [oldDetailData, oldLastUpdated]) => {
   if (newDetailData !== oldDetailData || newLastUpdated !== oldLastUpdated) {
@@ -159,12 +177,21 @@ const toggleLike = (comment) => {
     min-height: 249px;
 }
 .comment-content .comment_num {
-    margin-top:10px;
+    margin-top: 10px;
     margin-bottom: 10px;
     font-size: 16px;
     color: rgb(15, 41, 77);
     line-height: 24px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-content .comment_num .comment_count {
     text-align: left;
+}
+
+.comment-content .comment_num .temperature {
+    text-align: right;
 }
 .scrollCardContent{
     width: 446px;

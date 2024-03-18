@@ -1,10 +1,10 @@
 <template>
     <div class="cardContainer">
-        <div class="cardTitle">
+        <div class="cardTitle" >
             실시간 항공권 근황
         </div>
-        <div class="scrollCardContent">
-            <div class="card">
+        <div class="scrollCardContent" v-if="flightList && flightList.length > 0">
+            <div class="card" @click="$emit('selectPageStartFlight',startIataCode)">
                 <div class="imageContainer">
                     <div class="lazyload-wrapper">
                         <img width="120" height="100%" :src="imgUrl" class="image">
@@ -14,18 +14,18 @@
                     <div class="info">
                         <div class="city-title">
                             <div style="display: flex; align-items: center;">
-                            <span>서울</span>
+                            <span>{{ flightList[0] }}</span>
                             <img :src="iconUrl" alt="Round Trip Icon" style="width: 12px; height: 12px; margin: 0 5px;">
-                            <span>도쿄</span>
+                            <span>{{ flightList[1] }}</span>
                             </div>
                         </div>
                         <div class="row" style="margin-bottom: 4px; display: flex;">
                             <div class="text">
                                 <p>
-                                    왕복
+                                    {{ flightList[2] > 0 ? '경유':'직항' }}
                                     <span class="gap-line"></span>
                                     <span style="margin-left: 5px;">
-                                        3월 7일 - 3월 9일
+                                        시간 : {{ formatTime(flightList[5]) }} ~ {{ formatTime(flightList[6]) }}
                                     </span>
                                 </p> 
                             </div>
@@ -38,7 +38,8 @@
                                 </div>
                                 <div style="display:flex;flex-direction:row;justify-content:flex-end;align-items:flex-end;flex-wrap:wrap">
                                     <div style="color:#3264ff;font-size:12px;font-weight:bold;line-height:16px">
-                                        <span style="font-size: 20px;line-height: 22px">116,691</span>
+                                        <span style="font-size: 20px;line-height: 22px">{{parseInt(flightList[4]).toLocaleString('ko-KR')}}</span>
+                                        
                                         <span>원</span>
                                     </div>
                                 </div>   
@@ -58,13 +59,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref , defineProps , watchEffect } from 'vue'
 
-
-
-
-const imgUrl = ref('https://ak-d.tripcdn.com/images/01058120005r0hvyk9F44_C_600_400_R5.jpg')
 const iconUrl = ref(require('@/assets/round_trip_icon.png'))
+let flightList = ref([]);
+const imgUrl = ref('');
+const startIataCode = ref('');
+
+const props = defineProps({
+    detailData: Object,
+});
+
+watchEffect(() => {
+  // props.detailData가 존재하는지 확인
+  if (props.detailData && props.detailData.flightList) {
+    flightList.value = props.detailData.flightList;
+    // flightList.value가 유효한지 확인한 후 imgUrl 업데이트
+    if (flightList.value.length > 3) {
+      imgUrl.value = flightList.value[3];
+      startIataCode.value = props.detailData.locationList.location_iatacode;
+    }
+  }
+});
+
+function formatTime(dateTime) {
+    const date = new Date(dateTime);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+
 </script>
 
 <style scoped>
@@ -76,9 +101,9 @@ const iconUrl = ref(require('@/assets/round_trip_icon.png'))
     width: 100%;
 }
 .cardContainer .cardTitle {
-    padding-top: 26px;
+    padding-top: 35px;
     padding-left: 32px;
-    padding-bottom: 30px;
+    padding-bottom: 31px;
     color: rgb(15, 41, 77);
     font-size: 20px;
     font-weight: 500;

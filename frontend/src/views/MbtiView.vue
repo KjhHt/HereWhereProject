@@ -39,12 +39,19 @@ const answers = ref([]);
 const result = ref({});
 
 
-
+let combinedObject = ref({});
 async function request_mbti(answers) {
   console.log('request_mbti');
   console.log(answers);
+  combinedObject.value = answers.reduce((accumulator, currentObject) => {
+    let key = Object.keys(currentObject)[0];
+    accumulator[key] = currentObject[key];
+    return accumulator;
+  }, {});
+  console.log('확인작업 : ',combinedObject.value);
+
   try {
-    const response = await axios.post(`${process.env.VUE_APP_PYTHON_API_URL}/predict_mbti`, { 'answers': answers });
+    const response = await axios.post(`${process.env.VUE_APP_PYTHON_API_URL}/predict_mbti`, { 'answers': combinedObject.value });
     console.log(response.data);
     return response; // 이 부분이 추가되어야 합니다.
   } catch (error) {
@@ -56,7 +63,7 @@ async function request_mbti(answers) {
 const handleAnswer = async (data) => {
     try {
         answers.value.push(data.summary);
-        if (currentQuestionIndex.value < 9) { 
+        if (currentQuestionIndex.value < 11) { 
           nextQuestion();
             
         } else {

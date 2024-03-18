@@ -5,6 +5,9 @@
       <div class="image-list slide-in-from-left">
           <div class="image-list">
               <FlightCard :flights="flights"/>
+              <template v-if="flights.length === 1">
+                <div v-for="i in 7" :key="i" class="transparent-image-item"></div>
+              </template>
           </div>
       </div>
       <button v-if="flights.length > flightLimits[continent]" @click="showMore(continent)">더보기</button>
@@ -75,5 +78,8 @@ margin-bottom: 100px;
 }
 .features{
 padding: 80px
+}
+.transparent-image-item {
+  visibility: hidden; /* 투명한 이미지 아이템을 화면에 표시하지 않음 */
 }
 </style>

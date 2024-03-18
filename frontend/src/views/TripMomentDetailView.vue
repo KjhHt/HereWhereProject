@@ -17,7 +17,7 @@
                                 <div class="image-gallery-thumbnails-wrapper bottom image-gallery-overview">
                                     <BoxLeftThumnail :images="images" :currentIndex="currentIndex" :displayIndex="displayIndex" @selectImage="handleSelectImage"/>
                                 </div>
-                                <BoxLeftPlace/>
+                                <BoxLeftPlace @selectPageStartFlight="selectPageStartFlight" :detailData="detailData"/>
                             </div>
                         </div>
                     </div>
@@ -147,6 +147,7 @@ const handleUpdateLikes = () => {
             detailData.value.like = false;
             detailData.value.likeList = likeList.filter(like => like.like_id !== userInfo.id);
         }
+          
     })
     .catch(err=>console.log(err))
 }
@@ -158,6 +159,15 @@ const updateOcrImage = (index,data,sliceData) => {
 const moveLocationViewHandle = (place_id) => {
     emit('moveLocationViewHandler',place_id);
 }
+const selectPageStartFlight = (iatacode) => {
+    let newIataCode = {
+        origin:'ICN',
+        destination :iatacode
+    }
+    emit('selectPageStartFlight',newIataCode);
+}
+
+
 </script>
 <style scoped>
 

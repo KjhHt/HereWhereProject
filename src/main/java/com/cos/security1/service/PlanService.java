@@ -26,12 +26,24 @@ public class PlanService {
 		return mapper.getSchedules(id);
 	}
 	
-	public List<PlanDto> findPlans(Long scheduleNo){
-		return mapper.getPlans(scheduleNo);
+	public List<PlanDto> findPlans(Long schedule_no){
+		return mapper.getPlans(schedule_no);
 	}
 
-	public ScheduleDto findScheduleByNo(String schedule_no) {
+	public ScheduleDto findScheduleByNo(Long schedule_no) {
 		return mapper.getScheduleByNo(schedule_no);
+	}
+	
+	public void updateSchedule(ScheduleDto dto) {
+		mapper.updateSchedule(dto);
+	}
+	
+	public void deleteSchedule(Long schedule_no) {
+		mapper.deleteScheduleByNo(schedule_no);
+	}
+	
+	public void deletePlan(Long plan_no) {
+		mapper.deletePlanByNo(plan_no);
 	}
 	
 }

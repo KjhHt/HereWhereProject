@@ -1,7 +1,7 @@
 <template>
     <div class="index_trip_moment_con">
     <div class="card-container">
-        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="photo in props.boardData" :key="photo.board_no" v-show="props.boardData.length">
+        <div class="CardStyle-z6mgtl-11 hzJTqM index_card_con" v-for="(photo,index) in props.boardData" :key="photo.board_no" v-show="props.boardData.length">
             <div class="sub_con" @click="$emit('moveDetailView',photo)">
                 <div class="layer_con"></div>
                 <div class="tag_con">
@@ -10,6 +10,12 @@
                 <div style="padding-bottom:106%" class="ImgWarpStyle-z6mgtl-13 kOBKyz">
                     <div class="img">
                         <img :src="photo.base64BoardImages[0]" />
+                    </div>
+                    <div class="average-probability" style="position: absolute; top: 0; right: 0; background-color: #454545; padding: 2px; min-width: 114.6px;">
+                        <span style="font-weight: bold; color: aliceblue; font-size: 14px">긍정지수 </span><span :style="{ fontWeight: 'bold', color: getProbabilityColor(averageCommentProbabilitiesByBoard[index]), fontSize: '14px' }">{{ isNaN(averageCommentProbabilitiesByBoard[index]) ? 0 + '°C' : averageCommentProbabilitiesByBoard[index]  + '°C' }}</span>
+                        <div class="progress thermometer" style="height: 15px; border-radius: 12px; overflow: hidden; padding: 2px; background-color: #454545; border: 1.5px solid white;">
+                            <div class="progress-bar" role="progressbar" :style="{ width: isNaN(averageCommentProbabilitiesByBoard[index]) ? 0 + '%' : averageCommentProbabilitiesByBoard[index] + '%', backgroundColor: getProbabilityColor(averageCommentProbabilitiesByBoard[index]), borderRadius: '9px' }" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="bottom_con">
@@ -22,7 +28,7 @@
                         <div class="bottom_user_right">
                             <i class="fas fa-thumbs-up"></i>
                             <span>{{ photo.like_count }}</span>
-                        </div>
+                        </div>                
                     </div>      
                 </div>
             </div>   
@@ -32,17 +38,55 @@
             <p class="message">아직 등록한 글이 없습니다! 글을 등록해 보세요!</p>
         </div>
     </div>
-</div>
-  </template>
+    </div>
+</template>
   
 <script setup>
 import { defineProps } from 'vue';
-  
+
 const props = defineProps({
-    boardData : Array,
-})
+    boardData: Array,
+});
+
+// 함수 정의: 배열의 평균 계산
+function calculateAverage(arr) {
+    const sum = arr.reduce((acc, val) => acc + val, 0);
+    const avg = sum / arr.length;
+    return parseFloat(avg.toFixed(2));
+}
+
+function getAverageCommentProbability(boardData) {
+    return boardData.map(board => {
+        const commentProbabilities = board.commentList.map(comment => {
+            if (comment.comment_sentiment === '부정') {
+                return 100 - parseFloat(comment.comment_probability);
+            } else {
+                return parseFloat(comment.comment_probability);
+            }
+        });
+        return calculateAverage(commentProbabilities);
+    });
+}
+
+function getProbabilityColor(probability) {
+    if (isNaN(probability) || probability === 0) {
+        return '#B8E1F2';
+    } else if (probability <= 20) {
+        return '#B8E1F2';
+    } else if (probability <= 40) {
+        return '#249AA7';
+    } else if (probability <= 60) {
+        return '#ABD25E';
+    } else if (probability <= 80) {
+        return '#F8C830';
+    } else {
+        return '#FF0000';
+    }
+}
   
-  </script>
+const averageCommentProbabilitiesByBoard = getAverageCommentProbability(props.boardData);
+</script>
+  
   
   <style scoped>
   .empty-container {

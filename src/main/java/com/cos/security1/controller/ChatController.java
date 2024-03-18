@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 
 import com.cos.security1.service.MemberService;
 import com.cos.security1.service.dto.ChatDto;
+import com.cos.security1.service.dto.CountDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.NoticeDto;
 
@@ -31,6 +32,33 @@ public class ChatController {
     	System.out.println("sendMessage 통신 message : "+message.getDm_content());
         return message;
     }
+	// 실시간
+	@MessageMapping("/send/realTime/{myCountry}")
+	@SendTo("/receive/realTimeChatting/{myCountry}")
+    public ChatDto realTimeChatting(@Payload ChatDto message) {
+		System.out.println("보낸사람 아이디 : "+message.getDm_sender_id());
+    	System.out.println("실시간채팅방 : "+message.getText());
+        return message;
+    }
+	
+	@MessageMapping("/send/personCount/{myCountry}")
+	@SendTo("/receive/personCount/{myCountry}")
+    public CountDto personCount(@Payload CountDto countDto) {
+	    if ("1".equals(countDto.getCount())) {
+	        // 연결된 상태일 때의 로직 처리
+	    	System.out.println("한명 들어옴");
+	    	service.increaseCount();
+	    }
+	    else {
+	    	System.out.println("한명 나감");
+	        // 끊긴 상태일 때의 로직 처리
+	        System.out.println("한명 나감");
+	        service.decreaseCount(); // count 값을 감소시키는 메소드 호출
+	    }
+	    CountDto count = service.getCount(); // 업데이트된 count 값을 가져오는 메소드 호출
+	    return count;
+    }
+	
 	
 	@MessageMapping("/followRequest")
 	public void processFollowRequest(@Payload FollowDto followRequest) {

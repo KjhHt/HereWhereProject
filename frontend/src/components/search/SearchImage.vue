@@ -8,8 +8,9 @@
 <script setup>
 import { ref,defineEmits } from 'vue';
 import axios from 'axios'
-const emit = defineEmits(['searchImgLocation','clearPlaces']);
+const emit = defineEmits(['searchImgLocation','clearPlaces','loadingState']);
 const inputFile=ref(null);
+const isLoading = ref(false);
 // 고침
 const handleClick = () => {
   clickInput(); // clickInput 함수 호출
@@ -24,6 +25,8 @@ const clearPlaces = () => {
 function uploadImage(event) {
   const files = event.target.files;
   if (files.length > 0) {
+    isLoading.value = true; // 로딩 시작
+    emit('loadingState', isLoading.value);
     const formData = new FormData();
     formData.append('image', files[0]);
     axios.post(process.env.VUE_APP_PYTHON_API_URL+'/searchImage', formData, {
@@ -34,9 +37,15 @@ function uploadImage(event) {
     .then(response =>{
       console.log(response)
       const imgplaces=response.data.results[0]
+      isLoading.value = false; // 로딩 종료
+      emit('loadingState', isLoading.value);
       emit('searchImgLocation',imgplaces)
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+      isLoading.value = false; // 로딩 종료
+      emit('loadingState', isLoading.value);
+      console.error('Error:', error);
+    })
   }
 }
 </script>

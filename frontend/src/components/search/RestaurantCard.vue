@@ -20,7 +20,9 @@
           </p>
         </div>
         <div class="card-img">
-          <img :src="props.restaurant.image" @error="imgError" alt="Restaurant Image">
+          <img v-if="props.restaurant.image" :src="props.restaurant.image" alt="Restaurant Image">
+          <!-- 이미지가 빈 문자열일 경우 -->
+          <img v-else src="@/assets/place_default.png" alt="Default Image">
         </div>
       </div>
     </div>
@@ -42,7 +44,9 @@
     <div class="offcanvas-body">
       <div class="card product-detail">
         <div class="product-img">
-          <img :src="props.restaurant.image" @error="imgError" alt="Restaurant Image">
+          <img v-if="props.restaurant.image" :src="props.restaurant.image" alt="Restaurant Image">
+          <!-- 이미지가 빈 문자열일 경우 -->
+          <img v-else src="@/assets/place_default.png" alt="Default Image">
         </div>
         <div class="restaurant-name">
           <h1>{{ selectedRestaurant.restaurant }}</h1>
@@ -114,9 +118,6 @@ const getTodayOperatingTime = computed(() => {
   }
 });
 
-function imgError(event){
-  event.target.src = require("@/assets/place_default.png");
-}
 </script>
 
 <style scoped>
@@ -158,15 +159,12 @@ function imgError(event){
   width: calc(100% - 40px); /* 내용과 이미지 사이의 비율을 조절 */
   padding: 10px; /* 내용 주변에 여백 추가 */
   text-align: left;
-  overflow: hidden; /* 텍스트가 넘칠 경우 자르기 */
-  white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 설정 */
-  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 마침표로 표시 */
 }
 .card-restaurant-name{
   font-weight: bold;
 }
 .card-img{
-  width: 40%; /* 내용과 이미지 사이의 비율을 조절 */
+  width: 50%; /* 내용과 이미지 사이의 비율을 조절 */
 }
 
 .card-img img{

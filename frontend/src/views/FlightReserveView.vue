@@ -44,10 +44,11 @@ const props=defineProps({
 onMounted(async () => {
   loading.value=true
   await getAirportsList();
-  if(Object.keys(props.iataCode).length) console.log('iataCode',props.iataCode) //경로에서 받은 공항 데이터
   amadeusToken.value=await getAmadeusAccessToken();
-  if(props.initialSearchParameters) 
+  if(props.initialSearchParameters) {
+    console.log(props.initialSearchParameters);
     await onSearchFlight(props.initialSearchParameters);
+  }
   else
     loading.value=false;
   
@@ -105,6 +106,8 @@ function handleSelectChange(data){
 
 async function onSearchFlightByDate(flightSearchParameters) {
   try {
+    flights.value = '';
+    loading.value=true;
     // getCheapestDate()
     const response = await axios.get(`https://api.amadeus.com/v2/shopping/flight-offers`, {
       headers: {
@@ -141,6 +144,7 @@ async function onSearchFlightByDate(flightSearchParameters) {
     }).sort((a, b) => parseFloat(a.price) - parseFloat(b.price)); // 가격 순으로 정렬
 
     flights.value = processedFlights;
+    loading.value=false;
   } catch (error) {
     flights.value = [];
     console.error('onSearchFlight Error:', error);

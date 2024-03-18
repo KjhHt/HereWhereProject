@@ -31,13 +31,11 @@ const loading = ref(true);
 const dmMain = ref(null);
 
 function addMessage(message) {
-  console.log('왔음');
   chatList.value.push(message);
   console.log(chatList.value);
 }
 
 const handleUpdateChatList = async (user,index) => {
-  console.log('updateChatList 이벤트를 받았습니다.', user.id);
 
   // 웹소켓 연결을 끊습니다.
   await dmMain.value.disconnect();

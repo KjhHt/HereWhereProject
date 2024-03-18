@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.cos.security1.service.dto.BoardDto;
 import com.cos.security1.service.dto.ChatDto;
 import com.cos.security1.service.dto.CommentDto;
+import com.cos.security1.service.dto.CountDto;
 import com.cos.security1.service.dto.FollowDto;
 import com.cos.security1.service.dto.LikeDto;
 import com.cos.security1.service.dto.LocationDto;
@@ -88,7 +89,15 @@ public interface MybatisMapper {
 	void insertSchedule(ScheduleDto scheduleDto);
 	void insertPlan(PlanDto planDto);
 	List<ScheduleDto> getSchedules(String id);
-	List<PlanDto> getPlans(Long scheduleId);
-	ScheduleDto getScheduleByNo(String schedule_no);		
+	List<PlanDto> getPlans(Long schedule_no);
+	ScheduleDto getScheduleByNo(Long schedule_no);
+	void updateSchedule(ScheduleDto dto);
+	void deleteScheduleByNo(Long schedule_no);		
+	void deletePlanByNo(Long plan_no);
 	
+	//감정도
+	List<CommentDto> getSensitive(String board_no);
+	CountDto getCount();
+	void increaseCount();
+	void decreaseCount();
 }

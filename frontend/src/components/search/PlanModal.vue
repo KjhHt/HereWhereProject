@@ -57,28 +57,42 @@ const props= defineProps({
 
 const emit= defineEmits(['addPlan']);
 
-function getPlanList(schedule){
-    axios.get(process.env.VUE_APP_API_URL+'/getPlan',{
-      params:{schedule_no: schedule.schedule_no}
-    }).then(response=>{
-      plansList.value= response.data;
-    });
+async function getPlanList(schedule) {
+    try {
+        const response = await axios.get(process.env.VUE_APP_API_URL+'/getPlan', {
+            params: {schedule_no: schedule.schedule_no}
+        });
+        plansList.value = response.data;
+    } catch (error) {
+        console.error('플랜 리스트 가져오기 실패:', error);
+    }
 }
 
-const addPlan= schedule=>{
-    getPlanList(schedule)
-    plansList.value.forEach(plan=>{
-        if(plan.place_id===props.places.place_id) return
-    });
-    axios.post(process.env.VUE_APP_API_URL+'/addPlan',{
-        plan_name: props.places.name,
-        plan_img: props.places.photos[0].getUrl(),
-        plan_placeid: props.places.place_id,
-        schedule_no: schedule.schedule_no
-    }).then(()=>{
-        getPlanList(schedule);
+const addPlan= async(schedule)=>{
+    await getPlanList(schedule);
+    let duplicated= plansList.value.filter(plan=>{return plan.plan_placeid===props.places.place_id})[0]
+    if(duplicated) {
         closeBtn.value.click();
         emit('addPlan',schedule);
+        return;
+    }
+    let photoUrl= 'http://localhost:8080/place_default.png';
+    let placeName;
+    if(props.places.photos)
+        photoUrl= props.places.photos[0].getUrl();
+    if(props.places.name){
+        placeName= props.places.name;
+    }else placeName= props.places.formatted_address;
+    axios.post(process.env.VUE_APP_API_URL+'/addPlan',{
+        plan_name: placeName,
+        plan_img: photoUrl,
+        plan_placeid: props.places.place_id,
+        plan_latitude: props.places.geometry.location.lat(),
+        plan_longitude: props.places.geometry.location.lng(),
+        schedule_no: schedule.schedule_no
+    }).then(()=>{
+        closeBtn.value.click();
+        emit('addPlan');
     }).catch(error=>{
         console.log('플랜추가 실패',error)
         closeBtn.value.click();

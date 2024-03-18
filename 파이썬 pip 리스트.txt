@@ -1,0 +1,1 @@
+pip install CORS flask_restful Flask werkzeug requests amadeus selenium bs4 pillow aiohttp aiofiles google-cloud-vision google-cloud-translate PyPDF2 forex-python pandas uvicorn uvicorn flask_cors openai google-api-python-client opencv-python geopy ultralytics tensorflow keras-preprocessing kiwipiepy wordcloud cx_Oracle

@@ -5,13 +5,15 @@
     </div>
 </template>
 <style scope>
-    .Title-sc-1sm6d0j-2 {
+.Title-sc-1sm6d0j-2 {
     margin-top: 40px;
     padding: 24px 32px;
     font-size: 28px;
     color: rgb(15, 41, 77);
     line-height: 34px;
     text-align: center;
+    padding-left: 8px;
+    text-align: left;
 }
 .index_trip_moment_con .release_btn_con {
     position: absolute;

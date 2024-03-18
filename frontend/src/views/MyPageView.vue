@@ -6,7 +6,6 @@
         <div class="no-nav-main ">
           <MyPageHeader :headerData="headerData"/>
           <div class="PersonalHomeStyle__FlexContainer-sc-17u1tdw-2">
-          <PurchaseHistory :show-modal="showModal" :reservation="reservation" :fetch-reservation="fetchReservation" :close-modal="closeModal" @handleItemClick="handleItemClick"/>
           <MyPageTablist v-if="!loadingModal"/>
           <MypageLoadingModal v-if="loadingModal"></MypageLoadingModal>
           <MyPhotoList @moveDetailView="handleMoveDetailView" v-if="!loadingModal" :boardData="boardData"/>
@@ -22,7 +21,6 @@ import CircularMenu from '@/components/CircularMenu.vue';
 import MyPhotoList from '@/components/MyPage/MyPagePhotoList.vue'
 import MyPageHeader from '@/components/MyPage/MyPageHeader.vue'
 import MyPageTablist from '@/components/MyPage/MyPageTablist.vue'
-import PurchaseHistory from '@/components/search/PurchaseHistory.vue';
 import MypageLoadingModal from '@/components/MyPage/MypageLoadingModal.vue';
 
 import axios from 'axios';
@@ -43,7 +41,6 @@ const handleMoveDetailView = (data) => {
 
 onMounted(async () => {
   const id = props.mypageIdData;
-  console.log('뭐임? : ',id)
   loadingModal.value = true;
   await axios.get(`${process.env.VUE_APP_API_URL}/getMypageHeader`,{
     params: { id }
@@ -91,14 +88,15 @@ onMounted(async () => {
     return {...item, profileimage, base64BoardImages};
   })
   boardData.value = [...boardData.value, ...newBoardList];
+  console.log('마이페이지 리스트 : ',boardData.value);
   loadingModal.value = false;
 })
   .catch(err=>console.log(err))
 });
 
-const handleItemClick = (value) =>{
-  emit('handleItem',value)
-}
+// const handleItemClick = (value) =>{
+//   emit('handleItem',value)
+// }
 
 </script>
 <style scope>

@@ -8,7 +8,6 @@
                             <div class="mbti_Question">
                                 <div class="mbti_header">
                                     <h1>당신의 MBTI는 {{ result.mbti }} 입니다</h1>
-                                    <div class="mbti_percentage">정확도 : {{ result.probability.toFixed(2)}}%</div>
                                 </div>
                                 <div class="mbti_FlexContainer">
                                     <div class="mbti_image">

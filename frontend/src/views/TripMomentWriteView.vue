@@ -2,19 +2,23 @@
   <div id="__next">
       <div class="travel_guide_root_class">
         <div class="PublishIndexStyle__PublishMainContainer-sc-1q48sbw-0">
-          <div class="PublishIndexStyle__PublishCenterContainer-sc-1q48sbw-1">
+          <div class="PublishIndexStyle__PublishCenterContainer-sc-1q48sbw-1" :class="{'blur-background': isGeneratingImage}">
             <TripMomentSubtitle/>
-            <TripMomentPicture @updateImages="updateImages" @updateLabels="updateLabels"/>
+            <TripMomentPicture :generateBase64Image="generateBase64Image" @updateImages="updateImages" @updateLabels="updateLabels"/>
             <TripMomentAddtitle @updateTitle="updateTitle"/>
             <TripMomentContent @updateContent="updateContent"/>
             <TripMomentLocation @updateLocation="updateLocation"/>
             <TripMomentAddtag @updateTag="updateLabels"></TripMomentAddtag>
             <TripMomentHashtag @updateTags="updateTags" :newTags="newTags" @deleteTag="deleteTag"/>
+            <button class="btn btn-secondary float-start" @click="generateImage">해시태그 이미지 생성 서비스</button>
             <TripMomentSubmit @insertData="insertData"/>
           </div>
+          <div class="loadingbox">
+              <MypageLoadingModal v-if="isGeneratingImage"/>
+            </div>
         </div>
       </div>
-</div>
+  </div>
 </template>
 <script setup>
 import TripMomentSubtitle from '@/components/TripMoment/TripMomentSubtitle.vue'
@@ -25,12 +29,14 @@ import TripMomentSubmit from '@/components/TripMoment/TripMomentSubmit.vue'
 import TripMomentLocation from '@/components/TripMoment/TripMomentLocation.vue'
 import TripMomentHashtag from '@/components/TripMoment/TripMomentHashtag.vue'
 import TripMomentAddtag from '@/components/TripMoment/TripMomentAddtag.vue'
+import MypageLoadingModal from '@/components/MyPage/MypageLoadingModal.vue';
 
 import { ref,defineEmits,onMounted } from 'vue';
 import axios from 'axios';
 import Papa from 'papaparse'
 
 const csvData=ref([]);
+const isGeneratingImage = ref(false);
 
 onMounted(()=>{
   Papa.parse('airports.csv', {
@@ -53,6 +59,36 @@ const location = ref({});
 
 //이미지 객체 감지 후 추천태그 추가 변수
 const newTags = ref([]);
+
+const tagList = ref([]);
+const generateBase64Image = ref('');
+const generateImage = async () => {
+  try {
+    // 요청할 데이터 설정
+    isGeneratingImage.value = true;
+    const splittedTags = tags.value.split(',');
+    splittedTags.forEach(tag => {
+        tagList.value.push(tag);
+    });
+
+    const requestData = {
+        text_array: tagList.value
+    };
+
+    // POST 요청 보내기
+    const response = await axios.post(process.env.VUE_APP_PYTHON_API_URL+'/generator', requestData);
+
+    // 응답 확인
+    generateBase64Image.value = `data:${response.headers['content-type']};base64,${response.data.image}`;
+    tagList.value = [];
+    isGeneratingImage.value = false;
+  } catch (error) {
+    tagList.value = [];
+    console.error('이미지 생성 요청 에러:', error);
+    isGeneratingImage.value = false;
+  }
+};
+
 
 const searchAirports = (lat, lng) => {
   return new Promise((resolve, reject) => {
@@ -86,13 +122,6 @@ const searchAirports = (lat, lng) => {
     }
   });
 };
-
-
-
-
-
-
-
 //이미지 파일들
 const updateImages = (newImages) => {
   images.value = newImages;
@@ -164,7 +193,6 @@ const insertData = async () => {
   console.log('location.value searchAirports : ',location.value.location_lat);
   let airportLocation = await searchAirports( location.value.location_lat , location.value.location_lng );
   console.log(airportLocation);
-  console.log('공항코드 : ',airportLocation['iata_code']);
   location.value['location_iatacode']=airportLocation['iata_code'];
 
   formData.append('dto', JSON.stringify(location.value));
@@ -184,11 +212,12 @@ const insertData = async () => {
       console.log(error);
   });
 }
-
-
-
 </script>
+
 <style scope>
+.blur-background {
+    filter: blur(5px);
+}
 #__next {
     height: 100%;
 }
@@ -203,7 +232,12 @@ const insertData = async () => {
 .PublishIndexStyle__PublishCenterContainer-sc-1q48sbw-1 {
     padding: 0px 10px;
 }
-
+.loadingbox {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 
 </style>
